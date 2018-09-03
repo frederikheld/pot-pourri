@@ -31,11 +31,9 @@ It also answers to requests for specified chunks of data.
 
 The `ui` provides a graphical user interface that allows interaction with the app.
 
-### pot-monitoring-serial
+## Devices
 
-The `pot-monitoring-serial` microservice provides connectivity to the datastore for devices, that do not have their own network interface, e. g. the classic Arduino Uno. You can connect such devices via serial interface to a device with network access and run this service there.
-
-> This service will _not_ be automatically run when the app is started with `docker-compose up`!
+You will find the devices that provide the `datastore` with data in the separate repository https://github.com/frederikheld/pot-pourri-devices.git.
 
 ## Useful links
 
