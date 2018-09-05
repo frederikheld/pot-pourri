@@ -10,7 +10,7 @@ const app = require('../app.js')
 
 describe('Hello World route', () => {
 
-    it('returns 200', () => {
+    it('returns 201', () => {
         chai.request(app)
             .get('/')
             .end((err, res) => {
