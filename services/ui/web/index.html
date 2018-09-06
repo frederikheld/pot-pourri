@@ -123,13 +123,10 @@
                     .domain([minDate, maxDate])
                     .range([0, width])
 
-                // Define 10% lines:
+                // Define 10 % lines:
                 for (var i = 10; i <= 100; i += 10) {
 
-                    var classes = "percent-line"
-                    if (50 == i || 100 == i) {
-                        classes += " fifty-percent-line"
-                    }
+                    var classes = "ten-percent-line"
 
                     var group = chart.append("g")
                         .classed(classes, true)
