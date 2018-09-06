@@ -30,8 +30,18 @@ body {
     margin-top: 4px;
 }
 
+#chart .percent-line line {
+    stroke: lightgrey;
+    stroke-width: 1px;
+}
+
+#chart .fifty-percent-line line {
+    stroke: grey;
+}
+
 #chart .midnight-line line {
     stroke: grey;
+    stroke-width: 1px;
 }
 
 #chart .midnight-line text {

@@ -43,13 +43,13 @@
         // console.log(canvasWidth, canvasHeight)
 
         var margin = {
-                top: 20,
-                right: 50,
-                bottom: 30,
-                left: 50
-            },
-            width = canvasWidth - margin.left - margin.right,
-            height = canvasHeight - margin.top - margin.bottom
+            top: 20,
+            right: 50,
+            bottom: 30,
+            left: 50
+        }
+        var width = canvasWidth - margin.left - margin.right
+        var height = canvasHeight - margin.top - margin.bottom
 
         function createChart(canvasWidth, canvasHeight, margin = {
             top: 0,
@@ -57,9 +57,6 @@
             bottom: 0,
             left: 0
         }) {
-
-            var width = canvasWidth - margin.left - margin.right
-            var height = canvasHeight - margin.top - margin.bottom
 
             var chart = d3.select("#chart")
                 .append("svg")
@@ -70,8 +67,6 @@
                 .attr("xmlns", "http://www.w3.org/2000/svg")
                 .append("g")
                 .attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
-
-
 
             return chart
 
@@ -89,7 +84,6 @@
             // var datapoints_interval_in_microseconds = 1000 * 60 * 60 * 1 // 6 h
             var startTime = new Date(date.getTime() - datapoints_interval_in_microseconds)
             var endTime = new Date(date.getTime())
-
 
             getSamplesAsync(startTime.toISOString(), endTime.toISOString(), function (data) {
 
@@ -129,6 +123,22 @@
                     .domain([minDate, maxDate])
                     .range([0, width])
 
+                // Define 10% lines:
+                for (var i = 10; i <= 100; i += 10) {
+
+                    var classes = "percent-line"
+                    if (50 == i || 100 == i) {
+                        classes += " fifty-percent-line"
+                    }
+
+                    var group = chart.append("g")
+                        .classed(classes, true)
+                    group.append("line")
+                        .attr("x1", 0)
+                        .attr("y1", yScale(i / 100))
+                        .attr("x2", width)
+                        .attr("y2", yScale(i / 100))
+                }
 
                 // Define lines that indicate midnight:
                 var midnights = getMidnightsInInterval(startTime, endTime)
@@ -144,7 +154,7 @@
                     group.append("text")
                         .text(timestamp.toLocaleDateString())
                         .attr("x", xScale(timestamp) + 4)
-                        .attr("y", 0)
+                        .attr("y", yScale(0.98))
                 })
 
                 // Define data lines:
