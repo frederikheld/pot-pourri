@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <title>Auto Pot-Purri</title>
-    <script src="./js/jquery-3.3.1.min.js" charset="utf-8"></script>
     <script src="./js/d3.v5.min.js" charset="utf-8"></script>
+    <script src="./js/jquery-3.3.1.min.js" charset="utf-8"></script>
 
     <link rel="stylesheet" type="text/css" href="./styles.css">
 </head>
@@ -15,90 +15,155 @@
     <div id="chart"></div>
 
     <script>
-        function getSamplesAsync(startTime, endTime, callback) {
+        var Chart = function (domSelector, margins) {
 
-            $.get("http://" + document.location.hostname + ":" + document.location.port + "/datastore", function (
-                result) {
+            // -- MEMBERS
 
-                var datastore_hostname = result.data.datastore.hostname
-                var datastore_port = result.data.datastore.port
+            // the thing itelf
 
-                var url =
-                    "http://" + datastore_hostname + ":" + datastore_port + "/api/v1/samples?timestampStart=" +
-                    startTime +
-                    "&timestampEnd=2" + endTime
+            this.chart
 
-                $.get(url, function (result) {
-                    callback(result.data)
-                })
+            // layout
 
-            })
-        }
-    </script>
+            this.domSelector = domSelector
+            this.margins = margins
 
-    <script>
-        // Define dimensions and margin according to d3 conventions:
-        var canvasWidth = document.getElementById("chart").clientWidth
-        var canvasHeight = canvasWidth * 2 / 3
-        // console.log(canvasWidth, canvasHeight)
+            this.canvasWidth = $(this.domSelector).width()
+            this.canvasHeight = this.canvasWidth * 2 / 3
 
-        var margin = {
-            top: 20,
-            right: 50,
-            bottom: 30,
-            left: 50
-        }
-        var width = canvasWidth - margin.left - margin.right
-        var height = canvasHeight - margin.top - margin.bottom
+            console.log(this.canvasWidth + ", " + this.canvasHeight)
 
-        function createChart(canvasWidth, canvasHeight, margin = {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0
-        }) {
+            this.width = this.canvasWidth - this.margins.left - this.margins.right
+            this.height = this.canvasHeight - this.margins.top - this.margins.bottom
 
-            var chart = d3.select("#chart")
+            // scales
+
+            this.xScale
+            this.yScale
+
+            this.startTime
+            this.endTime
+
+            // data representations
+
+            this.hygroLine
+
+
+            // -- CONSTRUCTOR
+
+            this.chart = d3.select(this.domSelector)
                 .append("svg")
                 .attr("preserveAspectRatio", "xMinYMin meet")
-                .attr("viewBox", "0 0 " + canvasWidth + " " + canvasHeight)
-                .attr("width", canvasWidth)
-                .attr("height", canvasHeight)
+                .attr("viewBox", "0 0 " + this.canvasWidth + " " + this.canvasHeight)
+                .attr("width", this.canvasWidth)
+                .attr("height", this.canvasHeight)
                 .attr("xmlns", "http://www.w3.org/2000/svg")
                 .append("g")
-                .attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
-
-            return chart
+                .attr("transform", "translate(" + this.margins.left + ", " + this.margins.top + ")")
 
         }
 
+        Chart.prototype.setup = function (startTime, endTime) {
 
-        function updateChart(chart) {
+            // -- process argumenst
 
-            var date = new Date()
-            var datapoints_interval_in_microseconds = 1000 * 60 * 60 * 72 // 72 h
-            // var datapoints_interval_in_microseconds = 1000 * 60 * 60 * 48 // 48 h
-            // var datapoints_interval_in_microseconds = 1000 * 60 * 60 * 24 // 24 h
-            // var datapoints_interval_in_microseconds = 1000 * 60 * 60 * 12 // 12 h
-            // var datapoints_interval_in_microseconds = 1000 * 60 * 60 * 6 // 6 h
-            // var datapoints_interval_in_microseconds = 1000 * 60 * 60 * 1 // 6 h
-            var startTime = new Date(date.getTime() - datapoints_interval_in_microseconds)
-            var endTime = new Date(date.getTime())
+            this.startTime = startTime
+            this.endTime = endTime
 
-            getSamplesAsync(startTime.toISOString(), endTime.toISOString(), function (data) {
+            // -- scales
+
+            this.xScale = d3.scaleTime()
+                .domain([this.startTime, this.endTime])
+                .range([0, this.width])
+
+            this.yScale = d3.scaleLinear()
+                .domain([1, 0])
+                .range([0, this.height])
+
+
+            // -- axes
+
+            this.chart.append("g")
+                .call(
+                    d3.axisLeft(this.yScale)
+                    .ticks(10)
+                    .tickFormat(d3.format(".0%"))
+                )
+                .classed("axis axis-y axis-time", true)
+
+
+            this.chart.append("g")
+                .attr("transform", "translate(0, " + this.height + ")")
+                .call(
+                    d3.axisBottom(this.xScale)
+                    .tickFormat(d3.timeFormat("%H:%M"))
+                )
+                .classed("axis axis-x axis-percentage", true)
+
+
+            // -- grid
+
+            // INFO: Lines are grouped with their label.
+            // If there's no label the line will still be in a group
+            // to keep konsistency.
+
+            // horizontal 10 % lines:
+            var tenPercentLines = this.chart.append("g")
+                .classed("ten-percent-lines", true)
+
+            for (var i = 10; i <= 100; i += 10) {
+                var line = tenPercentLines.append("g")
+                line.append("line")
+                    .attr("x1", 0)
+                    .attr("y1", this.yScale(i / 100))
+                    .attr("x2", this.width)
+                    .attr("y2", this.yScale(i / 100))
+            }
+
+            // vertical midnight lines:
+            var midnights = getMidnightsInInterval(this.startTime, this.endTime)
+
+            var midnightLines = this.chart.append("g")
+                .classed("midnight-lines", true)
+
+            midnights.forEach((timestamp) => {
+                var group = midnightLines.append("g")
+                group.append("line")
+                    .attr("x1", this.xScale(timestamp))
+                    .attr("y1", this.height)
+                    .attr("x2", this.xScale(timestamp))
+                    .attr("y2", 0)
+                group.append("text")
+                    .text(timestamp.toLocaleDateString())
+                    .attr("x", this.xScale(timestamp) + 4)
+                    .attr("y", this.yScale(0.98))
+            })
+
+
+            // -- data representations
+
+            this.hygroLine = d3.line()
+                .x((function (d) {
+                    return this.xScale(d.timestamp)
+                }).bind(this))
+                .y((function (d) {
+                    return this.yScale(d.value_percent)
+                }).bind(this))
+
+
+        }
+
+        Chart.prototype.update = function (startTime, endTime) {
+
+            // console.log(this)
+
+            getSamplesAsync(startTime.toISOString(), endTime.toISOString(), function (data, self) {
 
                 // re-format data points
                 for (var i = 0; i < data.length; i++) {
                     data[i].timestamp = d3.isoParse(data[i].timestamp)
                     data[i].value_percent = (1024 - data[i].value_raw) * (1 / 1024)
                 }
-
-                // Using the queried interval makes a more stable time scale
-                // but could leave gaps at the beginning and the end of each line
-                var minDate = d3.isoParse(startTime)
-                var maxDate = d3.isoParse(endTime)
-
-                // console.log("time interval: [" + minDate + ", " + maxDate + "]")
 
                 // re-arrange data to create one line per sensor
                 var data = d3.nest()
@@ -113,68 +178,20 @@
                     data[i].color = d3.schemeSet1[i]
                 }
 
-                // Define y-scale as linear (for percentage values):
-                var yScale = d3.scaleLinear()
-                    .domain([1, 0])
-                    .range([0, height])
-
-                // Define x-scale as time:
-                var xScale = d3.scaleTime()
-                    .domain([minDate, maxDate])
-                    .range([0, width])
-
-                // Define 10 % lines:
-                for (var i = 10; i <= 100; i += 10) {
-
-                    var classes = "ten-percent-line"
-
-                    var group = chart.append("g")
-                        .classed(classes, true)
-                    group.append("line")
-                        .attr("x1", 0)
-                        .attr("y1", yScale(i / 100))
-                        .attr("x2", width)
-                        .attr("y2", yScale(i / 100))
-                }
-
-                // Define lines that indicate midnight:
-                var midnights = getMidnightsInInterval(startTime, endTime)
-
-                midnights.forEach((timestamp) => {
-                    var group = chart.append("g")
-                        .classed("midnight-line", true)
-                    group.append("line")
-                        .attr("x1", xScale(timestamp))
-                        .attr("y1", height)
-                        .attr("x2", xScale(timestamp))
-                        .attr("y2", 0)
-                    group.append("text")
-                        .text(timestamp.toLocaleDateString())
-                        .attr("x", xScale(timestamp) + 4)
-                        .attr("y", yScale(0.98))
-                })
-
-                // Define data lines:
-                var dataLine = d3.line()
-                    .x(function (d) {
-                        return xScale(d.timestamp)
-                    })
-                    .y(function (d) {
-                        return yScale(d.value_percent)
-                    })
-
                 // Add lines to chart:
                 data.forEach(function (d) {
 
+                    // console.log(self)
+
                     // path
-                    chart.append("path")
-                        .attr("d", dataLine(d.values))
+                    self.chart.append("path")
+                        .attr("d", self.hygroLine(d.values))
                         .attr("stroke", d.color)
-                        .classed("line", true)
+                        .classed("data-line", true)
 
                     // label
-                    chart.append("text")
-                        .attr("transform", "translate(" + (width + 5) + ", " + yScale(d.values[
+                    self.chart.append("text")
+                        .attr("transform", "translate(" + (self.width + 5) + ", " + self.yScale(d.values[
                             d.values
                             .length -
                             1].value_percent) + ")")
@@ -183,30 +200,13 @@
                         .classed("label", true)
                 })
 
-                // Add axes to chart:
-                chart.append("g")
-                    .attr("transform", "translate(0, " + height + ")")
-                    .call(
-                        d3.axisBottom(xScale)
-                        .tickFormat(d3.timeFormat("%H:%M"))
-                    )
-                    .classed("axis axis-x axis-percentage", true)
-
-                chart.append("g")
-                    .call(
-                        d3.axisLeft(yScale)
-                        .ticks(10)
-                        .tickFormat(d3.format(".0%"))
-                    )
-                    .classed("axis axis-y axis-time", true)
-
-            })
+            }, this)
         }
 
 
         /**
-         * Returns an array of timestamps of all midnights between
-         * startTime and endTime.
+         *  Returns an array of timestamps of all midnights between
+         *  startTime and endTime.
          */
         function getMidnightsInInterval(startTime, endTime) {
 
@@ -233,17 +233,84 @@
         }
 
 
+        /*
+         *  Queries data from the datastore and returns
+         *  it as an JSON object
+         */
+        function getSamplesAsync(startTime, endTime, callback, context) {
+
+            $.get("http://" + document.location.hostname + ":" + document.location.port + "/datastore",
+                function (
+                    result) {
+
+                    var datastore_hostname = result.data.datastore.hostname
+                    var datastore_port = result.data.datastore.port
+
+                    var url =
+                        "http://" + datastore_hostname + ":" + datastore_port +
+                        "/api/v1/samples?timestampStart=" +
+                        startTime +
+                        "&timestampEnd=2" + endTime
+
+                    $.get(url, function (result) {
+                        callback(result.data, context)
+                    })
+
+                })
+        }
+    </script>
+    <script>
+        // -- CONFIG
+
+        // -- layout
+
+        var margins = {
+            top: 20,
+            right: 30,
+            bottom: 30,
+            left: 50
+        }
+
+        // -- data ranges
+
+        var time_interval_in_microseconds = 1000 * 60 * 60 * 72 // 72 h
+        // var time_interval_in_microseconds = 1000 * 60 * 60 * 48 // 48 h
+        // var time_interval_in_microseconds = 1000 * 60 * 60 * 24 // 24 h
+        // var time_interval_in_microseconds = 1000 * 60 * 60 * 12 // 12 h
+        // var time_interval_in_microseconds = 1000 * 60 * 60 * 6 // 6 h
+        // var time_interval_in_microseconds = 1000 * 60 * 60 * 1 // 6 h
+
+
         // -- MAIN
 
-        var chart = createChart(canvasWidth, canvasHeight, margin)
-        updateChart(chart)
+        var date = new Date()
+        var startTime = new Date(date.getTime() - time_interval_in_microseconds)
+        var endTime = new Date(date.getTime())
+
+        // console.log(startTime)
+        // console.log(startTime.toISOString())
+        // console.log(d3.isoParse(startTime.toISOString()))
+
+        var chart = new Chart("#chart", margins)
+        chart.setup(startTime, endTime)
+        chart.update(startTime, endTime)
+
+        // function updateChart(chart) {
+
+        //     var date = new Date()
+        //     var startTime = new Date(date.getTime() - time_interval_in_microseconds)
+        //     var endTime = new Date(date.getTime())
+
+        //     // console.log(startTime)
+        //     // console.log(startTime.toISOString())
+        //     // console.log(d3.isoParse(startTime.toISOString()))
+
+        //     chart.update(startTime, endTime)
+
+        //     console.log(endTime + ": chart updated")
+        // }
         // setInterval(updateChart, 1000, chart)
     </script>
-
-    <div class="chart-legend">
-        Labels represent
-        <em>device_id.sensor_id</em>
-    </div>
 
 </body>
 
