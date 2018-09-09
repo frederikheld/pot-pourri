@@ -250,7 +250,7 @@
                         "http://" + datastore_hostname + ":" + datastore_port +
                         "/api/v1/samples?timestampStart=" +
                         startTime +
-                        "&timestampEnd=2" + endTime
+                        "&timestampEnd=" + endTime
 
                     $.get(url, function (result) {
                         callback(result.data, context)
