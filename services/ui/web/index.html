@@ -31,7 +31,7 @@
             this.canvasWidth = $(this.domSelector).width()
             this.canvasHeight = this.canvasWidth * 2 / 3
 
-            console.log(this.canvasWidth + ", " + this.canvasHeight)
+            // console.log(this.canvasWidth + ", " + this.canvasHeight)
 
             this.width = this.canvasWidth - this.margins.left - this.margins.right
             this.height = this.canvasHeight - this.margins.top - this.margins.bottom
@@ -157,50 +157,55 @@
 
             // console.log(this)
 
-            getSamplesAsync(startTime.toISOString(), endTime.toISOString(), function (data, self) {
+            getSamples(startTime.toISOString(), endTime.toISOString(), this)
+                .then((data) => {
 
-                // re-format data points
-                for (var i = 0; i < data.length; i++) {
-                    data[i].timestamp = d3.isoParse(data[i].timestamp)
-                    data[i].value_percent = (1024 - data[i].value_raw) * (1 / 1024)
-                }
+                    var self = this
 
-                // re-arrange data to create one line per sensor
-                var data = d3.nest()
-                    .key(function (d) {
-                        return d.device_id
+                    // re-format data points
+                    for (var i = 0; i < data.length; i++) {
+                        data[i].timestamp = d3.isoParse(data[i].timestamp)
+                        data[i].value_percent = (1024 - data[i].value_raw) * (1 / 1024)
+                    }
+
+                    // re-arrange data to create one line per sensor
+                    var data = d3.nest()
+                        .key(function (d) {
+                            return d.device_id
+                        })
+                        .entries(data)
+
+
+                    // add attributes to each dataset
+                    for (var i = 0; i < data.length; i++) {
+                        data[i].color = d3.schemeSet1[i]
+                    }
+
+                    // Add lines to chart:
+                    data.forEach(function (d) {
+
+                        // path
+                        self.chart.append("path")
+                            .attr("d", self.hygroLine(d.values))
+                            .attr("stroke", d.color)
+                            .classed("data-line", true)
+
+                        // label
+                        self.chart.append("text")
+                            .attr("transform", "translate(" + (self.width + 5) + ", " + self.yScale(d.values[
+                                d.values
+                                .length -
+                                1].value_percent) + ")")
+                            .attr("fill", d.color)
+                            .text(d.values[0].device_id + "." + d.values[0].sensor_id)
+                            .classed("label", true)
                     })
-                    .entries(data)
 
-
-                // add attributes to each dataset
-                for (var i = 0; i < data.length; i++) {
-                    data[i].color = d3.schemeSet1[i]
-                }
-
-                // Add lines to chart:
-                data.forEach(function (d) {
-
-                    // console.log(self)
-
-                    // path
-                    self.chart.append("path")
-                        .attr("d", self.hygroLine(d.values))
-                        .attr("stroke", d.color)
-                        .classed("data-line", true)
-
-                    // label
-                    self.chart.append("text")
-                        .attr("transform", "translate(" + (self.width + 5) + ", " + self.yScale(d.values[
-                            d.values
-                            .length -
-                            1].value_percent) + ")")
-                        .attr("fill", d.color)
-                        .text(d.values[0].device_id + "." + d.values[0].sensor_id)
-                        .classed("label", true)
+                })
+                .catch((error) => {
+                    console.log(error)
                 })
 
-            }, this)
         }
 
 
@@ -232,31 +237,63 @@
 
         }
 
+        var getDatastoreApiEndpoint = function (uiApiEndpoint) {
+
+            return new Promise((resolve, reject) => {
+
+                d3.json(uiApiEndpoint + '/datastore')
+                    .then((result) => {
+
+                        console.log(result)
+
+                        var datastore_hostname = result.data.datastore.hostname
+                        var datastore_port = result.data.datastore.port
+                        resolve("http://" + datastore_hostname + ":" + datastore_port + "/api/v1")
+
+                    })
+                    .catch((error) => {
+                        reject(error)
+                    })
+            })
+
+        }
 
         /*
          *  Queries data from the datastore and returns
          *  it as an JSON object
          */
-        function getSamplesAsync(startTime, endTime, callback, context) {
+        function getSamples(startTime, endTime, context) {
 
-            $.get("http://" + document.location.hostname + ":" + document.location.port + "/datastore",
-                function (
-                    result) {
+            var uiApiEndpoint = "http://" + document.location.hostname + ":" + document.location.port
 
-                    var datastore_hostname = result.data.datastore.hostname
-                    var datastore_port = result.data.datastore.port
+            return new Promise((resolve, reject) => {
 
-                    var url =
-                        "http://" + datastore_hostname + ":" + datastore_port +
-                        "/api/v1/samples?timestampStart=" +
-                        startTime +
-                        "&timestampEnd=" + endTime
+                getDatastoreApiEndpoint(uiApiEndpoint)
+                    .then((datastoreApiEndpoint) => {
 
-                    $.get(url, function (result) {
-                        callback(result.data, context)
+                        console.log("datastoreApiEndpoint: " + datastoreApiEndpoint)
+
+                        var query = datastoreApiEndpoint + "/samples?timestampStart=" + startTime +
+                            "&timestampEnd=" + endTime
+                        console.log("query: " + query)
+
+                        d3.json(query)
+                            .then((result) => {
+                                console.log("result:")
+                                console.log(result)
+                                resolve(result.data)
+                            })
+                            .catch((error) => {
+                                reject(error)
+                            })
+
+                    })
+                    .catch((error) => {
+                        reject(error)
                     })
 
-                })
+            })
+
         }
     </script>
     <script>
@@ -283,10 +320,11 @@
 
         // -- MAIN
 
-        var date = new Date()
+        var date = new Date("2018-09-01")
         var startTime = new Date(date.getTime() - time_interval_in_microseconds)
         var endTime = new Date(date.getTime())
 
+        // console.log("Time interval: [" + startTime + ", " + endTime + "]")
         // console.log(startTime)
         // console.log(startTime.toISOString())
         // console.log(d3.isoParse(startTime.toISOString()))
