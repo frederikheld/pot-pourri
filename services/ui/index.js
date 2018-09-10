@@ -29,6 +29,7 @@ function publish_webinterface() {
             msg: "ok",
             data: {
                 datastore: {
+                    apiEndpoint: "http://" + datastore_hostname + ":" + datastore_port + "/api/v1",
                     hostname: datastore_hostname,
                     port: datastore_port
                 }

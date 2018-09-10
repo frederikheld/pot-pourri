@@ -243,13 +243,7 @@
 
                 d3.json(uiApiEndpoint + '/datastore')
                     .then((result) => {
-
-                        console.log(result)
-
-                        var datastore_hostname = result.data.datastore.hostname
-                        var datastore_port = result.data.datastore.port
-                        resolve("http://" + datastore_hostname + ":" + datastore_port + "/api/v1")
-
+                        resolve(result.data.datastore.apiEndpoint)
                     })
                     .catch((error) => {
                         reject(error)
@@ -271,16 +265,11 @@
                 getDatastoreApiEndpoint(uiApiEndpoint)
                     .then((datastoreApiEndpoint) => {
 
-                        console.log("datastoreApiEndpoint: " + datastoreApiEndpoint)
-
                         var query = datastoreApiEndpoint + "/samples?timestampStart=" + startTime +
                             "&timestampEnd=" + endTime
-                        console.log("query: " + query)
 
                         d3.json(query)
                             .then((result) => {
-                                console.log("result:")
-                                console.log(result)
                                 resolve(result.data)
                             })
                             .catch((error) => {
