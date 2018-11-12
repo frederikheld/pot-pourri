@@ -1,0 +1,53 @@
+@startuml
+skinparam componentStyle uml2
+
+participant "Eventstore"
+participant "Datastore"
+participant "Device"
+participant "Sensors"
+participant "Actuators"
+
+Device -> Device: wake-up\nevent
+Activate Device
+
+== Read Sensors ==
+
+Device -> Sensors: power-on\nSensors
+Activate Sensors
+Sensors -> Device: provide\ndata
+Device -> Device: read data
+Device -> Sensors: power-off\nSensors
+Deactivate Sensors
+
+Device -> Device: prepare data
+
+== Send Data to Datastore ==
+
+Device -> Datastore: send data
+
+Activate Datastore
+Datastore -> Datastore: process and\nsave data
+Datastore -> Device: send\nacknowledge-\nment
+Deactivate Datastore
+
+== Fetch accumulated events ==
+
+Device -> Eventstore: check for events
+Activate Eventstore
+Eventstore -> Device: send events
+Deactivate Eventstore
+
+== Control Actuators ==
+
+opt in case of events received
+    
+    Device -> Actuators: control
+    Activate Actuators
+    Deactivate Actuators
+
+end
+
+Device -> Device: go to\ndeep sleep
+Deactivate Device
+
+@enduml
