@@ -14,7 +14,7 @@ pipeline {
             }
         }
         stage('Deploy documentation') {
-            step {
+            stepS {
                 echo 'Deploy docs to potpourri.frederikheld.de/docs/ ...'
                 withCredentials([usernamePassword(credentialsId: 'deploy-usm.io', usernameVariable: 'FTP_USER', passwordVariable: 'FTP_PW')]) {
                     // sh 'curl -T dist/docs/* ftp://potpourri.frederikheld.de/ -u $FTP_USER:$FTP_PW --ftp-ssl --insecure'
