@@ -17,11 +17,13 @@ pipeline {
     }
     stage('Deploy documentation') {
       steps {
-        echo 'Deploy docs to potpourri.frederikheld.de/docs/ ...'
-        withCredentials([usernamePassword(credentialsId: 'deploy-usm.io', usernameVariable: 'FTP_USER', passwordVariable: 'FTP_PW')]) {
-            // sh 'curl -T dist/docs/* ftp://potpourri.frederikheld.de/ -u $FTP_USER:$FTP_PW --ftp-ssl --insecure'
-            sh 'find dist/docs -type f -exec curl -u $FTP_USER:$FTP_PW --ftp-create-dirs --ftp-ssl --insecure -T {} ftp://potpourri.frederikeld.de/docs/architecture{}'
-        }
+          step {
+            echo 'Deploy docs to potpourri.frederikheld.de/docs/ ...'
+            withCredentials([usernamePassword(credentialsId: 'deploy-usm.io', usernameVariable: 'FTP_USER', passwordVariable: 'FTP_PW')]) {
+                // sh 'curl -T dist/docs/* ftp://potpourri.frederikheld.de/ -u $FTP_USER:$FTP_PW --ftp-ssl --insecure'
+                sh 'find dist/docs -type f -exec curl -u $FTP_USER:$FTP_PW --ftp-create-dirs --ftp-ssl --insecure -T {} ftp://potpourri.frederikeld.de/docs/architecture{}'
+            }
+          }
       }
     }
   }
