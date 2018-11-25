@@ -10,7 +10,7 @@ pipeline {
         stage('Compile documentation') {
             steps {
                 echo 'Render architecture'
-                sh 'npm run build/compile_docs'
+                sh 'npm run build/compile_docs.js'
             }
         }
         stage('Deploy documentation') {
