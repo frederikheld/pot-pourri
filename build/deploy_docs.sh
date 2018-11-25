@@ -4,4 +4,4 @@ open -u $FTP_USER,$FTP_PASSWORD potpourri.frederikheld.de
 mirror -R ./dist/docs/ /
 bye
 EOF
-# open -u $FTP_USER,$FTP_PASSWORD potpourri.frederikheld.de
+open -u $FTP_USER,$FTP_PASSWORD potpourri.frederikheld.de
