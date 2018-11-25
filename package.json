@@ -11,7 +11,7 @@
     "rimraf": "^2.6.2"
   },
   "scripts": {
-    "docs": "node compile_docs.js"
+    "docs": "node build/compile_docs.js"
   },
   "author": "",
   "license": "MIT"
