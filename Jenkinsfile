@@ -10,15 +10,14 @@ pipeline {
         stage('Compile documentation') {
             steps {
                 echo 'Render architecture'
-                sh 'npm run docs'
+                sh 'npm run build/compile_docs'
             }
         }
         stage('Deploy documentation') {
             steps {
                 echo 'Deploy docs to potpourri.frederikheld.de/docs/ ...'
                 withCredentials([usernamePassword(credentialsId: 'deploy-usm.io', usernameVariable: 'FTP_USER', passwordVariable: 'FTP_PW')]) {
-                    // sh 'curl -T dist/docs/* ftp://potpourri.frederikheld.de/ -u $FTP_USER:$FTP_PW --ftp-ssl --insecure'
-                    sh 'find dist/docs -type f -exec `curl -T {} ftp://potpourri.frederikeld.de/architecture/{} -u $FTP_USER:$FTP_PW --ftp-create-dirs --ftp-ssl --insecure`'
+                    sh 'build/deploy_docs.sh'
                 }
             }
         }
