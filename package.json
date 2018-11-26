@@ -4,9 +4,14 @@
   "description": "pot-pourri",
   "main": "index.js",
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "mkdirp": "^0.5.1",
+    "plantuml-encoder": "^1.2.5",
+    "request": "^2.88.0",
+    "rimraf": "^2.6.2"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "docs": "node build/compile_docs.js"
   },
   "author": "",
   "license": "MIT"
