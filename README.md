@@ -21,7 +21,7 @@ The easiest way is to run the app is to start all services at once. To do this, 
 
 The pot-pourri application consists of several microservices that communicate via rest apis. The system context looks like this:
 
-![System Context of pot-pourri][https://potpourri.frederikheld.de/architecture/system_context.png]
+![System Context of pot-pourri](https://potpourri.frederikheld.de/architecture/system_context.png)
 
 See the readme of each service for more details.
 

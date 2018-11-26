@@ -24,4 +24,4 @@ This will mount the directory `./db` as a bind mount within the container at the
 
 ### Components diagram
 
-![Components diagram for service Datastore of pot-pourri][https://potpourri.frederikheld.de/architecture/service_datastore_components.png]
+![Components diagram for service Datastore of pot-pourri](https://potpourri.frederikheld.de/architecture/service_datastore_components.png)

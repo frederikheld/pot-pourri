@@ -18,8 +18,8 @@ To run the container run
 
 ### Components diagram
 
-![Components diagram for service UI of pot-pourri][https://potpourri.frederikheld.de/architecture/service_ui_components.png]
+![Components diagram for service UI of pot-pourri](https://potpourri.frederikheld.de/architecture/service_ui_components.png)
 
 ### Sequence diagram
 
-![Sequence diagram for service UI of pot-pourri][https://potpourri.frederikheld.de/architecture/service_ui_sequence.png]
+![Sequence diagram for service UI of pot-pourri](https://potpourri.frederikheld.de/architecture/service_ui_sequence.png)
