@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Auto Pot-Purri</title>
+    <script src="./js/d3.v5.min.js" charset="utf-8"></script>
+    <style type="text/css">
+        #chart svg {
+            width: 100%;
+            height: auto;
+        }
+
+        #chart .line {
+            fill: none;
+            stroke: blue;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="chart"></div>
+
+    <script>
+        // -- CONFIG
+
+        var datapoints_interval_in_microseconds = 1000 * 60 * 60 * 0.1
+        // var datapoints_interval_in_microseconds = 1000 * 60 * 60 * 6 // 6 h
+        // var datapoints_interval_in_microseconds = 1000 * 60 * 60 * 12 // 12 h
+        // var datapoints_interval_in_microseconds = 1000 * 60 * 60 * 24 // 12 h
+        // var datapoints_interval_in_microseconds = 1000 * 60 * 60 * 0.05
+
+
+        // -- MAIN
+
+        updateChart() // Do it once before the interval starts
+        // setInterval(function () {
+        //     updateChart()
+        // }, 1000)
+
+
+        // -- UPDATE AND RENDER FUNCTIONS
+
+        function updateChart() {
+
+            getSamplesAsync(getNowMinusX(datapoints_interval_in_microseconds), getNow(), function (data) {
+                // re-format data
+                data.forEach(function (d) {
+                    // parse timestamps
+                    d.timestamp = d3.isoParse(d.timestamp)
+
+                    // calculate value as percentage of the raw value:
+                    d.value_percent = (1024 - d.value_raw) * (1 / 1024)
+                })
+
+                // re-arrange data to create one line per sensor
+                var data = d3.nest()
+                    .key(function (d) {
+                        return d.device_id
+                    })
+                    .entries(data)
+
+                // Add lines to chart:
+                data.forEach(function (d) {
+                    chart.append("path")
+                        .attr("class", "line")
+                        .attr("d", dataLine(d.values))
+                })
+
+            })
+
+        }
+
+        function getSamplesAsync(startTime, endTime, callback) {
+            var url =
+                "http://localhost:3000/api/v1/samples?timestampStart=" + startTime + "&timestampEnd=" + endTime
+            console.log(url)
+            httpGetAsync(url, function (result) {
+                callback(JSON.parse(result).data)
+            })
+        }
+
+        function httpGetAsync(url, callback) {
+            var xmlHttp = new XMLHttpRequest()
+            xmlHttp.onreadystatechange = function () {
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                    callback(xmlHttp.responseText)
+                }
+            }
+            xmlHttp.open("GET", url, true) // true for async
+            xmlHttp.send(null)
+        }
+        // Source: https://stackoverflow.com/questions/247483/http-get-request-in-javascript
+
+        function getNowMinusX(timeInMicroseconds) {
+            var date = new Date()
+            return new Date(date.getTime() - timeInMicroseconds).toISOString()
+        }
+
+        function getNow() {
+            var date = new Date()
+            return new Date(date.getTime()).toISOString()
+        }
+
+
+        // -- DEFINE CHART
+
+        // calculate time interval:
+        var startTime = getNow()
+        var endTime = getNowMinusX(datapoints_interval_in_microseconds)
+
+        // Using the queried interval makes a more stable time scale
+        // but could leave gaps at the beginning and the end of each line
+        var minDate = d3.isoParse(startTime)
+        var maxDate = d3.isoParse(endTime)
+
+        console.log("time interval: [" + minDate + ", " + maxDate + "]")
+
+
+        // Define dimensions and margin according to conventions:
+        var canvasWidth = document.getElementById("chart").clientWidth
+        var canvasHeight = canvasWidth * 2 / 3
+        console.log(canvasWidth, canvasHeight)
+
+        var margin = {
+                top: 20,
+                right: 20,
+                bottom: 30,
+                left: 50
+            },
+            width = canvasWidth - margin.left - margin.right,
+            height = canvasHeight - margin.top - margin.bottom
+
+        // Create chart:
+        var chart = d3.select("#chart")
+            // .append("div")
+            // .classed("svg-container", true)
+            .append("svg")
+            .attr("preserveAspectRatio", "xMinYMin meet")
+            .attr("viewBox", "0 0 " + canvasWidth + " " + canvasHeight)
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .attr("xmlns", "http://www.w3.org/2000/svg")
+            // .classed("svg-content-responsive", true)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
+
+        // Define y-scale as linear (for percentage values):
+        var yScale = d3.scaleLinear()
+            .domain([1, 0])
+            .range([0, height])
+
+        // Define x-scale as time:
+        var xScale = d3.scaleTime()
+            .domain([maxDate, minDate])
+            .range([0, width])
+
+        // Add axes to chart:
+        chart.append("g")
+            .attr("transform", "translate(0, " + height + ")")
+            .call(
+                d3.axisBottom(xScale)
+                .tickFormat(d3.timeFormat("%H:%M"))
+            )
+
+        chart.append("g")
+            .call(
+                d3.axisLeft(yScale)
+                .ticks(10)
+                .tickFormat(d3.format(".0%"))
+            )
+
+        // Define lines:
+        var dataLine = d3.line()
+            .x(function (d) {
+                return xScale(d.timestamp)
+            })
+            .y(function (d) {
+                return yScale(d.value_percent)
+            })
+    </script>
+
+</body>
+
+</html>

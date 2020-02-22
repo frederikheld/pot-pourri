@@ -49,3 +49,7 @@ You will find the devices that provide the `datastore` with data in the separate
 ### Sensors
 
 - Humidity sensors compared: https://www.youtube.com/watch?v=udmJyncDvw0
+
+### Testing
+
+- Discussion about approaches on integration testing and unit testing in NodeJS: https://dev.to/jjjjcccjjf/need-recommendations-in-mocking-database--testing-cleanup-unit-testing-28eb
