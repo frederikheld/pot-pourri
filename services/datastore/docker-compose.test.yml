@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+  test_datastore:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    command: npm test

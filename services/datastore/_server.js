@@ -7,7 +7,7 @@ var argv = require('minimist')(process.argv.slice(2))
 var express = require('express')
 var cors = require('cors')
 
-var router = require('./router')
+var router = require('./_app')
 
 
 // config
@@ -39,6 +39,8 @@ app.use(function (req, res, next) {
 	// to the API (e.g. in case you use sessions)
 	res.setHeader('Access-Control-Allow-Credentials', true);
 
+	// res.setHeader('Content-Type', 'application/json');
+
 	// Pass to next layer of middleware
 	next();
 });
@@ -48,3 +50,8 @@ var server = app.listen(port, () => {
 	console.log("API is accessible at http://localhost:" + port + apiRoot)
 	console.log("To call from another machine in the same network, replace 'localhost' by the IP or hostname of this machine.")
 })
+
+
+// -- exports
+
+module.exports = server

@@ -1,5 +1,5 @@
 {
-  "name": "pot-monitoring-serial",
+  "name": "rest_api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,7 +9,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "request": "^2.87.0",
-    "serialport": "^6.2.1"
+    "express": "^4.16.3"
   }
 }

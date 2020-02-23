@@ -9,13 +9,7 @@ COPY package*.json ./
 COPY ./package.json package
 
 # ... then install dependencies
-RUN npm install --only=production
+RUN npm install
 
 # add application code
 COPY . .
-
-# map docker daemon to the port this app uses
-EXPOSE 8080
-
-# run the app
-CMD ["npm", "start"]
