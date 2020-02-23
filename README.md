@@ -60,15 +60,6 @@ You will find the devices that provide the `datastore` with data in the separate
 
 ## Useful links
 
-### NodeMCU
-
-- NodeMCU power supply: http://henrysbench.capnfatz.com/henrys-bench/arduino-projects-tips-and-more/powering-the-esp-12e-nodemcu-development-board/
-- ESP32 deep sleep: http://educ8s.tv/esp32-deep-sleep-tutorial/
-
-### Sensors
-
-- Humidity sensors compared: https://www.youtube.com/watch?v=udmJyncDvw0
-
 ### Testing
 
 - Discussion about approaches on integration testing and unit testing in NodeJS: https://dev.to/jjjjcccjjf/need-recommendations-in-mocking-database--testing-cleanup-unit-testing-28eb
