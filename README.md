@@ -1,54 +1,86 @@
-# pot-pourri
+# Pot Pourri
 
-// todo: What does it do?
+_Pot Pourri_ helps you to keep your potted plants alive
 
-## Prepare environment
+It collects data from connected sensor devices ([see the devices repository](https://github.com/frederikheld/pot-pourri-devices)) an displays it on a web interface. This helps you to track when your plants need water.
 
-To run the app, you need to have Docker and Docker-Compose installed. Please install it according to the following instructions in the Docker docs:
+It is also planned to add an event engine that triggers actors attached the connected devices on pre-defined events. This will allow for automatically watering the plants, regulating sun and ventilation, etc.
 
-Install Docker: https://docs.docker.com/install/
-Install Docker-Compose: https://docs.docker.com/compose/install/
+## What does the name mean?
 
-## Run it
+The name is a pun on many levels.
 
-You can run each service individually as a stand-alone node app with `npm start` or inside a docker container. This is particularly helpful if you want to run the services on different machines.
+Firstly, a _potpourri_ is defined as 
 
-The easiest way is to run the app is to start all services at once. To do this, simply run `docker-compose up` in the directory _./services_. To stop all services, you can run `docker-compose down` in a separate terminal window at the same location.
+> a mixture of dried, naturally fragrant plant materials, used to provide a gentle natural scent (source: [Wikipedia](https://en.wikipedia.org/wiki/Potpourri))
 
-`docker-compose up` will first build and then run all containers. If the containers already exist, it will not re-build them but use the existing ones. If you explicitly want to re-build all containers, use `docker-compose build` before you call `docker-compose up`.
+which your plants will hopefully never become if you use _Pot Pourri_.
 
-## Architecture
+It also refers of the wild mix of connected devices that can be used to collect data and act based on it.
 
-The pot-pourri application consists of several microservices that communicate via rest apis. The system context looks like this:
+And finally, the name is a composition of _Pot_ from "potted plants" and _Pourri_ form "the thing that pours water into the pots".
 
-![System Context of pot-pourri](https://potpourri.frederikheld.de/architecture/system_context.png)
+I really hope you're into puns.
 
-See the readme of each service for more details.
+## Run _Pot Pourri_
+
+_Pot Pourri_ consists of several services that all need to be started to render the app fully functional.
+
+### Prepare the environment
+
+To run _Pot Pourri_ you need to have _Docker_ ([instructions](https://docs.docker.com/install/)) and _Docker-Compose_ ([instructions](https://docs.docker.com/compose/install/)) installed on your machine.
+
+### Start the containers
+
+The simplest way to run _Pot Pourri_ is to start all services at once.
+
+To do this, simply navigate to the directory `./services` and run 
+
+```$ docker-compose up -d```
+
+You can now close the terminal, the containers will continue running in the background.
+
+### Stop the containers
+
+To shut the containers down, you can run
+
+```$ docker-compose down```
+
+in the same directory.
+
+### Force rebuild on startup
+
+If the containers don't exist yet, `docker-compose up` will build all specified containers before it starts them.
+
+If the containers already exist, it will not rebuild them but start the existing ones.
+
+So if you explicitly want to rebuild all containers (e. g. if you have changed the Dockerfiles), you have to run
+
+```$ docker-compose build --force-recreate```
+
+to start the containers.
+
+## Services
+
+_Pot Pourri_ consists of several services that communicate via REST api calls. The system context looks like this:
+
+![System Context of pot-pourri](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/frederikheld/pot-pourri/master/docs/system_context.plantuml&cache=no)
+
+Please see the readme of each service for more details!
 
 ### datastore
 
-The `datasore` service accepts data items and stores them in an internal database.
-
-It also answers to requests for specified chunks of data.
+The `datastore` service accepts data items and stores them in a database which is being persisted in a mounted volume.
 
 ### ui
 
-The `ui` provides a graphical user interface that allows interaction with the app.
+The `ui` provides a web app that displays data and allows interaction with _Pot Pourri_.
 
 ## Devices
 
 You will find the devices that provide the `datastore` with data in the separate repository https://github.com/frederikheld/pot-pourri-devices.git.
 
 ## Useful links
-
-### NodeMCU
-
-- NodeMCU power supply: http://henrysbench.capnfatz.com/henrys-bench/arduino-projects-tips-and-more/powering-the-esp-12e-nodemcu-development-board/
-- ESP32 deep sleep: http://educ8s.tv/esp32-deep-sleep-tutorial/
-
-### Sensors
-
-- Humidity sensors compared: https://www.youtube.com/watch?v=udmJyncDvw0
 
 ### Testing
 
