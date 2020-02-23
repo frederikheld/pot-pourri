@@ -4,36 +4,55 @@
 
 ## Prepare environment
 
-To run the app, you need to have Docker and Docker-Compose installed. Please install it according to the following instructions in the Docker docs:
+To run _Pot Pourri_ you need to have _Docker_ ([instructions](https://docs.docker.com/install/)) and _Docker-Compose_ ([instructions](https://docs.docker.com/compose/install/)) installed on your machine.
 
-Install Docker: https://docs.docker.com/install/
-Install Docker-Compose: https://docs.docker.com/compose/install/
+## Run _Pot Pourri_
 
-## Run it
+_Pot Pourri_ consists of several services that all need to be started to render the app fully functional.
 
-You can run each service individually as a stand-alone node app with `npm start` or inside a docker container. This is particularly helpful if you want to run the services on different machines.
+### Start the containers
 
-The easiest way is to run the app is to start all services at once. To do this, simply run `docker-compose up` in the directory _./services_. To stop all services, you can run `docker-compose down` in a separate terminal window at the same location.
+The easiest way is to run the app is to start all services at once. To do this, simply navigate to the directory `./services` and run 
 
-`docker-compose up` will first build and then run all containers. If the containers already exist, it will not re-build them but use the existing ones. If you explicitly want to re-build all containers, use `docker-compose build` before you call `docker-compose up`.
+```$ docker-compose up -d```
 
-## Architecture
+You can now close the terminal, the containers will continue running in the background.
 
-The pot-pourri application consists of several microservices that communicate via rest apis. The system context looks like this:
+### Stop the containers
+
+To shut the containers down, you can run
+
+```$ docker-compose down```
+
+in the same directory.
+
+### Force rebuild on startup
+
+If the containers don't exist yet, `docker-compose up` will first build and then run all specified containers.
+
+If the containers already exist, it will not rebuild them but start the existing ones.
+
+So if you explicitly want to rebuild all containers, you have to run
+
+```$ docker-compose build --force-recreate```
+
+to start the containers.
+
+## Services
+
+_Pot Pourri_ consists of several services that communicate via REST api calls. The system context looks like this:
 
 ![System Context of pot-pourri](https://potpourri.frederikheld.de/architecture/system_context.png)
 
-See the readme of each service for more details.
+Please see the readme of each service for more details!
 
 ### datastore
 
-The `datasore` service accepts data items and stores them in an internal database.
-
-It also answers to requests for specified chunks of data.
+The `datastore` service accepts data items and stores them in a database which is being persisted in a mounted volume.
 
 ### ui
 
-The `ui` provides a graphical user interface that allows interaction with the app.
+The `ui` provides a web app that displays data and allows interaction with _Pot Pourri_.
 
 ## Devices
 
