@@ -9,6 +9,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "seneca": "^3.6.0"
+    "seneca": "^3.9.0"
   }
 }
