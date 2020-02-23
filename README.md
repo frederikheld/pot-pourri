@@ -64,7 +64,7 @@ to start the containers.
 
 _Pot Pourri_ consists of several services that communicate via REST api calls. The system context looks like this:
 
-![System Context of pot-pourri](https://potpourri.frederikheld.de/architecture/system_context.png)
+![System Context of pot-pourri](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/frederikheld/pot-pourri/master/docs/system_context.plantuml&cache=no)
 
 Please see the readme of each service for more details!
 
