@@ -6,8 +6,8 @@
   "dependencies": {},
   "devDependencies": {
     "mkdirp": "^0.5.1",
-    "plantuml-encoder": "^1.2.5",
-    "request": "^2.88.0",
+    "plantuml-encoder": "^1.4.0",
+    "request": "^2.88.2",
     "rimraf": "^2.6.2"
   },
   "scripts": {
