@@ -30,13 +30,27 @@ _Pot Pourri_ consists of several services that all need to be started to render 
 
 To run _Pot Pourri_ you need to have _Docker_ ([instructions](https://docs.docker.com/install/)) and _Docker-Compose_ ([instructions](https://docs.docker.com/compose/install/)) installed on your machine.
 
+Clone this repository to your machine.
+
+Make a copy of `./services/.env.template` in the same directory and rename it to `.env`:
+
+```sh
+cp ./services/.env.template ./services/.env
+```
+
+Set the values in the newly created `./services/.env` according to your setup.
+
 ### Start the containers
+
+> **Note:** These instructions assume that you're going to run all containers on the same machine. It is possible to run them on different machines but you might need to adapt the setup to your environment.
 
 The simplest way to run _Pot Pourri_ is to start all services at once.
 
 To do this, simply navigate to the directory `./services` and run 
 
-```$ docker-compose up -d```
+```sh
+$ docker-compose up -d
+```
 
 You can now close the terminal, the containers will continue running in the background.
 
@@ -44,21 +58,32 @@ You can now close the terminal, the containers will continue running in the back
 
 To shut the containers down, you can run
 
-```$ docker-compose down```
+```sh
+$ docker-compose down
+```
 
 in the same directory.
 
-### Force rebuild on startup
+### Update containers
+
+If you want to update the running containers, you first have to pull the latest changes from GitHub:
+
+```sh
+$ git checkout master
+$ git pull
+```
 
 If the containers don't exist yet, `docker-compose up` will build all specified containers before it starts them.
 
-If the containers already exist, it will not rebuild them but start the existing ones.
+If the containers already exist, it will not rebuild them but restart the existing ones.
 
-So if you explicitly want to rebuild all containers (e. g. if you have changed the Dockerfiles), you have to run
+For the update you explicitly want to rebuild all containers before you start them, so you have to run:
 
-```$ docker-compose build --force-recreate```
+```sh
+$ docker-compose up --force-recreate
+```
 
-to start the containers.
+This will stop all running containers and then start them built fresh from the Dockerfile.
 
 ## Services
 
@@ -78,7 +103,7 @@ The `ui` provides a web app that displays data and allows interaction with _Pot 
 
 ## Devices
 
-You will find the devices that provide the `datastore` with data in the separate repository https://github.com/frederikheld/pot-pourri-devices.git.
+You will find the devices that provide the `datastore` with data in the [separate repository](https://github.com/frederikheld/pot-pourri-devices.git).
 
 ## Useful links
 
