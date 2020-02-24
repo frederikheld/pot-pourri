@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node _server.js",
     "test": "nyc mocha tests/*.test.js --verbose",
     "dev": "mocha --watch tests/*.test.js"
   },
