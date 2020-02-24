@@ -6,23 +6,7 @@ It collects data from connected sensor devices ([see the devices repository](htt
 
 It is also planned to add an event engine that triggers actors attached the connected devices on pre-defined events. This will allow for automatically watering the plants, regulating sun and ventilation, etc.
 
-## What does the name mean?
-
-The name is a pun on many levels.
-
-Firstly, a _potpourri_ is defined as 
-
-> a mixture of dried, naturally fragrant plant materials, used to provide a gentle natural scent (source: [Wikipedia](https://en.wikipedia.org/wiki/Potpourri))
-
-which your plants will hopefully never become if you use _Pot Pourri_.
-
-It also refers of the wild mix of connected devices that can be used to collect data and act based on it.
-
-And finally, the name is a composition of _Pot_ from "potted plants" and _Pourri_ form "the thing that pours water into the pots".
-
-I really hope you're into puns.
-
-## Run _Pot Pourri_
+## Run Pot Pourri
 
 _Pot Pourri_ consists of several services that all need to be started to render the app fully functional.
 
@@ -30,7 +14,11 @@ _Pot Pourri_ consists of several services that all need to be started to render 
 
 To run _Pot Pourri_ you need to have _Docker_ ([instructions](https://docs.docker.com/install/)) and _Docker-Compose_ ([instructions](https://docs.docker.com/compose/install/)) installed on your machine.
 
-Clone this repository to your machine.
+Clone this repository to a directory of your choice. This directory will referred to as `.` in this documentation.
+
+```sh
+$ git clone git@github.com:frederikheld/pot-pourri.git
+```
 
 Make a copy of `./services/.env.template` in the same directory and rename it to `.env`:
 
@@ -80,7 +68,7 @@ If the containers already exist, it will not rebuild them but restart the existi
 For the update you explicitly want to rebuild all containers before you start them, so you have to run:
 
 ```sh
-$ docker-compose up --force-recreate
+$ docker-compose up -d --force-recreate
 ```
 
 This will stop all running containers and then start them built fresh from the Dockerfile.
@@ -89,7 +77,7 @@ This will stop all running containers and then start them built fresh from the D
 
 _Pot Pourri_ consists of several services that communicate via REST api calls. The system context looks like this:
 
-![System Context of pot-pourri](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/frederikheld/pot-pourri/master/docs/system_context.plantuml&cache=no)
+![System Context diagram of Pot Pourri](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/frederikheld/pot-pourri/master/docs/system_context.plantuml&cache=no)
 
 Please see the readme of each service for more details!
 
@@ -104,6 +92,22 @@ The `ui` provides a web app that displays data and allows interaction with _Pot 
 ## Devices
 
 You will find the devices that provide the `datastore` with data in the [separate repository](https://github.com/frederikheld/pot-pourri-devices.git).
+
+## What does this name mean?
+
+The name is a pun on many levels.
+
+Firstly, a _potpourri_ is defined as 
+
+> a mixture of dried, naturally fragrant plant materials, used to provide a gentle natural scent (source: [Wikipedia](https://en.wikipedia.org/wiki/Potpourri))
+
+which your plants will hopefully never become if you use _Pot Pourri_.
+
+It also refers to the colorful mixture of connected devices that can be used to collect data and act based on it.
+
+And finally, the name is a composition of _Pot_ from "potted plants" and _Pourri_ form "the thing that pours water into the pots".
+
+I really hope you're into puns.
 
 ## Useful links
 
