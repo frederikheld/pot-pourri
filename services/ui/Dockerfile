@@ -1,5 +1,5 @@
 # choose the base image to build upon
-FROM node:9.11-alpine
+FROM node:10.9-alpine
 
 # define working directory
 WORKDIR /app
@@ -13,9 +13,6 @@ RUN npm install --only=production
 
 # add application code
 COPY . .
-
-# map docker daemon to the port this app uses
-EXPOSE 3002
 
 # run the app
 CMD ["npm", "start"]

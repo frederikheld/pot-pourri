@@ -14,8 +14,5 @@ RUN npm install --only=production
 # add application code
 COPY . .
 
-# map docker daemon to the port this app uses
-EXPOSE 8080
-
 # run the app
 CMD ["npm", "start"]
