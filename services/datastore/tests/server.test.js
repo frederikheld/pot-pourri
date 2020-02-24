@@ -7,28 +7,41 @@ chai.use(chaiHttp)
 
 const should = chai.should()
 
-const server = require('../server')
+let server
 
 describe('usm.io datastore service', () => {
+
+    beforeEach(() => {
+        server = require('../server.js')
+    })
+
+    afterEach((done) => {
+        server.close()
+        done()
+    })
+
     it('has working tests', () => {
         'foo'.should.equal('foo')
     })
 
-    describe('GET /things', () => {
-
-        beforeEach(() => {
-            const server = require('../server')
+    describe('GET /hello', () => {
+        it('returns "Hello World"', () => {
+            chai.request(server)
+                .get('/api/hello')
+                .end((err, res) => {
+                    res.should.have.status(200)
+                    res.should.be.json
+                    res.body.data.should.equal('Hello World!')
+                })
         })
-
-        afterEach((done) => {
-            server.close()
-            done()
-        })
-
-        it('', (done) => {
-
-            done()
-        })
-
     })
+
+    // describe('GET /things', () => {
+
+    //     it('', (done) => {
+
+    //         done()
+    //     })
+
+    // })
 })

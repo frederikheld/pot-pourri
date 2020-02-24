@@ -11,7 +11,7 @@ app.use('/api', routes)
 
 // -- server
 
-let server = app.listen(8080, () => {
+let server = app.listen(3000, () => {
     const port = server.address().port
     console.log('Server is listening on port %s', port)
 })
