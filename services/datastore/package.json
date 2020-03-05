@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "test": "nyc mocha tests/*.test.js --verbose",
-    "dev": "mocha --watch tests/*.test.js"
+    "watch-test": "mocha --reporter=min --watch tests/*.test.js"
   },
-  "author": "",
+  "author": "Frederik S. Held (kontakt@frederikheld.de)",
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",

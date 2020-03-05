@@ -36,12 +36,15 @@ describe('usm.io datastore service', () => {
         })
     })
 
-    // describe('GET /things', () => {
+    describe('GET /things', () => {
 
-    //     it('', (done) => {
+        it('returns array of things', () => {
+            chai.request(server)
+                .get('/api/things')
+                .end((err, res) => {
+                res.should.have.status(200)
+            })
+        })
 
-    //         done()
-    //     })
-
-    // })
+    })
 })
