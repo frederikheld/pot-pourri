@@ -4,7 +4,7 @@ module.exports = {
     node: true
   },
   extends: [
-    'plugin:vue/essential',
+    'plugin:vue/recommended',
     '@vue/standard'
   ],
   parserOptions: {
@@ -24,5 +24,8 @@ module.exports = {
         mocha: true
       }
     }
+  ],
+  plugins: [
+    'prettier'
   ]
 }
