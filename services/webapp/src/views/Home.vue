@@ -76,7 +76,7 @@ export default {
       newPlants[deviceId] = {
         deviceId: deviceId,
         humidity: {
-          value: parseInt(message.payloadString),
+          value: 1024 - parseInt(message.payloadString),
           upperLimit: 1024,
           lowerLimit: 0,
           upperHealthyLimit: 800,
