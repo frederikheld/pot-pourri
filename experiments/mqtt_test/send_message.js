@@ -1,10 +1,10 @@
 const mqtt = require('mqtt')
-const client = mqtt.connect('mqtt://localhost:1883')
+const client = mqtt.connect('mqtt://192.168.0.105:1883')
 
 client.on('connect', async () => {
     let i = 1
     setInterval(() => {
-        client.publish('foo', 'send_message: Hey you! ' + i)
+        client.publish('devices/12/sensors/1', '' + i)
         i++
     }, 1000)
 })
