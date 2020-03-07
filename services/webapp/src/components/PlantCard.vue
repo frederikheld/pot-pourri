@@ -1,25 +1,27 @@
 <template>
   <div>
-    <small>Device ID: {{ plant.deviceId }}</small>
-    <h1>{{ plant.humidity.value }}</h1>
-    <HumidityIndicator :humidity="plant.humidity" />
+    <!-- <small>Device ID: {{ plant.deviceId }}</small> -->
+    <!-- <h1>{{ plant.humidity.value }}</h1> -->
+    <!-- <HumidityIndicator :humidity="plant.humidity" /> -->
+    <ChartTest :chart-data="chartTestData" />
   </div>
 </template>
 
 <script>
-import HumidityIndicator from '@/components/HumidityIndicator.vue'
+// import HumidityIndicator from '@/components/HumidityIndicator.vue'
+import ChartTest from '@/components/ChartTest.vue'
 
 export default {
   name: 'PlantCard',
-  components: { HumidityIndicator },
+  components: {
+    // HumidityIndicator,
+    ChartTest
+  },
   props: {
     plant: {
       type: Object,
       required: true
     }
-  },
-  data () {
-    return {}
   },
   mounted () {
     // console.log('PlantCard mounted')

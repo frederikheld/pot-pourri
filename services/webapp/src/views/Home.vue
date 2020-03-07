@@ -1,10 +1,16 @@
 <template>
   <div class="home">
-    <PlantCard
+    <!-- <PlantCard
       v-for="(plant, plant_id) in plants"
       :key="plant_id"
       class="plant_card"
       :plant="plant"
+    /> -->
+
+    <PlantCard
+      v-if="plants['12'] !== undefined"
+      :plant="plants['12']"
+      class="plant_card"
     />
   </div>
 </template>
@@ -74,7 +80,7 @@ export default {
       newPlants[deviceId] = {
         deviceId: deviceId,
         humidity: {
-          value: message.payloadString,
+          value: parseInt(message.payloadString),
           upperLimit: 1024,
           lowerLimit: 0,
           upperHealthyLimit: 800,

@@ -5,6 +5,10 @@
         Home
       </router-link>
       |
+      <router-link to="/lab">
+        Lab
+      </router-link>
+      |
       <router-link to="/about">
         About
       </router-link>
