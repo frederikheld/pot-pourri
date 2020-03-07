@@ -84,7 +84,7 @@ export default {
 
       this.plants = Object.assign({}, newPlants)
 
-      console.log('this.plants:', this.plants)
+      // console.log('this.plants:', this.plants)
     }
   }
 }
