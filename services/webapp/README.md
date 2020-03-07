@@ -54,3 +54,8 @@ To enable format on save and prevent _Vetur_ from doing the formatting, add the 
   "vetur.format.enable": false
 }
 ```
+
+## Useful Links
+
+- MQTT Client library in JS _Eclipse Paho_ How To: https://www.hivemq.com/blog/mqtt-client-library-encyclopedia-paho-js/
+- Enable MQTT over websockets in _Mosquitto_: https://blog.ithasu.org/2016/05/enabling-and-using-websockets-on-mosquitto/

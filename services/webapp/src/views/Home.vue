@@ -32,7 +32,7 @@ export default {
     }
   },
   mounted () {
-    console.log('mounted')
+    console.log('Home mounted')
     this.mqttInit()
     this.mqttConnect()
   },
@@ -73,10 +73,18 @@ export default {
       const newPlants = this.plants
       newPlants[deviceId] = {
         deviceId: deviceId,
-        humidity: message.payloadString
+        humidity: {
+          value: message.payloadString,
+          upperLimit: 1024,
+          lowerLimit: 0,
+          upperHealthyLimit: 800,
+          lowerHealthyLimit: 200
+        }
       }
 
       this.plants = Object.assign({}, newPlants)
+
+      console.log('this.plants:', this.plants)
     }
   }
 }
