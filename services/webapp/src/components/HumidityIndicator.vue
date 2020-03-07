@@ -7,29 +7,42 @@ import Chart from 'chart.js'
 import * as chartjsPluginAnnotation from 'chartjs-plugin-annotation'
 
 export default {
+  name: 'HumidityIndicator',
   props: {
     humidity: {
       type: Object,
-      required: true
+      default: function () {
+        return {}
+      }
     }
   },
   data () {
     return {
-      chartHumidity: undefined
+      chartHumidity: {}
+    }
+  },
+  watch: {
+    humidity: function (newData, oldData) {
+      // update line that indicates current value:
+      this.chartHumidity.annotation.elements['current-value'].options.value =
+        newData.value / newData.upperLimit
+
+      this.chartHumidity.annotation.elements[
+        'current-value'
+      ].options.label.content =
+        Math.round((newData.value / newData.upperLimit) * 100) + ' %'
+
+      // re-render chart:
+      this.chartHumidity.update()
     }
   },
   mounted () {
-    // console.log('HumidityIndicator mounted')
-    // console.log('this.humidity:', this.humidity)
-
     this.$nextTick(function () {
       this.createChart(this.$refs.humidity_indicator, this.humidity)
     })
   },
   methods: {
     createChart (ctx, data) {
-      //   console.log('data:', data)
-
       this.chartHumidity = new Chart(ctx, {
         type: 'bar',
         plugins: [chartjsPluginAnnotation],
@@ -91,6 +104,7 @@ export default {
             // drawTime: 'afterDraw',
             annotations: [
               {
+                id: 'current-value',
                 type: 'line',
                 mode: 'horizontal',
                 scaleID: 'y-axis-0',

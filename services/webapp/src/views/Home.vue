@@ -1,17 +1,17 @@
 <template>
   <div class="home">
-    <!-- <PlantCard
+    <PlantCard
       v-for="(plant, plant_id) in plants"
       :key="plant_id"
       class="plant_card"
       :plant="plant"
-    /> -->
+    />
 
-    <PlantCard
+    <!-- <PlantCard
       v-if="plants['12'] !== undefined"
       :plant="plants['12']"
       class="plant_card"
-    />
+    /> -->
   </div>
 </template>
 
@@ -38,7 +38,6 @@ export default {
     }
   },
   mounted () {
-    console.log('Home mounted')
     this.mqttInit()
     this.mqttConnect()
   },
@@ -62,20 +61,17 @@ export default {
       })
     },
     onConnectionLost (response) {
-      // console.log('connection lost')
-      console.log(response.errorCode + ' | ' + response.errorMessage)
+      // console.log(response.errorCode + ' | ' + response.errorMessage)
       this.mqttClient.connect({ onSuccess: this.onConnect })
     },
     onMessageArrived (message) {
-      // console.log('message arrived')
       this.updatePlants(message)
     },
     updatePlants (message) {
       // extract device id:
       const deviceId = message.topic.match(/devices\/(.*)\/sensors\/.*/)[1]
 
-      // console.log('[' + deviceId + '] ' + message.payloadString)
-
+      // compile data object:
       const newPlants = this.plants
       newPlants[deviceId] = {
         deviceId: deviceId,
@@ -89,8 +85,6 @@ export default {
       }
 
       this.plants = Object.assign({}, newPlants)
-
-      // console.log('this.plants:', this.plants)
     }
   }
 }
