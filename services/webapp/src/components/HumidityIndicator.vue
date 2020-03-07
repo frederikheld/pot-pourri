@@ -96,10 +96,16 @@ export default {
                 scaleID: 'y-axis-0',
                 value: data.value / data.upperLimit,
                 borderWidth: 2,
-                borderColor: 'rgba(255,0,0,1.0)',
+                borderColor: 'rgba(255,50,50,1.0)',
                 label: {
-                  content: 'current',
-                  position: 'center'
+                  content:
+                    Math.round((data.value / data.upperLimit) * 100) + ' %',
+                  position: 'center',
+                  fontSize: 16,
+                  backgroundColor: 'rgba(255,50,50,1.0)',
+                  yPadding: 10,
+                  xPadding: 10,
+                  enabled: true
                 }
               }
             ]
