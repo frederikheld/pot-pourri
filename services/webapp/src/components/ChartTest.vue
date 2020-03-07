@@ -20,30 +20,46 @@ export default {
   },
   data () {
     return {
-      chart: {}
+      chart: {},
+      formattedData: []
+    }
+  },
+  watch: {
+    chartData: function (newData, oldData) {
+      //   console.log('chartData updated!', newData)
+      this.formattedData = this.formatChartData(newData)
+      this.chart.data.datasets = this.formattedData
+      this.chart.update()
     }
   },
   mounted () {
-    this.createChart(this.$refs.chart, this.chartData)
-    console.log(this.chart)
+    this.formattedData = this.formatChartData(this.chartData)
+    this.createChart(this.$refs.chart, this.formattedData)
+    // console.log(this.chart)
   },
   methods: {
-    createChart (ctx, data) {
-      console.log('data:', data)
-      const convertedData = []
+    formatChartData (data) {
+      //   console.log('data:', data)
+      const formattedData = []
       data.forEach(function (value) {
-        console.log('value:', value)
-        convertedData.push({
+        // console.log('value:', value)
+        formattedData.push({
           data: [value]
         })
       })
-      console.log('convertedData:', convertedData)
+      return formattedData
+    },
+    createChart (ctx, data) {
+      //   console.log('this.formattedData:', this.formattedData)
       this.chart = new Chart(ctx, {
         type: 'bar',
         data: {
-          datasets: convertedData
+          datasets: this.formattedData
         },
         options: {
+          animation: {
+            duration: 0
+          },
           legend: {
             display: false
           },
