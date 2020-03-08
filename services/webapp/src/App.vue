@@ -3,6 +3,7 @@
     <v-bottom-navigation
       hide-on-scroll
       app
+      grow
     >
       <v-btn to="/">
         <span>Plants</span>

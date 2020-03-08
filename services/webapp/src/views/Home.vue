@@ -1,18 +1,27 @@
 <template>
   <v-content>
     <h1>Home</h1>
-    <PlantCard
-      v-for="(plant, plant_id) in plants"
-      :key="plant_id"
-      class="plant_card"
-      :plant="plant"
-    />
-
-    <!-- <PlantCard
-      v-if="plants['12'] !== undefined"
-      :plant="plants['12']"
-      class="plant_card"
-    /> -->
+    <v-container>
+      <v-row>
+        <v-expansion-panels>
+          <v-expansion-panel
+            v-for="(plant, plant_id) in plants"
+            :key="plant_id"
+          >
+            <v-expansion-panel-header>
+              <span>Plant {{ plant.deviceId }}</span>
+              <span><PlantStatusCompact :plant="plant" /></span>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <PlantCard
+                class="plant_card"
+                :plant="plant"
+              />
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-row>
+    </v-container>
   </v-content>
 </template>
 
@@ -20,9 +29,14 @@
 .plant_card {
   margin: 4rem;
 }
+
+.v-expansion-panel-header__icon {
+  display: none !important;
+}
 </style>
 <script>
 import PlantCard from '@/components/PlantCard.vue'
+import PlantStatusCompact from '@/components/PlantStatusCompact.vue'
 
 import Paho from '../assets/paho-mqtt-min.js'
 global.Paho = {
@@ -31,7 +45,7 @@ global.Paho = {
 
 export default {
   name: 'Home',
-  components: { PlantCard },
+  components: { PlantCard, PlantStatusCompact },
   data () {
     return {
       plants: {},
@@ -77,11 +91,9 @@ export default {
       newPlants[deviceId] = {
         deviceId: deviceId,
         humidity: {
-          value: 1024 - parseInt(message.payloadString),
-          upperLimit: 1024,
-          lowerLimit: 0,
-          upperHealthyLimit: 800,
-          lowerHealthyLimit: 200
+          value: ((1024 - parseInt(message.payloadString)) / 1024) * 100,
+          upperHealthyLimit: 70,
+          lowerHealthyLimit: 30
         }
       }
 
