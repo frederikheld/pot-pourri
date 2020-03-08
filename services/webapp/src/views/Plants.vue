@@ -1,35 +1,27 @@
 <template>
-  <v-content>
-    <h1>Home</h1>
-    <v-container>
-      <v-row>
-        <v-expansion-panels>
-          <v-expansion-panel
-            v-for="(plant, plant_id) in plants"
-            :key="plant_id"
-          >
-            <v-expansion-panel-header>
-              <span>Plant {{ plant.deviceId }}</span>
-              <span><PlantStatusCompact :plant="plant" /></span>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <PlantCard
-                class="plant_card"
-                :plant="plant"
-              />
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
-      </v-row>
-    </v-container>
-  </v-content>
+  <v-container>
+    <h1>Plants</h1>
+    <v-expansion-panels>
+      <v-expansion-panel
+        v-for="(plant, plant_id) in plants"
+        :key="plant_id"
+      >
+        <v-expansion-panel-header>
+          <span>{{ plant.deviceId }}</span>
+          <span><PlantStatusCompact :plant="plant" /></span>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <PlantCard
+            class="plant_card"
+            :plant="plant"
+          />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+  </v-container>
 </template>
 
 <style lang="scss" scoped>
-.plant_card {
-  margin: 4rem;
-}
-
 .v-expansion-panel-header__icon {
   display: none !important;
 }
@@ -44,7 +36,7 @@ global.Paho = {
 }
 
 export default {
-  name: 'Home',
+  name: 'Plants',
   components: { PlantCard, PlantStatusCompact },
   data () {
     return {

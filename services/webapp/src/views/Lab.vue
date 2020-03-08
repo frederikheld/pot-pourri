@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-container>
     <h1>Chart Test</h1>
     <ChartTest
       id="chart"
@@ -86,7 +86,7 @@
         velit cursus nunc,
       </p>
     </div>
-  </v-content>
+  </v-container>
 </template>
 
 <style scoped>

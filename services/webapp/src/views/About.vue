@@ -1,12 +1,12 @@
 <template>
   <v-container>
-    <h1>Devices</h1>
+    <h1>About</h1>
   </v-container>
 </template>
 
 <script>
 export default {
-  name: 'Devices',
+  name: 'About',
   components: {}
 }
 </script>
