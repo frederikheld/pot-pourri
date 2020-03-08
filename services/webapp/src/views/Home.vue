@@ -1,5 +1,6 @@
 <template>
-  <div class="home">
+  <v-content>
+    <h1>Home</h1>
     <PlantCard
       v-for="(plant, plant_id) in plants"
       :key="plant_id"
@@ -12,7 +13,7 @@
       :plant="plants['12']"
       class="plant_card"
     /> -->
-  </div>
+  </v-content>
 </template>
 
 <style lang="scss" scoped>
