@@ -1,5 +1,7 @@
 <template>
   <v-container>
+    <h1>Vuex Test</h1>
+    <Counter class="my-4" />
     <h1>Chart Test</h1>
     <ChartTest
       id="chart"
