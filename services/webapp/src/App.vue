@@ -90,17 +90,13 @@
       </v-btn>
     </v-bottom-navigation>
 
-    <v-content class="fill-height">
+    <v-content>
       <router-view />
     </v-content>
   </v-app>
 </template>
 
 <style lang="scss">
-html {
-  overflow-y: auto;
-}
-
 // fixes bug with misplaced buttons in bottom-navigation
 // see: https://github.com/vuetifyjs/vuetify/issues/8067
 .v-item-group.v-bottom-navigation .v-btn.v-size--default {
@@ -109,9 +105,49 @@ html {
 </style>
 
 <script>
+import Paho from './assets/paho-mqtt-min.js'
+global.Paho = {
+  MQTT: Paho
+}
+
 export default {
-  data: () => ({
-    drawer: null
-  })
+  data () {
+    return {
+      drawer: null,
+      mqttClient: undefined
+    }
+  },
+  mounted () {
+    this.mqttInit()
+    this.mqttConnect()
+  },
+  methods: {
+    mqttInit () {
+      this.mqttClient = new Paho.Client(
+        'potpourri',
+        Number(1884),
+        'PotPourriWebApp'
+      )
+      this.mqttClient.onConnectionLost = this.onConnectionLost
+      this.mqttClient.onMessageArrived = this.onMessageArrived
+    },
+    mqttConnect () {
+      this.mqttClient.connect({ onSuccess: this.onConnect })
+    },
+    onConnect () {
+      // console.log('new mqtt client: connected')
+      this.mqttClient.subscribe('devices/+/sensors/+', {
+        qos: 2
+      })
+    },
+    onConnectionLost (response) {
+      // console.log(response.errorCode + ' | ' + response.errorMessage)
+      this.mqttClient.connect({ onSuccess: this.onConnect })
+    },
+    onMessageArrived (message) {
+      // console.log('message as received:', message)
+      this.$store.state.mqtt.lastMessage = message
+    }
+  }
 }
 </script>

@@ -2,6 +2,7 @@
   <v-container>
     <h1>Vuex Test</h1>
     <Counter class="my-4" />
+    <CounterDirect class="my-4" />
     <h1>Chart Test</h1>
     <ChartTest
       id="chart"
@@ -99,10 +100,12 @@
 
 <script>
 import ChartTest from '@/components/ChartTest.vue'
+import Counter from '@/components/lab/Counter.vue'
+import CounterDirect from '@/components/lab/CounterDirect.vue'
 
 export default {
   name: 'Lab',
-  components: { ChartTest },
+  components: { ChartTest, Counter, CounterDirect },
   data () {
     return {
       chartTestData: this.generateRandomDataPoints(5)

@@ -5,10 +5,15 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-  },
+    mqtt: {
+      client: undefined,
+      lastMessage: undefined
+    },
     lab: {
-      count: 0
+      count: 0,
+      countDirect: 0
     }
+  },
   getters: {
     count (state) {
       return state.lab.count
