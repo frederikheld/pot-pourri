@@ -19,15 +19,17 @@
       </v-expansion-panel>
     </v-expansion-panels>
 
-    <v-container>
-      <h2>last mqtt message:</h2>
-      <p>{{ mqttLastMessage !== undefined ? mqttLastMessage.topic + ' > ' + mqttLastMessage.payloadString : 'no message received yet' }}</p>
-    </v-container>
-
-    <v-container>
-      <h2>Vuex Test</h2>
-      <Counter class="my-4" />
-    </v-container>
+    <v-btn
+      id="btn-add-plant"
+      fixed
+      fab
+      dark
+      bottom
+      right
+      to="/plants/add"
+    >
+      <v-icon>mdi-plus</v-icon>
+    </v-btn>
   </v-container>
 </template>
 
@@ -35,18 +37,21 @@
 .v-expansion-panel-header__icon {
   display: none !important;
 }
+
+#btn-add-plant {
+  margin-bottom: 55px;
+}
 </style>
 <script>
 import PlantCard from '@/components/PlantCard.vue'
 import PlantStatusCompact from '@/components/PlantStatusCompact.vue'
-import Counter from '@/components/lab/Counter.vue'
 
 export default {
   name: 'Plants',
-  components: { Counter, PlantCard, PlantStatusCompact },
+  components: { PlantCard, PlantStatusCompact },
   data () {
     return {
-      plants: {}
+      plants: { }
     }
   },
   computed: {

@@ -93,6 +93,8 @@
     <v-content>
       <router-view />
     </v-content>
+
+    <MQTTClient />
   </v-app>
 </template>
 
@@ -105,48 +107,13 @@
 </style>
 
 <script>
-import Paho from './assets/paho-mqtt-min.js'
-global.Paho = {
-  MQTT: Paho
-}
+import MQTTClient from '@/components/services/MQTTClient.vue'
 
 export default {
+  components: { MQTTClient },
   data () {
     return {
-      drawer: null,
-      mqttClient: undefined
-    }
-  },
-  mounted () {
-    this.mqttInit()
-    this.mqttConnect()
-  },
-  methods: {
-    mqttInit () {
-      this.mqttClient = new Paho.Client(
-        'potpourri',
-        Number(1884),
-        'PotPourriWebApp'
-      )
-      this.mqttClient.onConnectionLost = this.onConnectionLost
-      this.mqttClient.onMessageArrived = this.onMessageArrived
-    },
-    mqttConnect () {
-      this.mqttClient.connect({ onSuccess: this.onConnect })
-    },
-    onConnect () {
-      // console.log('new mqtt client: connected')
-      this.mqttClient.subscribe('devices/+/sensors/+', {
-        qos: 2
-      })
-    },
-    onConnectionLost (response) {
-      // console.log(response.errorCode + ' | ' + response.errorMessage)
-      this.mqttClient.connect({ onSuccess: this.onConnect })
-    },
-    onMessageArrived (message) {
-      // console.log('message as received:', message)
-      this.$store.state.mqtt.lastMessage = message
+      drawer: null
     }
   }
 }

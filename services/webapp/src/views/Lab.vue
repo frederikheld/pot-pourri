@@ -3,11 +3,14 @@
     <h1>Vuex Test</h1>
     <Counter class="my-4" />
     <CounterDirect class="my-4" />
+    <h1>MQTT Tests</h1>
+    <LastMQTTMessage />
     <h1>Chart Test</h1>
     <ChartTest
       id="chart"
       :chart-data="chartTestData"
     />
+    <h1>Scroll Test</h1>
     <div>
       <p>
         Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
@@ -102,10 +105,11 @@
 import ChartTest from '@/components/ChartTest.vue'
 import Counter from '@/components/lab/Counter.vue'
 import CounterDirect from '@/components/lab/CounterDirect.vue'
+import LastMQTTMessage from '@/components/lab/LastMQTTMessage.vue'
 
 export default {
   name: 'Lab',
-  components: { ChartTest, Counter, CounterDirect },
+  components: { ChartTest, Counter, CounterDirect, LastMQTTMessage },
   data () {
     return {
       chartTestData: this.generateRandomDataPoints(5)
