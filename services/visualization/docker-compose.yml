@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+    grafana:
+        env_file:
+            - .env
+        image: grafana/grafana
+        container_name: potpourri-visualization-grafana
+        ports:
+            - ${grafana_port}:3000
+        restart: always
