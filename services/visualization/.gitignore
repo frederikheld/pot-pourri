@@ -1,1 +1,4 @@
 .env
+
+grafana/provisioning/dashboards/json_models/*
+!grafana/provisioning/dashboards/json_models/potpourri_template.json
