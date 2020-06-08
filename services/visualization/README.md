@@ -10,13 +10,17 @@ Duplicate `.env.template` and rename it to `.env`.
 
 If you need to use ports that are different from the standard configuration, you can set them in `.env`.
 
+## Configure Grafana instance
+
+This instance comes with a default [`grafana.ini`](https://grafana.com/docs/grafana/latest/installation/configuration/#comments-in-ini-files) which you can edit according to your needs. However, this is not necessary to run _Grafana_!
+
 ## Run
 
 ```sh
 $ docker-compose up
 ```
 
-Add `-d` flag to keep containers running in background (detached mode).
+Add `-d` flag to keep containers running in background (detached mode). This allows you to close the terminal after _Grafana_ was started.
 
 Add `--force-recreate` if you want to make sure that Docker builds your containers anew.
 
@@ -52,4 +56,14 @@ If you want to start fresh, you need to delete this volume before you start the 
 ```sh
 $ docker rm potpourri-visualization-grafana
 $ docker volume rm potpourri-visualization_grafana
+```
+
+## Stop
+
+If you have run `docker-compose` without the `-d` flag, your terminal is still open. Just close the terminal or hit `ctrl + D` to stop the program.
+
+If you have run `docker-compose` with the `-d` flag, open a terminal, navigate to the location of this service's `docker-compose.yml` and execute
+
+```sh
+$ docker-compose down
 ```

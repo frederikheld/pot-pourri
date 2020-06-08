@@ -8,6 +8,7 @@ services:
         container_name: potpourri-visualization-grafana
         volumes:
             - grafana:/var/lib/grafana
+            - ./grafana/grafana.ini:/etc/grafana/grafana.ini:ro
             - ./grafana/provisioning:/etc/grafana/provisioning:ro
         ports:
             - ${grafana_port}:3000
