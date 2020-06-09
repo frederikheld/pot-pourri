@@ -12,7 +12,13 @@ services:
             - ./grafana/provisioning:/etc/grafana/provisioning:ro
         ports:
             - ${grafana_port}:3000
+        networks:
+            - potpourri-persistence_default
         restart: always
 
 volumes:
     grafana:
+
+networks:
+    potpourri-persistence_default:
+        external: true
