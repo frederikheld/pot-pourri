@@ -6,10 +6,13 @@ title System Context Diagram
 actor User
 
 package "pot-pourri" {
-    [Event Engine] #LightGrey
 
     package "mqtt-broker" #LightBlue {  
         [HiveMQ] as MQTTBroker
+    }
+
+    package "event-engine" #LightGrey {
+        [Event Engine] #LightGrey
     }
 
     package "persistence" {
@@ -53,10 +56,10 @@ User --> [Web App]
 [Actuator] --> [Event Engine] #CornflowerBlue : request command
 
 legend 
-    - Arrows point from the calling element to the one that is being called
-    - pot-pourri-devices can be found in a separate repository
-    - blue: MQTT communication initiated via MQTT Broker
+    - arrows are pointing from the calling element to the one that is being called
+    - blue: MQTT communication conducted via MQTT Broker
     - grey: not implemented yet or work in progress
+    'pot-pourri-devices can be found in a separate repository
     'Devices have to call other participants in order to allow energy savings with deep-sleep mode.
     'Deep-sleep mode might not be relevant for Actuators since they will need a lot more energy and therefore an external power supply.
 endlegend

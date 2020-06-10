@@ -1,6 +1,8 @@
 # Pot Pourri
 
-_Pot Pourri_ helps you to keep your potted plants alive.
+_Pot Pourri_ helps you to keep your potted plants alive :-)
+
+![Comparison: Your plants with and without Pot Pourri](./docs/header.jpg)
 
 The system collects data from connected sensor devices ([see the devices repository](https://github.com/frederikheld/pot-pourri-devices)) an displays it on a web interface. This helps you to track the health of your plants and don't miss the right time when they need water.
 
@@ -8,11 +10,7 @@ It is also planned to add an event engine that triggers actors attached the conn
 
 ## Architecture
 
-_Pot Pourri_ consists of several services that communicate via REST api interfaces or via their specific interfaces.
-
-Communication with the connected devices is conducted via the [MQTT protocol](https://en.wikipedia.org/wiki/MQTT).
-
-The system context looks like this:
+_Pot Pourri_ consists of several services that communicate via REST api interfaces or via their specific interfaces. Communication with the connected devices is conducted via the [MQTT protocol](https://en.wikipedia.org/wiki/MQTT).
 
 ![System Context diagram of Pot Pourri](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/frederikheld/pot-pourri/master/docs/system_context.plantuml&cache=no)
 
