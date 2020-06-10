@@ -155,9 +155,3 @@ It also refers to the colorful mixture of connected devices that can be used to 
 And finally, the name is a composition of _Pot_ from "potted plants" and _Pourri_ as a word creation to describe "the thing that pours water into the pots".
 
 I'm sorry to bother you with my weird humor. I really hope you're into puns ;-)
-
-## Useful links
-
-### Testing
-
-- Discussion about approaches on integration testing and unit testing in NodeJS: https://dev.to/jjjjcccjjf/need-recommendations-in-mocking-database--testing-cleanup-unit-testing-28eb
