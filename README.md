@@ -2,13 +2,93 @@
 
 _Pot Pourri_ helps you to keep your potted plants alive.
 
-It collects data from connected sensor devices ([see the devices repository](https://github.com/frederikheld/pot-pourri-devices)) an displays it on a web interface. This helps you to track when your plants need water.
+The system collects data from connected sensor devices ([see the devices repository](https://github.com/frederikheld/pot-pourri-devices)) an displays it on a web interface. This helps you to track the health of your plants and don't miss the right time when they need water.
 
-It is also planned to add an event engine that triggers actors attached the connected devices on pre-defined events. This will allow for automatically watering the plants, regulating sun and ventilation, etc.
+It is also planned to add an event engine that triggers actors attached the connected devices on pre-defined events (like "humidity below x %"). This will allow for automatically watering the plants, regulating sun and ventilation, etc.
+
+## Architecture
+
+_Pot Pourri_ consists of several services that communicate via REST api interfaces or via their specific interfaces.
+
+Communication with the connected devices is conducted via the [MQTT protocol](https://en.wikipedia.org/wiki/MQTT).
+
+The system context looks like this:
+
+![System Context diagram of Pot Pourri](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/frederikheld/pot-pourri/master/docs/system_context.plantuml&cache=no)
+
+> Note: According to the nature of the MQTT protocol, all MQTT communication is conducted via the broker. In order to keep the diagram clean, I visualized the communication between clients via an direct arrow between those clients.
+
+The following sections give a brief abstract of the purpose of those services. Please see the readme of each service for more details!
+
+### mqtt-broker
+
+This service is the backbone of the communication between the devices and the respective services.
+
+I decided to use [_HiveMQ Community Edition_](https://www.hivemq.com/), but any other broker works as well. If you have alread running a different broker, you can re-configure _Pot Pourri_ to use that one. You could even use a publicly hostet server.
+
+> Learn more about the role of the MQTT broker in the MQTT protocol [here](https://www.hivemq.com/blog/mqtt-essentials-part-3-client-broker-connection-establishment/).
+
+### persistence
+
+The MQTT broker doesn't store data except for the last message that was sent on each topic. This is sufficient, if you want to only know the current state of your plants, but it doesn't give you historic data.
+
+The purpose of the _persistence_ service is to collect all values that were sent from _Pot Pourri_ devices and store them in a database for later use.
+
+I decided to use _InfluxDB_ for this purpose, as it is specifically made for time-series data. _InfluxDB_ is available at Port 8086 but has no own web interface!
+
+_InfluxDB_ is sided by _Telegraf_, which works as an adapter that receives _MQTT_ messages, converts them into the _InfluxDB_ data format, and stores them in the database.
+
+As the third tool in the collection there's _Chronograf_, which serves as a web user iterface for _InfluxDB_. It's similar to _PHPMyAdmin_ in the _MySQL_ world. _Chronograf_'s web interface is available at port 8888 via your browser.
+
+The _persistence_ service comes with the necessary configuration files and a `docker-compose` file that sets up all three tools to communicate with each other. This works out of the box, except you need a different configuration.
+
+See [_persistence_](./services/persistence/README.md) for details.
+
+### visualization
+
+The _visualization_ service offers dashboards to - surprise! - visualize the data collected from your devices. It connects via Docker networking to the _persistence_ services and is set up ready to use.
+
+It also comes with a dashboard template which you can use as a basis for your own dashboards.
+
+Although _Telegraf_ in the _persistence_ service has the option to create dashboards as well, I'm using _Grafana_ for visualization as it is not tied to _InfluxDB_ alone but allows to connect to a variety of data sources.
+
+See [_visualization_](./services/visualization/README.md) for details.
+
+### webapp
+
+> Note: This is work in progress!
+
+The _webapp_ will be a convenient user interace for mobile devices to interact with your plants. Compared to other services of _Pot Pourri_, the web app is designed for a better user experience by reducing the displayed data and interaction options to what's relevant in a specific context.
+
+It will:
+
+* display the current health of your plants to tell you where you have to act at a glance
+* allow you to create and maintain plant profiles with information like max and min healty humidity for each plant individually
+* make it easy to integrate new devices into the _Pot Pourri_ system
+
+Right now it is capable of displaying the current humidity for each plant. All other features are not done yet and partly depend on planned features of _datastore_.
+
+### datastore
+
+> Note: This is work in progress!
+
+The original purpose of _datastore_ was to persist data from the connected devices, which is now done by the _persistence_ service.
+
+What _persistence_ can't do is store meta data like plant profiles. This is what _datastore_ will do as soon as it is implemented.
+
+### ui
+
+> Note: This is deprecated!
+
+The purpose of _ui_ was to visualize data like humidity on an web interface. This is now done by the _visualization_ service. Therefore _ui_ will be removed in the future!
+
+## Devices
+
+You will find the devices that can monitor your plants in the [separate repository](https://github.com/frederikheld/pot-pourri-devices.git).
 
 ## Run Pot Pourri
 
-_Pot Pourri_ consists of several services that all need to be started to render the app fully functional.
+_Pot Pourri_ consists of several services that can run individually, but partly depend on each other. You will find details about prerequisites in the README.md of each service.
 
 ### Prepare the environment
 
@@ -20,52 +100,33 @@ Clone this repository to a directory of your choice. This directory will referre
 $ git clone git@github.com:frederikheld/pot-pourri.git
 ```
 
-Make a copy of `./services/.env.template` in the same directory and rename it to `.env`:
+The services come with an `.env` file that defines ports for each service. You do not need to change it, except you need a different setup.
+
+### Start the services
+
+> Note: These instructions assume that you're going to run all containers on the same machine. It is possible to run them on different machines but you might need to adapt the setup to your environment.
+
+Each service comes with their own `docker-compose.yml` that can be used to start the service out of the box. Please note that some services depend on each others. Please read the respective README.md for more information.
+
+_Pot Pourri_ also offers a simple way to start and stop all services at once via:
 
 ```sh
-cp ./services/.env.template ./services/.env
+$ sh services/start_all.sh
 ```
 
-Set the values in the newly created `./services/.env` according to your setup.
+### Stop the services
 
-### Start the containers
-
-> **Note:** These instructions assume that you're going to run all containers on the same machine. It is possible to run them on different machines but you might need to adapt the setup to your environment.
-
-The simplest way to run _Pot Pourri_ is to start all services at once.
-
-To do this, simply navigate to the directory `./services` and run 
+In the same way as you started the services, you can either stop them individually via their respective `docker-compose.yml` or all at once via:
 
 ```sh
-$ docker-compose up -d
+$ sh services/stop_all.sh
 ```
 
-You can now close the terminal, the containers will continue running in the background.
+### Update the services
 
-### Stop the containers
+All containers persist the relevant data in Docker volumes. Therefore you can easily shut them down and start them again.
 
-To shut the containers down, you can run
-
-```sh
-$ docker-compose down
-```
-
-in the same directory.
-
-### Update containers
-
-If you want to update the running containers, you first have to pull the latest changes from GitHub:
-
-```sh
-$ git checkout master
-$ git pull
-```
-
-If the containers don't exist yet, `docker-compose up` will build all specified containers before it starts them.
-
-If the containers already exist, it will not rebuild them but restart the existing ones.
-
-For the update you explicitly want to rebuild all containers before you start them, so you have to run:
+To update the services, stop them, then pull the latest version from master and start them again via:
 
 ```sh
 $ docker-compose up -d --force-recreate
@@ -73,27 +134,7 @@ $ docker-compose up -d --force-recreate
 
 This will stop all running containers and then start them built fresh from the Dockerfile.
 
-## Services
-
-_Pot Pourri_ consists of several services that communicate via REST api calls. The system context looks like this:
-
-![System Context diagram of Pot Pourri](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/frederikheld/pot-pourri/master/docs/system_context.plantuml&cache=no)
-
-Please see the readme of each service for more details!
-
-### datastore
-
-The `datastore` service accepts data items and stores them in a database which is being persisted in a mounted volume.
-
-### ui
-
-The `ui` provides a web app that displays data and allows interaction with _Pot Pourri_.
-
-## Devices
-
-You will find the devices that provide the `datastore` with data in the [separate repository](https://github.com/frederikheld/pot-pourri-devices.git).
-
-## What does this name mean?
+## Why the name _Pot Pourri_?
 
 The name is a pun on many levels.
 

@@ -6,12 +6,10 @@ title System Context Diagram
 actor User
 
 package "pot-pourri" {
-    [Web App] #LightGrey
     [Event Engine] #LightGrey
-    [Datastore] #LightGrey
 
-    package "MQTT Broker" {
-        [HiveMQ] as MQTTBroker #CornflowerBlue
+    package "mqtt-broker" #LightBlue {  
+        [HiveMQ] as MQTTBroker
     }
 
     package "persistence" {
@@ -23,11 +21,21 @@ package "pot-pourri" {
     package "visualization" {
         [Grafana]
     }
+
+    package "webapp" {
+        [Web App] #LightGrey
+    }
+
+    package "datastore" {
+        [Datastore] #LightGrey
+    }
 }
 
-package "pot-pourri-device" {
-    () "Sensor"
-    () "Actuator" #LightGrey
+package "pot-pourri-devices" {
+    package "pot-monitoring-wifi" {
+        () "Sensor"
+        () "Actuator" #LightGrey
+    }
 }
 
 User --> [Grafana]
@@ -37,6 +45,7 @@ User --> [Chronograf]
 [Chronograf] --> [InfluxDB] : get data
 
 [Sensor] --> [Telegraf] #CornflowerBlue : send value
+[Sensor] --> [Datastore] #CornflowerBlue : send value
 [Telegraf] --> [InfluxDB] : set data
 
 User --> [Web App]
