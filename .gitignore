@@ -3,7 +3,6 @@ node_modules/
 
 \.vscode/
 
-services/.env
 services/datastore/\.nyc_output/
 services/datastore/test/temp/
 
