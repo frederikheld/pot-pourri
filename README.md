@@ -10,11 +10,7 @@ It is also planned to add an event engine that triggers actors attached the conn
 
 ## Architecture
 
-_Pot Pourri_ consists of several services that communicate via REST api interfaces or via their specific interfaces.
-
-Communication with the connected devices is conducted via the [MQTT protocol](https://en.wikipedia.org/wiki/MQTT).
-
-The system context looks like this:
+_Pot Pourri_ consists of several services that communicate via REST api interfaces or via their specific interfaces. Communication with the connected devices is conducted via the [MQTT protocol](https://en.wikipedia.org/wiki/MQTT).
 
 ![System Context diagram of Pot Pourri](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/frederikheld/pot-pourri/master/docs/system_context.plantuml&cache=no)
 
