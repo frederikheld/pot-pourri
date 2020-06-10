@@ -1,6 +1,8 @@
 # Pot Pourri
 
-_Pot Pourri_ helps you to keep your potted plants alive.
+_Pot Pourri_ helps you to keep your potted plants alive :-)
+
+![Comparison: Your plants with and without Pot Pourri](./docs/header.jpg)
 
 The system collects data from connected sensor devices ([see the devices repository](https://github.com/frederikheld/pot-pourri-devices)) an displays it on a web interface. This helps you to track the health of your plants and don't miss the right time when they need water.
 
