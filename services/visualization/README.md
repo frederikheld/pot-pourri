@@ -43,7 +43,7 @@ This instance of _Grafana_ comes with a dashboard template with panels that you 
 
 In order to create your own dashboard, make a copy of the template and save it under a different name.
 
-## Persistence
+## Data persistence
 
 All changes you make will be persisted in the Docker volume `potpourri-visualization_grafana`. So all your changes will still be there if you shut down and re-start your container.
 
@@ -74,13 +74,13 @@ All changes described here will take effect when you start the container with `d
 
 ### Configure Docker environment
 
-The port used by Grafana as well as the project name prefix that `docker-compose` will use, can be configured in the `.env` file.
+The port used by _Grafana_ as well as the project name prefix that `docker-compose` will use, can be configured in the `.env` file.
 
 ### Configure Grafana instance
 
-Grafana can configured via [./grafana/grafana.ini](./grafana/grafana.ini). You can edit it a according to your needs.
+_Grafana_ can configured via [./grafana/grafana.ini](./grafana/grafana.ini). You can edit it a according to your needs.
 
-> You can find more information on configuring Grafana [here](https://grafana.com/docs/grafana/latest/installation/configuration/).
+> You can find more information on configuring _Grafana_ [here](https://grafana.com/docs/grafana/latest/installation/configuration/).
 
 ### Data source
 
@@ -90,4 +90,4 @@ If you want to connect to a different data source, you can easily configure it v
 
 Another option is to duplicate [_./grafana/datasources/influxdb.yml_](./grafana/datasources/influxdb.yml) rename it and change the values according to your needs. The changes come into effect when you re-start the Docker container.
 
-> You can find more information about provisioning Grafana [here](https://grafana.com/docs/grafana/latest/administration/provisioning/).
+> You can find more information about provisioning _Grafana_ [here](https://grafana.com/docs/grafana/latest/administration/provisioning/).
