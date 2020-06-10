@@ -6,35 +6,57 @@ title System Context Diagram
 actor User
 
 package "pot-pourri" {
-    [UI]
-    [Event Engine]
-    [Datastore]
+    [Event Engine] #LightGrey
+
+    package "mqtt-broker" #LightBlue {  
+        [HiveMQ] as MQTTBroker
+    }
+
+    package "persistence" {
+        [InfluxDB]
+        [Telegraf]
+    }
+    
+    package "visualization" {
+        [Grafana]
+    }
+
+    package "webapp" {
+        [Web App] #LightGrey
+    }
+
+    package "datastore" {
+        [Datastore] #LightGrey
+    }
 }
 
-package "pot-pourri-device" {
-    () "Sensor"
-    () "Actuator"
+package "pot-pourri-devices" {
+    package "pot-monitoring-wifi" {
+        () "Sensor"
+        () "Actuator" #LightGrey
+    }
 }
 
-User --> [UI]
-[UI] --> [Datastore]
+User --> [Grafana]
 
-[Event Engine] --> [Datastore]
-[Event Engine] --> Actuator
+[Grafana] --> [InfluxDB] : get data
 
-Sensor -> [Datastore]
+[Sensor] --> [Telegraf] #CornflowerBlue : send value
+[Sensor] --> [Datastore] #CornflowerBlue : send value
+[Telegraf] --> [InfluxDB] : set data
 
-note top of "Event Engine"
-    not implemented yet
-endnote
+User --> [Web App]
+[Web App] --> [Datastore] : get/set meta data
+[Web App] --> [InfluxDB] : get data
 
-note top of Actuator
-    not available yet
-endnote
+[Event Engine] --> [Datastore] : get data
+[Actuator] --> [Event Engine] #CornflowerBlue : request command
 
 legend 
-    - Arrows point from the calling elements to those they are calling
+    - Arrows point from the calling element to the one that is being called
     - pot-pourri-devices can be found in a separate repository
+    - blue: MQTT communication initiated via MQTT Broker
+    - grey: not implemented yet or work in progress
     'Devices have to call other participants in order to allow energy savings with deep-sleep mode.
     'Deep-sleep mode might not be relevant for Actuators since they will need a lot more energy and therefore an external power supply.
 endlegend

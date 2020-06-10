@@ -1,0 +1,27 @@
+version: "3"
+
+services:    
+    influxdb:
+        env_file:
+            - .env
+        image: influxdb:alpine
+        container_name: potpourri-persistence-influxdb
+        volumes:
+            - influxdb:/var/lib/influxdb
+        ports:
+            - ${influxdb_port}:8086
+        restart: always
+
+    telegraf:
+        env_file:
+            - .env
+        image: telegraf:alpine
+        container_name: potpourri-persistence-telegraf
+        volumes:
+            - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+        depends_on:
+            - influxdb
+        restart: always
+
+volumes:
+    influxdb:

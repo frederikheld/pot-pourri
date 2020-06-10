@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+    grafana:
+        env_file:
+            - .env
+        image: grafana/grafana
+        container_name: potpourri-visualization-grafana
+        volumes:
+            - grafana:/var/lib/grafana
+            - ./grafana/grafana.ini:/etc/grafana/grafana.ini:ro
+            - ./grafana/provisioning:/etc/grafana/provisioning:ro
+        ports:
+            - ${grafana_port}:3000
+        networks:
+            - potpourri-persistence_default
+        restart: always
+
+volumes:
+    grafana:
+
+networks:
+    potpourri-persistence_default:
+        external: true
