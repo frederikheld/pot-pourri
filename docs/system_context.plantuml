@@ -15,7 +15,6 @@ package "pot-pourri" {
     package "persistence" {
         [InfluxDB]
         [Telegraf]
-        [Chronograf]
     }
     
     package "visualization" {
@@ -39,10 +38,8 @@ package "pot-pourri-devices" {
 }
 
 User --> [Grafana]
-User --> [Chronograf]
 
 [Grafana] --> [InfluxDB] : get data
-[Chronograf] --> [InfluxDB] : get data
 
 [Sensor] --> [Telegraf] #CornflowerBlue : send value
 [Sensor] --> [Datastore] #CornflowerBlue : send value

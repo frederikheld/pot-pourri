@@ -15,6 +15,3 @@ docker run -d --net=potpourri-persistence_influxdb -p 8083:8083 -p 8086:8086 --n
 
 # start Telegraf (collect data)
 docker run -d -v $PWD/telegraf.conf:/etc/telegraf/telegraf.conf:ro --net=potpourri-persistence_default --name potpourri-persistence-telegraf telegraf:alpine
-
-# start Chronograph (Web UI to visualize data)
-docker run -d --net=potpourri-persistence_default -p 8888:8888 --name potpourri-persistence-chronograf quay.io/influxdb/chronograf:1.8.4

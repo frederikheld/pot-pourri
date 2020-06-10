@@ -11,7 +11,6 @@
 # script to clean up the containers after 
 #   $ docker-compose down
 
-docker container rm potpourri-persistence-chronograf
 docker container rm potpourri-persistence-telegraf
 docker container rm potpourri-persistence-influxdb
 

@@ -1,12 +1,14 @@
 # Persistence
 
-This service uses [_Telegraf_](https://www.influxdata.com/time-series-platform/telegraf/) to collect data sent over _MQTT_ and persists it in an [_InfluxDB_](https://www.influxdata.com/products/influxdb-overview/) databse. Furthermore it starts a [_Chronograf_](https://www.influxdata.com/time-series-platform/chronograf/) instance that provides an web interface to interact with the database.
+The purpose of the _persistence_ service is to collect all values that were sent from _Pot Pourri_ devices and store them in a database for later use.
 
-> Note: This is an alternative approach to what I had already started in [datastore](../datastore).
+It uses [_InfluxDB_](https://www.influxdata.com/products/influxdb-overview/) for this purpose, as it is specifically made for time-series data.
+
+_InfluxDB_ is sided by [_Telegraf_](https://www.influxdata.com/time-series-platform/telegraf/), which works as an adapter that receives _MQTT_ messages, converts them into the _InfluxDB_ data format, and stores them in the database.
 
 ## Run
 
-This service runs out of the box. If you need to configure your deployment different from the default values, see section _Advanced configuration_ below!
+This service runs out of the box. If you need to configure your deployment different from the default values, have a look at section _Advanced configuration_ below!
 
 You can start this service via `docker-compose`:
 
@@ -29,7 +31,7 @@ $ docker rm potpourri-persistence-influxdb
 $ docker volume rm potpourri-persistence_influxdb
 ```
 
-Changes in _Telegraf_ and _Chronograf_ aren't persisted. _Telegraf_ is being configured via [./telegraf/telegraf.conf](./telegraf/telegraf.conf) and changes at runtime that could be persisted aren't necessary. _Chronograf_ has similar features than _Grafana_, which comes with the [_visualization_](../visualization/README.md) module. But it's more meant as a playground to fiddle around with the database, therefore it makes sense to leave it clean. If you need proper visualization, use the _visualization_ module instead!
+Changes in _Telegraf_ aren't persisted as _Telegraf_ is being configured via [./telegraf/telegraf.conf](./telegraf/telegraf.conf) and changes at runtime that need to be persisted aren't necessary.
 
 ## Stop
 

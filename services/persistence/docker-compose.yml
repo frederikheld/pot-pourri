@@ -23,16 +23,5 @@ services:
             - influxdb
         restart: always
 
-    chronograf:
-        env_file:
-            - .env
-        image: quay.io/influxdb/chronograf
-        container_name: potpourri-persistence-chronograf
-        ports:
-            - ${chronograf_port}:8888
-        depends_on:
-            - influxdb
-        restart: always
-
 volumes:
     influxdb:

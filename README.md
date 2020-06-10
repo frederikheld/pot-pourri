@@ -34,11 +34,9 @@ The MQTT broker doesn't store data except for the last message that was sent on 
 
 The purpose of the _persistence_ service is to collect all values that were sent from _Pot Pourri_ devices and store them in a database for later use.
 
-I decided to use _InfluxDB_ for this purpose, as it is specifically made for time-series data. _InfluxDB_ is available at Port 8086 but has no own web interface!
+It uses _InfluxDB_ for this purpose, as it is specifically made for time-series data. _InfluxDB_ is available at Port 8086 but has no own web interface!
 
 _InfluxDB_ is sided by _Telegraf_, which works as an adapter that receives _MQTT_ messages, converts them into the _InfluxDB_ data format, and stores them in the database.
-
-As the third tool in the collection there's _Chronograf_, which serves as a web user iterface for _InfluxDB_. It's similar to _PHPMyAdmin_ in the _MySQL_ world. _Chronograf_'s web interface is available at port 8888 via your browser.
 
 The _persistence_ service comes with the necessary configuration files and a `docker-compose` file that sets up all three tools to communicate with each other. This works out of the box, except you need a different configuration.
 
