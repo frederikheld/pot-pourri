@@ -54,7 +54,7 @@ See [_visualization_](./services/visualization/README.md) for details.
 
 ### webapp
 
-> Note: This is work in progress!
+> Note: This service is work in progress!
 
 The _webapp_ will be a convenient user interace for mobile devices to interact with your plants. Compared to other services of _Pot Pourri_, the web app is designed for a better user experience by reducing the displayed data and interaction options to what's relevant in a specific context.
 
@@ -68,7 +68,7 @@ Right now it is capable of displaying the current humidity for each plant. All o
 
 ### datastore
 
-> Note: This is work in progress!
+> Note: This service is work in progress!
 
 The original purpose of _datastore_ was to persist data from the connected devices, which is now done by the _persistence_ service.
 
@@ -76,9 +76,15 @@ What _persistence_ can't do is store meta data like plant profiles. This is what
 
 ### ui
 
-> Note: This is deprecated!
+> Note: This service is deprecated!
 
-The purpose of _ui_ was to visualize data like humidity on an web interface. This is now done by the _visualization_ service. Therefore _ui_ will be removed in the future!
+The purpose of _ui_ was to visualize data like humidity on an web interface.
+
+The system dashboard with all data is now provided by the _visualization_ service.
+
+A user-friendly way to interact with your plants will be provided by _webapp_.
+
+Therefore _ui_ will be removed in the near future!
 
 ## Devices
 
@@ -146,9 +152,9 @@ which your plants will hopefully never become if you use _Pot Pourri_.
 
 It also refers to the colorful mixture of connected devices that can be used to collect data and act based on it.
 
-And finally, the name is a composition of _Pot_ from "potted plants" and _Pourri_ form "the thing that pours water into the pots".
+And finally, the name is a composition of _Pot_ from "potted plants" and _Pourri_ as a word creation to describe "the thing that pours water into the pots".
 
-I really hope you're into puns.
+I'm sorry to bother you with my weird humor. I really hope you're into puns ;-)
 
 ## Useful links
 
