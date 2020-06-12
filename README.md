@@ -126,15 +126,21 @@ $ sh services/stop_all.sh
 
 ### Update the services
 
-All containers persist the relevant data in Docker volumes. Therefore you can easily shut them down and start them again.
+All containers persist the relevant data in Docker volumes. Therefore you can easily shut them down and start them again. This can happen individually or all at once as shown above.
 
-To update the services, stop them, then pull the latest version from master and start them again via:
+To update the services, pull the latest version of this repository on the master branch and re-build the images.
+
+`docker-compose` offers
+
+If you do it individually, you can the `--force-recreate` flag of `docker-compose` to re-build the image:
 
 ```sh
 $ docker-compose up -d --force-recreate
 ```
 
-This will stop all running containers and then start them built fresh from the Dockerfile.
+If you re-start them all at once, you don't need to take care of it. `start_all.sh` always uses the `--force-recreate` flag.
+
+Hint: you don't need to stop containers before you re-build them with `docker-compose` or `start_all.sh`! This will be done automatically.
 
 ## Why the name _Pot Pourri_?
 
