@@ -1,5 +1,7 @@
 # Datastore for pot-pourri
 
+> Note: this service is WIP and not working correctly right now!
+
 This service provides access to the datastore via an api.
 
 > // todo: API documentation

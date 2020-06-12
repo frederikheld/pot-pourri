@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+    mqtt-broker:
+        env_file:
+            - .env
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: potpourri-mqtt-broker
+        ports:
+            - ${mqtt_broker_port}:1883
+        restart: always

@@ -108,11 +108,9 @@ The services come with an `.env` file that defines ports for each service. You d
 
 > Note: These instructions assume that you're going to run all containers on the same machine. It is possible to run them on different machines but you might need to adapt the setup to your environment.
 
-> WARNING: This section describes how it is planned to be. Right now, there's a common `docker-compose` file for _datastore_, _mqtt-broker_ and _ui_, while _persistence_ and _visualization_ come with their own `docker-compose` files. The shell scripts don't exist yet.
+Each service comes with their own `docker-compose` file that can be used to start the service individually. Please note that some services depend on other service. Please read the respective README.md for more information.
 
-Each service comes with their own `docker-compose` file that can be used to start the service out of the box. Please note that some services depend on each others. Please read the respective README.md for more information.
-
-_Pot Pourri_ also offers a simple way to start and stop all services at once via:
+_Pot Pourri_ also offers a simple way to start services at once in the right order:
 
 ```sh
 $ sh services/start_all.sh
@@ -120,7 +118,7 @@ $ sh services/start_all.sh
 
 ### Stop the services
 
-In the same way as you started the services, you can either stop them individually via their respective `docker-compose.yml` or all at once via:
+In the same way as you started the services, you can either stop them individually via their respective `docker-compose` file or all at once via:
 
 ```sh
 $ sh services/stop_all.sh
