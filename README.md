@@ -12,7 +12,7 @@ It is also planned to add an event engine that triggers actors attached the conn
 
 _Pot Pourri_ consists of several services that communicate via REST api interfaces or via their specific interfaces. Communication with the connected devices is conducted via the [MQTT protocol](https://en.wikipedia.org/wiki/MQTT).
 
-![System Context diagram of Pot Pourri](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/frederikheld/pot-pourri/master/docs/system_context.plantuml&cache=no)
+![Technical Architecture Design diagram of Pot Pourri](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/frederikheld/pot-pourri/master/docs/technical_architecture_design.plantuml&cache=no)
 
 > Note: According to the nature of the MQTT protocol, all MQTT communication is conducted via the broker. In order to keep the diagram clean, I visualized the communication between clients via an direct arrow between those clients.
 
