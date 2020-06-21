@@ -1,7 +1,7 @@
 @startuml
 skinparam componentStyle uml2
 
-title System Context Diagram
+title Technical Architecture Design Diagram
 
 actor User
 
