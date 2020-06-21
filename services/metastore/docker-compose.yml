@@ -1,0 +1,17 @@
+version: "3"
+
+services:    
+    metastore:
+        env_file:
+            - .env
+        build:
+            context: .
+        container_name: potpourri-metastore
+        volumes:
+            - store:/usr/src/app/store
+        ports:
+            - ${metastore_port}:3003
+        restart: always
+
+volumes:
+    store:
