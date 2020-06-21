@@ -12,7 +12,7 @@ It is also planned to add an event engine that triggers actors attached the conn
 
 _Pot Pourri_ consists of several services that communicate via REST api interfaces or via their specific interfaces. Communication with the connected devices is conducted via the [MQTT protocol](https://en.wikipedia.org/wiki/MQTT).
 
-![System Context diagram of Pot Pourri](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/frederikheld/pot-pourri/master/docs/system_context.plantuml&cache=no)
+![Technical Architecture Design diagram of Pot Pourri](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/frederikheld/pot-pourri/master/docs/technical_architecture_design.plantuml&cache=no)
 
 > Note: According to the nature of the MQTT protocol, all MQTT communication is conducted via the broker. In order to keep the diagram clean, I visualized the communication between clients via an direct arrow between those clients.
 
@@ -108,11 +108,9 @@ The services come with an `.env` file that defines ports for each service. You d
 
 > Note: These instructions assume that you're going to run all containers on the same machine. It is possible to run them on different machines but you might need to adapt the setup to your environment.
 
-> WARNING: This section describes how it is planned to be. Right now, there's a common `docker-compose` file for _datastore_, _mqtt-broker_ and _ui_, while _persistence_ and _visualization_ come with their own `docker-compose` files. The shell scripts don't exist yet.
+Each service comes with their own `docker-compose` file that can be used to start the service individually. Please note that some services depend on other service. Please read the respective README.md for more information.
 
-Each service comes with their own `docker-compose` file that can be used to start the service out of the box. Please note that some services depend on each others. Please read the respective README.md for more information.
-
-_Pot Pourri_ also offers a simple way to start and stop all services at once via:
+_Pot Pourri_ also offers a simple way to start services at once in the right order:
 
 ```sh
 $ sh services/start_all.sh
@@ -120,7 +118,7 @@ $ sh services/start_all.sh
 
 ### Stop the services
 
-In the same way as you started the services, you can either stop them individually via their respective `docker-compose.yml` or all at once via:
+In the same way as you started the services, you can either stop them individually via their respective `docker-compose` file or all at once via:
 
 ```sh
 $ sh services/stop_all.sh
@@ -128,15 +126,21 @@ $ sh services/stop_all.sh
 
 ### Update the services
 
-All containers persist the relevant data in Docker volumes. Therefore you can easily shut them down and start them again.
+All containers persist the relevant data in Docker volumes. Therefore you can easily shut them down and start them again. This can happen individually or all at once as shown above.
 
-To update the services, stop them, then pull the latest version from master and start them again via:
+To update the services, pull the latest version of this repository on the master branch and re-build the images.
+
+`docker-compose` offers
+
+If you do it individually, you can the `--force-recreate` flag of `docker-compose` to re-build the image:
 
 ```sh
 $ docker-compose up -d --force-recreate
 ```
 
-This will stop all running containers and then start them built fresh from the Dockerfile.
+If you re-start them all at once, you don't need to take care of it. `start_all.sh` always uses the `--force-recreate` flag.
+
+Hint: you don't need to stop containers before you re-build them with `docker-compose` or `start_all.sh`! This will be done automatically.
 
 ## Why the name _Pot Pourri_?
 
