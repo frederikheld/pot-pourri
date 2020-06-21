@@ -4,7 +4,10 @@
 
 ```
 npm install
+
 ```
+
+## Build and Run
 
 ### Compiles and hot-reloads for development
 
@@ -17,6 +20,8 @@ npm run serve
 ```
 npm run build
 ```
+
+## Quality Checks
 
 ### Run your unit tests
 
@@ -35,6 +40,10 @@ npm run test:e2e
 ```
 npm run lint
 ```
+
+## CI/CD
+
+This module comes with a GitHub action that runs the Quality Checks.
 
 ### Customize configuration
 
