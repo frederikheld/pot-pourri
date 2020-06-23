@@ -5,9 +5,10 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "start:dev": "nodemon server.js",
+    "start:watch": "nodemon server.js",
     "test": "mocha tests/*.test.js",
-    "test:coverage": "nyc mocha tests/*.test.js --verbose"
+    "test:coverage": "nyc mocha tests/*.test.js --verbose",
+    "test:coverage-ci": "nyc --check-coverage --lines 100 mocha tests/*.test.js --verbose "
   },
   "author": "",
   "license": "MIT",
