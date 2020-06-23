@@ -1,0 +1,23 @@
+name: Pot-Pourri Metastore Tests and Coverage
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  quality-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: npm install
+
+    # - name: Run linter
+    #   run: npm run lint
+
+    - name: Run tests and coverage
+      run: npm run test:coverage-ci
