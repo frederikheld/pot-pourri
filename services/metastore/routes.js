@@ -11,12 +11,12 @@ const actions = require('./actions')
 // -- routes
 
 router.route('/').get((req, res) => {
-    res.status(200).send('server is running :-)')
+    res.status(200).send('Hello World! :-)')
 })
 
-router.route('/hello').get(actions.hello)
+router.route('/devices').get(actions.devices.getAll)
 
-router.route('/devices').get(actions.devices.get)
+router.route('/devices/:id').get(actions.devices.getDeviceById)
 
 
 // -- exports
