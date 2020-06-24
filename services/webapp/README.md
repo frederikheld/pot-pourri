@@ -41,7 +41,9 @@ npm run test:e2e
 npm run lint
 ```
 
-## CI/CD
+## Dev Tools
+
+### CI/CD
 
 This module comes with a GitHub action that runs the Quality Checks.
 
@@ -51,18 +53,9 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### VSCode configuration
 
-To enable Vue code highlighting in VSCode, install the extension _Vetur_. Unfortunately it doesn't resepct the linting settings in `.eslintrc.js`, therefore you need disable it in _Vetur_ and install the extension _Prettier_ to do the job.
+To enable Vue code highlighting in VSCode, install the extension _Vetur_.
 
-To enable format on save and prevent _Vetur_ from doing the formatting, add the following lines to VSCode's `settings.json`:
-
-```json
-{
-  "editor.codeActionsOnSave": {
-    "source.fixAll": true
-  },
-  "vetur.format.enable": false
-}
-```
+_Vetur_ can do linting as well, but unfortunately it doesn't resepct the linting settings in `.eslintrc.js`. Therefore it's bette to install the extension _Prettier_ to do the job. _Prettier_ will use the `.vscode` config that comes with this module.
 
 ## Useful Links
 
