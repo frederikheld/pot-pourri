@@ -15,5 +15,5 @@ server.initDB(JSON.stringify([
 ]))
 
 server.initOptions({
-  responseDelay: 1000
+  responseDelay: 2000
 })
