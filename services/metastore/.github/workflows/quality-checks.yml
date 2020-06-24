@@ -1,4 +1,4 @@
-name: Pot-Pourri Metastore Tests and Coverage
+name: Pot-Pourri Metastore Quality Checks
 
 on:
   push:
@@ -16,8 +16,8 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    # - name: Run linter
-    #   run: npm run lint
+    - name: Run linter
+      run: npm run lint
 
     - name: Run tests and coverage
       run: npm run test:coverage-ci
