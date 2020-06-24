@@ -32,6 +32,12 @@ describe('devices', () => {
           ])
         }
       })
+
+      server.initDB()
+    })
+
+    afterEach(() => {
+      mockFs.restore()
     })
 
     describe('/devices', () => {
@@ -75,6 +81,12 @@ describe('devices', () => {
           ])
         }
       })
+
+      server.initDB()
+    })
+
+    afterEach(() => {
+      mockFs.restore()
     })
 
     describe('/devices', () => {
@@ -94,6 +106,16 @@ describe('devices', () => {
           { id: 'green' },
           { id: 42 }
         ])
+      })
+
+      it('should return 409 with an error message if a device with the given "id" exists already', async () => {
+        const res = await chai.request(server)
+          .post(apiBasePath + '/devices')
+          .type('json')
+          .send({ id: 0 })
+
+        res.should.have.status(409)
+        res.body.error.should.equal('Device with same "id" exists already!')
       })
     })
   })

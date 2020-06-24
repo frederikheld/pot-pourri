@@ -19,8 +19,11 @@ actions.devices = {
 
   // POST
   create: (req, res) => {
-    createDevice(req.body)
-    res.status(201).send()
+    if (createDevice(req.body)) {
+      res.status(201).send()
+    } else {
+      res.status(409).send({ error: 'Device with same "id" exists already!' })
+    }
   }
 }
 
@@ -45,7 +48,15 @@ const getDeviceById = function (id) {
 
 const createDevice = function (object) {
   const devices = getDevices()
+
+  // eslint-disable-next-line eqeqeq
+  if (devices.find((x) => x.id == object.id)) {
+    return false
+  }
+
   fs.writeFileSync('store/devices.json', JSON.stringify([...devices, object]))
+
+  return true
 }
 
 // -- exports
