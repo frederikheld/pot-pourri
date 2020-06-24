@@ -4,10 +4,9 @@
 
 const fs = require('fs')
 
-
 // -- actions
 
-let actions = {}
+const actions = {}
 
 actions.devices = {
     // GET
@@ -39,10 +38,9 @@ const getDevices = function () {
 
 const getDeviceById = function (id) {
     const devices = getDevices()
-    return devices.find(x => x.id == id)
-    /**
-     * note: it is intentional that this is not === as the id can be int or string
-     */
+    // eslint-disable-next-line eqeqeq
+    return devices.find((x) => x.id == id)
+    // note: it is intentional that this is not === as the id can be int or string
 }
 
 const createDevice = function (object) {
