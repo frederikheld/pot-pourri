@@ -33,11 +33,11 @@ actions.devices = {
  * easy to replace.
  */
 
-const getDevices = function() {
+const getDevices = function () {
     return JSON.parse(fs.readFileSync('store/devices.json'))
 }
 
-const getDeviceById = function(id) {
+const getDeviceById = function (id) {
     const devices = getDevices()
     return devices.find(x => x.id == id)
     /**
@@ -45,7 +45,7 @@ const getDeviceById = function(id) {
      */
 }
 
-const createDevice = function(object) {
+const createDevice = function (object) {
     const devices = getDevices()
     fs.writeFileSync('store/devices.json', JSON.stringify([...devices, object]))
 }

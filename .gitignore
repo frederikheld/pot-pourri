@@ -1,10 +1,7 @@
 
 node_modules/
 
-\.vscode/
-
 services/datastore/\.nyc_output/
 services/datastore/test/temp/
 
 dist/
-
