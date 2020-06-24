@@ -8,10 +8,12 @@
 
 const server = require('./server')
 
-const dbContents = JSON.stringify([
+server.initDB(JSON.stringify([
   { id: 0, name: 'foo' },
   { id: 1, name: 'bar' },
   { id: 2, name: 'baz' }
-])
+]))
 
-server.initDB(dbContents)
+server.initOptions({
+  responseDelay: 1000
+})
