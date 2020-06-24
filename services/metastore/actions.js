@@ -9,19 +9,19 @@ const fs = require('fs')
 const actions = {}
 
 actions.devices = {
-    // GET
-    getAll: (req, res) => {
-        res.status(200).send(getDevices())
-    },
-    getDeviceById: (req, res) => {
-        res.status(200).send(getDeviceById(req.params.id))
-    },
+  // GET
+  getAll: (req, res) => {
+    res.status(200).send(getDevices())
+  },
+  getDeviceById: (req, res) => {
+    res.status(200).send(getDeviceById(req.params.id))
+  },
 
-    // POST
-    create: (req, res) => {
-        createDevice(req.body)
-        res.status(201).send()
-    }
+  // POST
+  create: (req, res) => {
+    createDevice(req.body)
+    res.status(201).send()
+  }
 }
 
 // -- database functions
@@ -33,19 +33,19 @@ actions.devices = {
  */
 
 const getDevices = function () {
-    return JSON.parse(fs.readFileSync('store/devices.json'))
+  return JSON.parse(fs.readFileSync('store/devices.json'))
 }
 
 const getDeviceById = function (id) {
-    const devices = getDevices()
-    // eslint-disable-next-line eqeqeq
-    return devices.find((x) => x.id == id)
-    // note: it is intentional that this is not === as the id can be int or string
+  const devices = getDevices()
+  // eslint-disable-next-line eqeqeq
+  return devices.find((x) => x.id == id)
+  // note: it is intentional that this is not === as the id can be int or string
 }
 
 const createDevice = function (object) {
-    const devices = getDevices()
-    fs.writeFileSync('store/devices.json', JSON.stringify([...devices, object]))
+  const devices = getDevices()
+  fs.writeFileSync('store/devices.json', JSON.stringify([...devices, object]))
 }
 
 // -- exports

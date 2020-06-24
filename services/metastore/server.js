@@ -13,8 +13,8 @@ app.use('/api', routes)
 // -- server
 
 const server = app.listen(3003, () => {
-    const port = server.address().port
-    console.log('Metastore server is listening on port %s', port)
+  const port = server.address().port
+  console.log('Metastore server is listening on port %s', port)
 })
 
 // -- exports

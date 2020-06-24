@@ -16,7 +16,7 @@
         "chai-friendly"
     ],
     "rules": {
-        "indent": ["warn", 4],
+        "indent": ["warn", 2],
         "arrow-parens": 1,
         "new-cap": [
             2,

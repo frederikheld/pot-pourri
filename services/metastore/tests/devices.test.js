@@ -21,87 +21,87 @@ const server = require('../server')
 const apiBasePath = '/api'
 
 describe('devices', () => {
-    describe('GET', () => {
-        beforeEach(() => {
-            mockFs({
-                store: {
-                    'devices.json': JSON.stringify([
-                        { id: 0 },
-                        { id: 1 },
-                        { id: 'green' }
-                    ])
-                }
-            })
-        })
-
-        describe('/devices', () => {
-            it('should return an array that contains all the devices', async () => {
-                const res = await chai.request(server)
-                    .get(apiBasePath + '/devices')
-
-                res.should.have.status(200)
-                res.body.should.be.an('array')
-                res.body.length.should.eql(3)
-            })
-        })
-
-        describe('/devices/:id', () => {
-            it('should return the json object of the device with the given id', async () => {
-                const res1 = await chai.request(server)
-                    .get(apiBasePath + '/devices/1')
-
-                res1.should.have.status(200)
-                res1.body.should.be.an('object')
-                res1.body.id.should.eql(1)
-
-                const res2 = await chai.request(server)
-                    .get(apiBasePath + '/devices/green')
-
-                res2.should.have.status(200)
-                res2.body.should.be.an('object')
-                res2.body.id.should.eql('green')
-            })
-        })
+  describe('GET', () => {
+    beforeEach(() => {
+      mockFs({
+        store: {
+          'devices.json': JSON.stringify([
+            { id: 0 },
+            { id: 1 },
+            { id: 'green' }
+          ])
+        }
+      })
     })
 
-    describe('POST', () => {
-        beforeEach(() => {
-            mockFs({
-                store: {
-                    'devices.json': JSON.stringify([
-                        { id: 0 },
-                        { id: 1 },
-                        { id: 'green' }
-                    ])
-                }
-            })
-        })
+    describe('/devices', () => {
+      it('should return an array that contains all the devices', async () => {
+        const res = await chai.request(server)
+          .get(apiBasePath + '/devices')
 
-        describe('/devices', () => {
-            it('should write the given object into the database and return 201', async () => {
-                const res = await chai.request(server)
-                    .post(apiBasePath + '/devices')
-                    .type('json')
-                    .send({ id: 42 })
-
-                res.should.have.status(201)
-
-                const devices = JSON.parse(fs.readFileSync('store/devices.json'))
-
-                devices.should.eql([
-                    { id: 0 },
-                    { id: 1 },
-                    { id: 'green' },
-                    { id: 42 }
-                ])
-            })
-        })
+        res.should.have.status(200)
+        res.body.should.be.an('array')
+        res.body.length.should.eql(3)
+      })
     })
+
+    describe('/devices/:id', () => {
+      it('should return the json object of the device with the given id', async () => {
+        const res1 = await chai.request(server)
+          .get(apiBasePath + '/devices/1')
+
+        res1.should.have.status(200)
+        res1.body.should.be.an('object')
+        res1.body.id.should.eql(1)
+
+        const res2 = await chai.request(server)
+          .get(apiBasePath + '/devices/green')
+
+        res2.should.have.status(200)
+        res2.body.should.be.an('object')
+        res2.body.id.should.eql('green')
+      })
+    })
+  })
+
+  describe('POST', () => {
+    beforeEach(() => {
+      mockFs({
+        store: {
+          'devices.json': JSON.stringify([
+            { id: 0 },
+            { id: 1 },
+            { id: 'green' }
+          ])
+        }
+      })
+    })
+
+    describe('/devices', () => {
+      it('should write the given object into the database and return 201', async () => {
+        const res = await chai.request(server)
+          .post(apiBasePath + '/devices')
+          .type('json')
+          .send({ id: 42 })
+
+        res.should.have.status(201)
+
+        const devices = JSON.parse(fs.readFileSync('store/devices.json'))
+
+        devices.should.eql([
+          { id: 0 },
+          { id: 1 },
+          { id: 'green' },
+          { id: 42 }
+        ])
+      })
+    })
+  })
 })
 
 after(() => {
-    mockFs.restore()
-    /**
+  mockFs.restore()
+  /**
      * This step is important because otherwise subsequent programs
      * that write to the file system won't work.
      * Istanbul (nyc) is one example that is also documented
