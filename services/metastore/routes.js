@@ -14,9 +14,10 @@ router.route('/').get((req, res) => {
     res.status(200).send('Hello World! :-)')
 })
 
-router.route('/devices').get(actions.devices.getAll)
+router.post('/devices', actions.devices.create)
+router.get('/devices', actions.devices.getAll)
 
-router.route('/devices/:id').get(actions.devices.getDeviceById)
+router.get('/devices/:id', actions.devices.getDeviceById)
 
 
 // -- exports

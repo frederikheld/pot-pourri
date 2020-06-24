@@ -10,11 +10,18 @@ const fs = require('fs')
 let actions = {}
 
 actions.devices = {
+    // GET
     getAll: (req, res) => {
         res.status(200).send(getDevices())
     },
     getDeviceById: (req, res) => {
         res.status(200).send(getDeviceById(req.params.id))
+    },
+
+    // POST
+    create: (req, res) => {
+        createDevice(req.body)
+        res.status(201).send()
     }
 }
 
@@ -36,6 +43,11 @@ const getDeviceById = function(id) {
     /**
      * note: it is intentional that this is not === as the id can be int or string
      */
+}
+
+const createDevice = function(object) {
+    const devices = getDevices()
+    fs.writeFileSync('store/devices.json', JSON.stringify([...devices, object]))
 }
 
 // -- exports
