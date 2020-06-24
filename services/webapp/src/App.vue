@@ -90,9 +90,9 @@
       </v-btn>
     </v-bottom-navigation>
 
-    <v-content class="fill-height">
+    <v-main class="fill-height">
       <router-view />
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
