@@ -26,8 +26,8 @@ describe('devices', () => {
       mockFs({
         store: {
           'devices.json': JSON.stringify([
-            { id: 0 },
-            { id: 1 },
+            { id: '0' },
+            { id: '1' },
             { id: 'green' }
           ])
         }
@@ -58,7 +58,7 @@ describe('devices', () => {
 
         res1.should.have.status(200)
         res1.body.should.be.an('object')
-        res1.body.id.should.eql(1)
+        res1.body.id.should.eql('1')
 
         const res2 = await chai.request(server)
           .get(apiBasePath + '/devices/green')
@@ -75,8 +75,8 @@ describe('devices', () => {
       mockFs({
         store: {
           'devices.json': JSON.stringify([
-            { id: 0 },
-            { id: 1 },
+            { id: '0' },
+            { id: '1' },
             { id: 'green' }
           ])
         }
@@ -94,17 +94,17 @@ describe('devices', () => {
         const res = await chai.request(server)
           .post(apiBasePath + '/devices')
           .type('json')
-          .send({ id: 42 })
+          .send({ id: '42' })
 
         res.should.have.status(201)
 
         const devices = JSON.parse(fs.readFileSync('store/devices.json'))
 
         devices.should.eql([
-          { id: 0 },
-          { id: 1 },
+          { id: '0' },
+          { id: '1' },
           { id: 'green' },
-          { id: 42 }
+          { id: '42' }
         ])
       })
 
@@ -112,10 +112,46 @@ describe('devices', () => {
         const res = await chai.request(server)
           .post(apiBasePath + '/devices')
           .type('json')
-          .send({ id: 0 })
+          .send({ id: '0' })
 
         res.should.have.status(409)
         res.body.error.should.equal('Device with same "id" exists already!')
+      })
+    })
+  })
+
+  describe('DELETE', () => {
+    beforeEach(() => {
+      mockFs({
+        store: {
+          'devices.json': JSON.stringify([
+            { id: '0' },
+            { id: '1' },
+            { id: 'green' }
+          ])
+        }
+      })
+
+      server.initDB()
+    })
+
+    afterEach(() => {
+      mockFs.restore()
+    })
+
+    describe('/devices/:id', () => {
+      it('should remove the device with the given "id" from the database and return 204', async () => {
+        const res = await chai.request(server)
+          .delete(apiBasePath + '/devices/1')
+
+        res.should.have.status(204)
+
+        const devices = JSON.parse(fs.readFileSync('store/devices.json'))
+
+        devices.should.eql([
+          { id: '0' },
+          { id: 'green' }
+        ])
       })
     })
   })

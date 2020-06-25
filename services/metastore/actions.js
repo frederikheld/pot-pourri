@@ -24,6 +24,15 @@ actions.devices = {
     } else {
       res.status(409).send({ error: 'Device with same "id" exists already!' })
     }
+  },
+
+  // DELETE
+  deleteDeviceById: (req, res) => {
+    if (deleteDeviceById(req.params.id)) {
+      res.status(204).send()
+    } else {
+      // tbd
+    }
   }
 }
 
@@ -41,21 +50,29 @@ const getDevices = function () {
 
 const getDeviceById = function (id) {
   const devices = getDevices()
-  // eslint-disable-next-line eqeqeq
-  return devices.find((x) => x.id == id)
-  // note: it is intentional that this is not === as the id can be int or string
+  return devices.find((x) => x.id === id)
 }
 
 const createDevice = function (object) {
   const devices = getDevices()
 
-  // eslint-disable-next-line eqeqeq
-  if (devices.find((x) => x.id == object.id)) {
+  if (devices.find((x) => x.id === object.id)) {
     return false
   }
 
   fs.writeFileSync('store/devices.json', JSON.stringify([...devices, object]))
 
+  return true
+}
+
+const deleteDeviceById = function (id) {
+  const devices = getDevices()
+
+  const devicesNew = devices.filter((x) => {
+    return x.id !== id
+  })
+
+  fs.writeFileSync('store/devices.json', JSON.stringify(devicesNew))
   return true
 }
 

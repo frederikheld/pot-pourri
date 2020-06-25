@@ -9,11 +9,11 @@
 const server = require('./server')
 
 server.initDB(JSON.stringify([
-  { id: 0, name: 'foo' },
-  { id: 1, name: 'bar' },
-  { id: 2, name: 'baz' }
+  { id: '0', name: 'foo' },
+  { id: '1', name: 'bar' },
+  { id: '2', name: 'baz' }
 ]))
 
 server.initOptions({
-  responseDelay: 2000
+  responseDelay: 1000
 })
