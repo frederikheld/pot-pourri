@@ -18,11 +18,53 @@
         aliquet nec, vulputate eget, arcu.
       </p>
 
-      <p>
-        In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam
-        dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
-        Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.
-      </p>
+      <h2>Loading Indicators</h2>
+
+      <div>
+        <h3>type="inline"</h3>
+
+        <p>
+          In enim justo <LoadingIndicator type="inline" />, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam
+          dictum felis eu pede mollis <LoadingIndicator type="inline" /> pretium. Integer tincidunt. Cras dapibus.
+          Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.
+        </p>
+      </div>
+
+      <div style="display: block; width: 100%; float: left;">
+        <h3>type="box"</h3>
+        <div style="height: 6rem; width: 50%; background: #ccf; float: left;">
+          <LoadingIndicator type="box" />
+        </div>
+        <div style="height: 4rem; width: 20%; background: #fcc; float: left;">
+          <LoadingIndicator type="box" />
+        </div>
+      </div>
+
+      <div>
+        <h3>type="page"</h3>
+        <v-btn @click="showPageLoadingIndicator()">
+          Show for 5 seconds
+        </v-btn>
+        <LoadingIndicator
+          v-if="pageLoadingIndicatorActive"
+          type="page"
+          style="background: red;"
+        />
+      </div>
+
+      <div>
+        <h3>type="viewport"</h3>
+        <v-btn
+          @click="showViewportLoadingIndicator()"
+        >
+          Show for 5 seconds
+        </v-btn>
+        <LoadingIndicator
+          v-if="viewportLoadingIndicatorActive"
+          type="viewport"
+          style="background: blue;"
+        />
+      </div>
 
       <p>
         Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.
@@ -97,13 +139,16 @@
 
 <script>
 import ChartTest from '@/components/ChartTest.vue'
+import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
 export default {
   name: 'Lab',
-  components: { ChartTest },
+  components: { ChartTest, LoadingIndicator },
   data () {
     return {
-      chartTestData: this.generateRandomDataPoints(5)
+      chartTestData: this.generateRandomDataPoints(5),
+      pageLoadingIndicatorActive: false,
+      viewportLoadingIndicatorActive: false
     }
   },
   mounted () {
@@ -118,6 +163,18 @@ export default {
         data.push(Math.random())
       }
       return data
+    },
+    showPageLoadingIndicator () {
+      this.pageLoadingIndicatorActive = true
+      setTimeout(() => {
+        this.pageLoadingIndicatorActive = false
+      }, 5000)
+    },
+    showViewportLoadingIndicator () {
+      this.viewportLoadingIndicatorActive = true
+      setTimeout(() => {
+        this.viewportLoadingIndicatorActive = false
+      }, 5000)
     }
   }
 }
