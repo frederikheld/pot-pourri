@@ -77,7 +77,7 @@ export default {
       try {
         await fetch(url, options)
         this.savingDevice = false
-        this.$router.replace('/devices')
+        this.$router.replace('/devices/' + this.id)
       } catch (err) {
         console.log(err)
       }
