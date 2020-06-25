@@ -8,9 +8,13 @@
         {{ device.name }}
       </li>
     </ul>
-    <div v-if="fetchingDevices">
-      <LoadingIndicator />
-    </div>
+        </v-list-item>
+      </v-list>
+    </v-list-item-group>
+    <LoadingIndicator
+      v-if="fetchingDevices"
+      type="page"
+    />
   </v-container>
 </template>
 
