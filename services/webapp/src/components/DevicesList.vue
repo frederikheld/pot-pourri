@@ -1,13 +1,15 @@
 <template>
-  <v-container>
-    <ul v-if="!fetchingDevices">
-      <li
-        v-for="(device, device_id) in devices"
-        :key="device_id"
-      >
-        {{ device.name }}
-      </li>
-    </ul>
+  <v-container class="pa-0">
+    <v-list-item-group>
+      <v-list v-if="!fetchingDevices">
+        <v-list-item
+          v-for="device in devices"
+          :key="device.id"
+          :to="'/devices/' + device.id"
+        >
+          <v-list-item-content>
+            <v-list-item-title>{{ device.name }}</v-list-item-title>
+          </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-list-item-group>
