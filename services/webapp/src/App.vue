@@ -71,6 +71,7 @@
       app
       grow
       dark
+      fixed
       color="#fff"
       background-color="#690"
     >
