@@ -9,8 +9,22 @@
 const server = require('./server')
 
 server.initDB(JSON.stringify([
-  { id: '0', name: 'foo' },
-  { id: '1', name: 'bar' },
+  {
+    id: '0',
+    name: 'foo',
+    sensors: [
+      { id: '0', type: 'humidity' },
+      { id: '1', type: 'light' }
+    ]
+  },
+  {
+    id: '1',
+    name: 'bar',
+    sensors: [
+      { id: '0', type: 'humidity' },
+      { id: '1', type: 'temperature' }
+    ]
+  },
   { id: '2', name: 'baz' }
 ]))
 
