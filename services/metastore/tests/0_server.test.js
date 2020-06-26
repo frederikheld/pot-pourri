@@ -107,7 +107,7 @@ describe('server.initDB(contents)', () => {
   })
 })
 
-describe('root', () => {
+describe('/', () => {
   beforeEach(() => {
     mockFs({})
 
@@ -116,7 +116,7 @@ describe('root', () => {
     // as the server will create the database files.
   })
 
-  describe('GET /', () => {
+  describe('GET', () => {
     it('should return a string to indicate that the server is running', async () => {
       const res = await chai.request(server)
         .get(apiBasePath + '/')

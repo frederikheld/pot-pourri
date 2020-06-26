@@ -20,139 +20,117 @@ const server = require('../server')
 
 const apiBasePath = '/api'
 
-describe('devices', () => {
+describe('/devices', () => {
+  beforeEach(() => {
+    mockFs({
+      store: {
+        'devices.json': JSON.stringify([
+          { id: '0' },
+          { id: '1' },
+          { id: 'green' }
+        ])
+      }
+    })
+
+    server.initDB()
+  })
+
+  afterEach(() => {
+    mockFs.restore()
+  })
+
   describe('GET', () => {
-    beforeEach(() => {
-      mockFs({
-        store: {
-          'devices.json': JSON.stringify([
-            { id: '0' },
-            { id: '1' },
-            { id: 'green' }
-          ])
-        }
-      })
+    it('should return an array that contains all the devices', async () => {
+      const res = await chai.request(server)
+        .get(apiBasePath + '/devices')
 
-      server.initDB()
-    })
-
-    afterEach(() => {
-      mockFs.restore()
-    })
-
-    describe('/devices', () => {
-      it('should return an array that contains all the devices', async () => {
-        const res = await chai.request(server)
-          .get(apiBasePath + '/devices')
-
-        res.should.have.status(200)
-        res.body.should.be.an('array')
-        res.body.length.should.eql(3)
-      })
-    })
-
-    describe('/devices/:id', () => {
-      it('should return the json object of the device with the given id', async () => {
-        const res1 = await chai.request(server)
-          .get(apiBasePath + '/devices/1')
-
-        res1.should.have.status(200)
-        res1.body.should.be.an('object')
-        res1.body.id.should.eql('1')
-
-        const res2 = await chai.request(server)
-          .get(apiBasePath + '/devices/green')
-
-        res2.should.have.status(200)
-        res2.body.should.be.an('object')
-        res2.body.id.should.eql('green')
-      })
+      res.should.have.status(200)
+      res.body.should.be.an('array')
+      res.body.length.should.eql(3)
     })
   })
 
   describe('POST', () => {
-    beforeEach(() => {
-      mockFs({
-        store: {
-          'devices.json': JSON.stringify([
-            { id: '0' },
-            { id: '1' },
-            { id: 'green' }
-          ])
-        }
-      })
+    it('should write the given object into the database and return 201', async () => {
+      const res = await chai.request(server)
+        .post(apiBasePath + '/devices')
+        .type('json')
+        .send({ id: '42' })
 
-      server.initDB()
+      res.should.have.status(201)
+
+      const devices = JSON.parse(fs.readFileSync('store/devices.json'))
+
+      devices.should.eql([
+        { id: '0' },
+        { id: '1' },
+        { id: 'green' },
+        { id: '42' }
+      ])
     })
 
-    afterEach(() => {
-      mockFs.restore()
+    it('should return 409 with an error message if a device with the given "id" exists already', async () => {
+      const res = await chai.request(server)
+        .post(apiBasePath + '/devices')
+        .type('json')
+        .send({ id: '0' })
+
+      res.should.have.status(409)
+      res.body.error.should.equal('Device with same "id" exists already!')
     })
+  })
+})
 
-    describe('/devices', () => {
-      it('should write the given object into the database and return 201', async () => {
-        const res = await chai.request(server)
-          .post(apiBasePath + '/devices')
-          .type('json')
-          .send({ id: '42' })
-
-        res.should.have.status(201)
-
-        const devices = JSON.parse(fs.readFileSync('store/devices.json'))
-
-        devices.should.eql([
+describe('/devices/:id', () => {
+  beforeEach(() => {
+    mockFs({
+      store: {
+        'devices.json': JSON.stringify([
           { id: '0' },
           { id: '1' },
-          { id: 'green' },
-          { id: '42' }
+          { id: 'green' }
         ])
-      })
+      }
+    })
 
-      it('should return 409 with an error message if a device with the given "id" exists already', async () => {
-        const res = await chai.request(server)
-          .post(apiBasePath + '/devices')
-          .type('json')
-          .send({ id: '0' })
+    server.initDB()
+  })
 
-        res.should.have.status(409)
-        res.body.error.should.equal('Device with same "id" exists already!')
-      })
+  afterEach(() => {
+    mockFs.restore()
+  })
+
+  describe('GET', () => {
+    it('should return the json object of the device with the given id', async () => {
+      const res1 = await chai.request(server)
+        .get(apiBasePath + '/devices/1')
+
+      res1.should.have.status(200)
+      res1.body.should.be.an('object')
+      res1.body.id.should.eql('1')
+
+      const res2 = await chai.request(server)
+        .get(apiBasePath + '/devices/green')
+
+      res2.should.have.status(200)
+      res2.body.should.be.an('object')
+      res2.body.id.should.eql('green')
     })
   })
 
   describe('DELETE', () => {
-    beforeEach(() => {
-      mockFs({
-        store: {
-          'devices.json': JSON.stringify([
-            { id: '0' },
-            { id: '1' },
-            { id: 'green' }
-          ])
-        }
-      })
+    it('should remove the device with the given "id" from the database and return 204', async () => {
+      const res = await chai.request(server)
+        .delete(apiBasePath + '/devices/1')
 
-      server.initDB()
-    })
+      res.should.have.status(204)
 
-    afterEach(() => {
-      mockFs.restore()
-    })
+      const devices = JSON.parse(fs.readFileSync('store/devices.json'))
 
-    describe('/devices/:id', () => {
-      it('should remove the device with the given "id" from the database and return 204', async () => {
-        const res = await chai.request(server)
-          .delete(apiBasePath + '/devices/1')
-
-        res.should.have.status(204)
-
-        const devices = JSON.parse(fs.readFileSync('store/devices.json'))
-
-        devices.should.eql([
-          { id: '0' },
-          { id: 'green' }
-        ])
-      })
+      devices.should.eql([
+        { id: '0' },
+        { id: 'green' }
+      ])
     })
   })
 })
