@@ -9,26 +9,24 @@ const fs = require('fs')
 const actions = {}
 
 actions.devices = {
-  // GET
-  getAll: (req, res) => {
-    res.status(200).send(getDevices())
+  get: (req, res) => {
+    res.status(200).send(db.getAllDevices())
   },
-  getDeviceById: (req, res) => {
-    res.status(200).send(getDeviceById(req.params.id))
-  },
-
-  // POST
-  create: (req, res) => {
-    if (createDevice(req.body)) {
+  post: (req, res) => {
+    if (db.createDevice(req.body)) {
       res.status(201).send()
     } else {
       res.status(409).send({ error: 'Device with same "id" exists already!' })
     }
-  },
+  }
+}
 
-  // DELETE
-  deleteDeviceById: (req, res) => {
-    if (deleteDeviceById(req.params.id)) {
+actions.devices.id = {
+  get: (req, res) => {
+    res.status(200).send(db.getDeviceById(req.params.id))
+  },
+  delete: (req, res) => {
+    if (db.deleteDeviceById(req.params.id)) {
       res.status(204).send()
     } else {
       // tbd
@@ -44,17 +42,19 @@ actions.devices = {
  * easy to replace.
  */
 
-const getDevices = function () {
+const db = {}
+
+db.getAllDevices = function () {
   return JSON.parse(fs.readFileSync('store/devices.json'))
 }
 
-const getDeviceById = function (id) {
-  const devices = getDevices()
+db.getDeviceById = function (id) {
+  const devices = db.getAllDevices()
   return devices.find((x) => x.id === id)
 }
 
-const createDevice = function (object) {
-  const devices = getDevices()
+db.createDevice = function (object) {
+  const devices = db.getAllDevices()
 
   if (devices.find((x) => x.id === object.id)) {
     return false
@@ -65,8 +65,8 @@ const createDevice = function (object) {
   return true
 }
 
-const deleteDeviceById = function (id) {
-  const devices = getDevices()
+db.deleteDeviceById = function (id) {
+  const devices = db.getAllDevices()
 
   const devicesNew = devices.filter((x) => {
     return x.id !== id
