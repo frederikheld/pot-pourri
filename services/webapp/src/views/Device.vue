@@ -51,34 +51,34 @@
         <v-row>
           <v-col>
             <v-img
-              src="https://images.pexels.com/photos/4505146/pexels-photo-4505146.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+              src="https://images.pexels.com/photos/159220/printed-circuit-board-print-plate-via-macro-159220.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
               aspect-ratio="2"
               max-height="12rem"
             >
+              <!-- Dummy picture for plants
+              src="https://images.pexels.com/photos/4505146/pexels-photo-4505146.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" -->
+
               <v-row
-                class="pl-3 pr-3 white--text fill-height"
                 align="end"
+                class="pl-3 pr-3 white--text fill-height"
               >
-                <v-col cols="11">
+                <v-col style="background-color: rgba(0,0,0,0.5);">
                   <div class="subtitle-1">
-                    {{ device.name }}
-                  </div>
-                  <div class="subtitle-2">
-                    {{ device }}
+                    Foo
                   </div>
                 </v-col>
-                <v-col
-                  cols="1"
-                  justify="start"
-                  class="fill-height pa-1 pt-2"
-                />
               </v-row>
             </v-img>
           </v-col>
         </v-row>
         <v-row>
           <v-col>
-            <p>Connected Plants here</p>
+            <h2>Attached Sensors</h2>
+            <DeviceSensorsList
+              :device="device"
+            />
+            <h2>Attached Actors</h2>
+            // tdo
           </v-col>
         </v-row>
       </div>
@@ -97,11 +97,12 @@
 <script>
 import AppBar from '@/components/AppBar.vue'
 import ContextMenuDevice from '@/components/ContextMenuDevice.vue'
+import DeviceSensorsList from '@/components/DeviceSensorsList.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
 export default {
   name: 'Device',
-  components: { AppBar, ContextMenuDevice, LoadingIndicator },
+  components: { AppBar, DeviceSensorsList, ContextMenuDevice, LoadingIndicator },
   data () {
     return {
       fetchingDevice: false,
@@ -119,7 +120,6 @@ export default {
       console.log('Edit device')
     },
     actionRemoveDevice () {
-      console.log('Remove device')
       this.removeDialogIsOpen = true
     },
     async removeDeviceConfirmed () {
