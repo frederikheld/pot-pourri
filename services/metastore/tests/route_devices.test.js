@@ -47,6 +47,11 @@ describe('/devices', () => {
       res.should.have.status(200)
       res.body.should.be.an('array')
       res.body.length.should.eql(3)
+      res.body.should.eql([
+        { id: '0' },
+        { id: '1' },
+        { id: 'green' }
+      ])
     })
   })
 
@@ -76,7 +81,7 @@ describe('/devices', () => {
         .send({ id: '0' })
 
       res.should.have.status(409)
-      res.body.error.should.equal('Device with same "id" exists already!')
+      res.body.error.should.equal('Device with same "id" exists already.')
     })
   })
 })
@@ -116,6 +121,14 @@ describe('/devices/:id', () => {
       res2.body.should.be.an('object')
       res2.body.id.should.eql('green')
     })
+
+    it('should return 404 with an error message if the device with the given id doesn\'t exist', async () => {
+      const res = await chai.request(server)
+        .get(apiBasePath + '/devices/bielefeld')
+
+      res.should.have.status(404)
+      res.body.error.should.eql('Device with given "id" does not exist.')
+    })
   })
 
   describe('DELETE', () => {
@@ -131,6 +144,83 @@ describe('/devices/:id', () => {
         { id: '0' },
         { id: 'green' }
       ])
+    })
+  })
+})
+
+describe('/devices/:id/sensors', () => {
+  beforeEach(() => {
+    mockFs({
+      store: {
+        'devices.json': JSON.stringify([
+          {
+            id: '0',
+            sensors: [
+              { id: '0', type: 'humidity' },
+              { id: '1', type: 'light' }
+            ]
+          },
+          {
+            id: '1',
+            sensors: []
+          },
+          {
+            id: 'green'
+          }
+        ])
+      }
+    })
+
+    server.initDB()
+  })
+
+  afterEach(() => {
+    mockFs.restore()
+  })
+
+  describe('GET', () => {
+    it('should return an array that contains all the sensors of the given device with 200', async () => {
+      // array with objects
+      const res1 = await chai.request(server)
+        .get(apiBasePath + '/devices/0/sensors')
+
+      res1.should.have.status(200)
+      res1.body.should.be.an('array')
+      res1.body.length.should.eql(2)
+      res1.body.should.eql([
+        {
+          id: '0',
+          type: 'humidity'
+        },
+        {
+          id: '1',
+          type: 'light'
+        }
+      ])
+
+      // empty array
+      const res2 = await chai.request(server)
+        .get(apiBasePath + '/devices/1/sensors')
+
+      res2.should.have.status(200)
+      res2.body.should.be.an('array')
+      res2.body.length.should.eql(0)
+
+      // no key 'sensors':
+      const res3 = await chai.request(server)
+        .get(apiBasePath + '/devices/green/sensors')
+
+      res3.should.have.status(200)
+      res3.body.should.be.an('array')
+      res3.body.length.should.eql(0)
+    })
+
+    it('should return 404 with an error message if the device with the given id doesn\'t exist', async () => {
+      const res = await chai.request(server)
+        .get(apiBasePath + '/devices/bielefeld')
+
+      res.should.have.status(404)
+      res.body.error.should.eql('Device with given "id" does not exist.')
     })
   })
 })
