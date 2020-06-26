@@ -39,7 +39,7 @@ describe('server.initOptions(options)', () => {
 
     const endTime1 = process.hrtime.bigint()
 
-    Number(endTime1 - startTime1).should.be.lessThan(50 * 1000 * 1000) // < 50 ms
+    Number(endTime1 - startTime1).should.be.lessThan(100 * 1000 * 1000) // < 100 ms
 
     // with artificial delay:
 
