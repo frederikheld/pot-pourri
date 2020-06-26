@@ -16,14 +16,19 @@ actions.devices = {
     if (db.createDevice(req.body)) {
       res.status(201).send()
     } else {
-      res.status(409).send({ error: 'Device with same "id" exists already!' })
+      res.status(409).send({ error: 'Device with same "id" exists already.' })
     }
   }
 }
 
 actions.devices.id = {
   get: (req, res) => {
-    res.status(200).send(db.getDeviceById(req.params.id))
+    const device = db.getDeviceById(req.params.id)
+    if (device) {
+      res.status(200).send(device)
+    } else {
+      res.status(404).send({ error: 'Device with given "id" does not exist.' })
+    }
   },
   delete: (req, res) => {
     if (db.deleteDeviceById(req.params.id)) {
@@ -31,6 +36,12 @@ actions.devices.id = {
     } else {
       // tbd
     }
+  }
+}
+
+actions.devices.id.sensors = {
+  get: (req, res) => {
+    res.status(200).send(db.getSensorsByDeviceId(req.params.id))
   }
 }
 
@@ -48,9 +59,9 @@ db.getAllDevices = function () {
   return JSON.parse(fs.readFileSync('store/devices.json'))
 }
 
-db.getDeviceById = function (id) {
+db.getDeviceById = function (deviceId) {
   const devices = db.getAllDevices()
-  return devices.find((x) => x.id === id)
+  return devices.find((x) => x.id === deviceId)
 }
 
 db.createDevice = function (object) {
@@ -65,15 +76,20 @@ db.createDevice = function (object) {
   return true
 }
 
-db.deleteDeviceById = function (id) {
+db.deleteDeviceById = function (deviceId) {
   const devices = db.getAllDevices()
 
   const devicesNew = devices.filter((x) => {
-    return x.id !== id
+    return x.id !== deviceId
   })
 
   fs.writeFileSync('store/devices.json', JSON.stringify(devicesNew))
   return true
+}
+
+db.getSensorsByDeviceId = function (deviceId) {
+  const device = db.getDeviceById(deviceId)
+  return device.sensors ? device.sensors : []
 }
 
 // -- exports
