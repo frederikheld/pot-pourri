@@ -9,6 +9,8 @@ import '@mdi/font/css/materialdesignicons.css'
 
 Vue.config.productionTip = false
 
+Vue.prototype.$eventBus = new Vue() // register global event bus
+
 new Vue({
   router,
   store,

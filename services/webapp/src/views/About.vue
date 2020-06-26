@@ -2,7 +2,6 @@
   <div>
     <AppBar
       title="About"
-      back="/"
     />
     <v-container>
       <h1>About</h1>

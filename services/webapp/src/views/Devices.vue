@@ -2,7 +2,6 @@
   <div>
     <AppBar
       title="Devices"
-      back="/"
     >
       <v-btn
         icon
