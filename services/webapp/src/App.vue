@@ -1,14 +1,26 @@
 <template>
   <v-app>
     <v-navigation-drawer
-      v-model="drawer"
+      v-model="drawerIsOpen"
       app
-      right
     >
-      <v-list-item>
-        <v-list-item-title>Settings</v-list-item-title>
-      </v-list-item>
       <v-list>
+        <v-subheader class="pa-3 ma-0">
+          <v-list-item-action>
+            <v-btn
+              icon
+              small
+              class="ma-0 pa-0 nav-drawer-icon-close"
+              @click.stop="drawerIsOpen = false"
+            >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>SETTINGS</v-list-item-title>
+          </v-list-item-content>
+        </v-subheader>
+
         <v-list-item
           link
           to="/devices"
@@ -56,15 +68,15 @@
       src="../public/img/backgrounds/bg-greens.jpg"
       color="#690"
     >
+      <v-app-bar-nav-icon @click.stop="drawerIsOpen = !drawerIsOpen">
+        <v-icon>mdi-tune</v-icon>
+      </v-app-bar-nav-icon>
+
       <v-toolbar-title>
         Pot Pourri
       </v-toolbar-title>
 
       <v-spacer />
-
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer">
-        <v-icon>mdi-tune</v-icon>
-      </v-app-bar-nav-icon>
     </v-app-bar>
 
     <v-bottom-navigation
@@ -112,7 +124,7 @@ html {
 <script>
 export default {
   data: () => ({
-    drawer: null
+    drawerIsOpen: null
   })
 }
 </script>
