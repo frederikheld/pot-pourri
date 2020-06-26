@@ -1,12 +1,20 @@
 <template>
-  <v-container>
-    <h1>About</h1>
-  </v-container>
+  <div>
+    <AppBar
+      title="About"
+      back="/"
+    />
+    <v-container>
+      <h1>About</h1>
+    </v-container>
+  </div>
 </template>
 
 <script>
+import AppBar from '@/components/AppBar.vue'
+
 export default {
   name: 'About',
-  components: {}
+  components: { AppBar }
 }
 </script>

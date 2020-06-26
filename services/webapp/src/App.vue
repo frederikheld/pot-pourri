@@ -69,7 +69,7 @@
       color="#690"
     >
       <v-app-bar-nav-icon @click.stop="drawerIsOpen = !drawerIsOpen">
-        <v-icon>mdi-tune</v-icon>
+        <v-icon>mdi-menu</v-icon>
       </v-app-bar-nav-icon>
 
       <v-toolbar-title>

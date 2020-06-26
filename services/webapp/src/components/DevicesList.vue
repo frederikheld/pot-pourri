@@ -1,7 +1,11 @@
 <template>
-  <v-container class="pa-0">
-    <v-list-item-group>
-      <v-list v-if="!fetchingDevices">
+  <v-container
+    class="pa-0"
+  >
+    <v-list-item-group
+      v-if="devices.length > 0 && !fetchingDevices"
+    >
+      <v-list>
         <v-list-item
           v-for="device in devices"
           :key="device.id"
@@ -9,10 +13,29 @@
         >
           <v-list-item-content>
             <v-list-item-title>{{ device.name }}</v-list-item-title>
+            <v-list-item-subtitle>{{ device.id }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-list-item-group>
+
+    <v-row
+      v-if="devices.length <= 0 && !fetchingDevices"
+      justify="center"
+      class="mt-4"
+    >
+      <v-col
+        class="text-center"
+      >
+        <p class="body-1">
+          You don't have any devices configured yet.
+        </p>
+        <p class="body-2">
+          Tap the + button to create one!
+        </p>
+      </v-col>
+    </v-row>
+
     <LoadingIndicator
       v-if="fetchingDevices"
       type="page"
