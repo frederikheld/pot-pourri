@@ -1,5 +1,7 @@
 'use strict'
 
+const fs = require('fs')
+
 /**
  * This script starts the server in a configuration that
  * can be useful if you want to debug an consumer of this API
@@ -7,6 +9,11 @@
  */
 
 const server = require('./server')
+
+// cleanup from last run:
+fs.rmdirSync('store', { recursive: true })
+// uncomment the above line if you want to keep
+// the database from the last debug run.
 
 server.initDB(JSON.stringify([
   {
