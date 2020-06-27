@@ -15,7 +15,10 @@ server.initDB(JSON.stringify([
     sensors: [
       { id: '0', type: 'humidity' },
       { id: '1', type: 'light' }
-    ]
+    ],
+    settings: {
+      measuringInterval: 300 // 5 minutes
+    }
   },
   {
     id: '1',
@@ -23,9 +26,15 @@ server.initDB(JSON.stringify([
     sensors: [
       { id: '0', type: 'humidity' },
       { id: '1', type: 'temperature' }
-    ]
+    ],
+    settings: {
+      measuringInterval: 3600 // 1 hour
+    }
   },
-  { id: '2', name: 'baz' }
+  {
+    id: '2',
+    name: 'baz'
+  }
 ]))
 
 server.initOptions({
