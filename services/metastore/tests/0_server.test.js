@@ -22,7 +22,8 @@ const server = require('../server.js')
 
 const apiBasePath = '/api'
 
-describe('server.initOptions(options)', () => {
+describe('server.initOptions(options)', function () {
+  this.slow(2000)
   it('should slow down responses by the time in ms that is passed in "options.responseDelay"', async () => {
     mockFs({})
 
@@ -39,7 +40,7 @@ describe('server.initOptions(options)', () => {
 
     const endTime1 = process.hrtime.bigint()
 
-    Number(endTime1 - startTime1).should.be.lessThan(100 * 1000 * 1000) // < 100 ms
+    Number(endTime1 - startTime1).should.be.lessThan(100 * 1000 * 1000) // < 200 ms
 
     // with artificial delay:
 
