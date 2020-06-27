@@ -45,6 +45,13 @@ actions.devices.id.sensors = {
   }
 }
 
+actions.devices.id.settings = {
+  post: (req, res) => {
+    db.setSettingsByDeviceId(req.params.id, req.body)
+    res.status(201).send()
+  }
+}
+
 // -- database functions
 /**
  * For the sake of simplicity, the database is just
@@ -90,6 +97,19 @@ db.deleteDeviceById = function (deviceId) {
 db.getSensorsByDeviceId = function (deviceId) {
   const device = db.getDeviceById(deviceId)
   return device.sensors ? device.sensors : []
+}
+
+db.setSettingsByDeviceId = function (deviceId, settingsObject) {
+  const devices = db.getAllDevices()
+
+  const devicesNew = devices.filter((x) => {
+    if (x.id === deviceId) {
+      x.settings = settingsObject
+    }
+    return x
+  })
+
+  fs.writeFileSync('store/devices.json', JSON.stringify(devicesNew))
 }
 
 // -- exports

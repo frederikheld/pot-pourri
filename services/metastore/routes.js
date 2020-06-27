@@ -24,6 +24,8 @@ router.delete('/devices/:id', actions.devices.id.delete)
 
 router.get('/devices/:id/sensors', actions.devices.id.sensors.get)
 
+router.post('/devices/:id/settings', actions.devices.id.settings.post)
+
 // -- exports
 
 module.exports = router

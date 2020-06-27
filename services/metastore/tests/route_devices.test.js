@@ -225,6 +225,131 @@ describe('/devices/:id/sensors', () => {
   })
 })
 
+describe('/devices/:id/settings', () => {
+  beforeEach(() => {
+    mockFs({
+      store: {
+        'devices.json': JSON.stringify([
+          {
+            id: '0',
+            settings: { }
+          },
+          {
+            id: '1',
+            settings: {
+              foo: 'bar',
+              this: 'that'
+            }
+          },
+          {
+            id: 'green'
+          }
+        ])
+      }
+    })
+
+    server.initDB()
+  })
+
+  afterEach(() => {
+    mockFs.restore()
+  })
+
+  describe('POST', () => {
+    it('should write the given object into field "settings" of the device with the given "id" and return 201', async () => {
+      const res = await chai.request(server)
+        .post(apiBasePath + '/devices/0/settings')
+        .type('json')
+        .send({ foo: '42' })
+
+      res.should.have.status(201)
+
+      const devices = JSON.parse(fs.readFileSync('store/devices.json'))
+
+      devices.should.eql([
+        {
+          id: '0',
+          settings: {
+            foo: '42'
+          }
+        },
+        {
+          id: '1',
+          settings: {
+            foo: 'bar',
+            this: 'that'
+          }
+        },
+        {
+          id: 'green'
+        }
+      ])
+    })
+
+    it('will replace the whole "settings" object if it already exists', async () => {
+      const res = await chai.request(server)
+        .post(apiBasePath + '/devices/1/settings')
+        .type('json')
+        .send({
+          foo: '42',
+          bar: 'baz'
+        })
+
+      res.should.have.status(201)
+
+      const devices = JSON.parse(fs.readFileSync('store/devices.json'))
+
+      devices.should.eql([
+        {
+          id: '0',
+          settings: { }
+        },
+        {
+          id: '1',
+          settings: {
+            foo: '42',
+            bar: 'baz'
+          }
+        },
+        {
+          id: 'green'
+        }
+      ])
+    })
+
+    it('will create the key "settings" if it doesn\'t already exist', async () => {
+      const res = await chai.request(server)
+        .post(apiBasePath + '/devices/green/settings')
+        .type('json')
+        .send({ bar: 'baz' })
+
+      res.should.have.status(201)
+
+      const devices = JSON.parse(fs.readFileSync('store/devices.json'))
+
+      devices.should.eql([
+        {
+          id: '0',
+          settings: { }
+        },
+        {
+          id: '1',
+          settings: {
+            foo: 'bar',
+            this: 'that'
+          }
+        },
+        {
+          id: 'green',
+          settings: {
+            bar: 'baz'
+          }
+        }
+      ])
+    })
+  })
+})
+
 after(() => {
   mockFs.restore()
   /**
