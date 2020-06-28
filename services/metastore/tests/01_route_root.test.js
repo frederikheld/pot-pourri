@@ -10,9 +10,9 @@ const server = require('../server')
 
 const apiBasePath = '/api'
 
-describe('root', () => {
-  describe('GET /', () => {
-    it('should return a string to indicate that the server is running', async () => {
+describe('/', () => {
+  describe('GET', () => {
+    it('should return "Hello World! :-)" to indicate that the server is running', async () => {
       const res = await chai.request(server)
         .get(apiBasePath + '/')
 
