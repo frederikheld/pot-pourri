@@ -73,12 +73,57 @@
         </v-row>
         <v-row>
           <v-col>
-            <h2>Attached Sensors</h2>
-            <DeviceSensorsList
-              :device="device"
-            />
-            <h2>Attached Actors</h2>
-            // tdo
+            <v-tabs>
+              <v-tab>Sensors</v-tab>
+              <v-tab>Actors</v-tab>
+              <v-tab>Settings</v-tab>
+
+              <v-tab-item>
+                <DeviceSensorsList
+                  :device="device"
+                />
+              </v-tab-item>
+              <v-tab-item>
+                <v-row>
+                  <v-col>
+                    // todo
+                  </v-col>
+                </v-row>
+              </v-tab-item>
+              <v-tab-item>
+                <v-form
+                  v-model="formIsValid"
+                >
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                        v-model="form.inputMeasuringInterval"
+                        label="Measuring interval (HH:MM:SS)"
+                        append-icon="mdi-close"
+                        :rules="[v => validateInputMeasuringInterval(v) || 'Time format HH:MM:SS required!']"
+                        @click:append="form.inputMeasuringInterval = '<device default>'"
+                      >
+                        />
+                      </v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col class="text-right">
+                      <v-btn
+
+                        right
+                        color="primary"
+                        :loading="savingSettings"
+                        :disabled="!formIsValid"
+                        @click="actionSaveSettings()"
+                      >
+                        Save
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+                </v-form>
+              </v-tab-item>
+            </v-tabs>
           </v-col>
         </v-row>
       </div>
@@ -108,14 +153,75 @@ export default {
       fetchingDevice: false,
       removingDevice: false,
       removeDialogIsOpen: false,
-      device: {}
+      savingSettings: false,
+      device: {},
+      tabs: null,
+      form: {
+        inputMeasuringInterval: null
+      },
+      formIsValid: false
     }
   },
-  beforeMount () {
+  async beforeMount () {
     this.fetchingDevice = true
-    this.fetchDevice()
+    await this.fetchDevice()
+
+    this.initializeForm()
   },
   methods: {
+    validateForm () {
+      this.formIsValid = this.validateInputMeasuringInterval()
+    },
+    validateInputMeasuringInterval (value) {
+      if (value === '<device default>') {
+        return true
+      }
+
+      const [hours, minutes, seconds] = value.split(':')
+      if (
+        hours >= 0 &&
+        minutes >= 0 && minutes < 60 &&
+        seconds >= 0 && seconds < 60
+      ) {
+        return true
+      }
+      return false
+    },
+    initializeForm () {
+      this.form.inputMeasuringInterval = this.device.settings && this.device.settings.measuringInterval ? new Date(this.device.settings.measuringInterval * 1000).toISOString().substr(11, 8) : '<device default>'
+    },
+    hmsToSeconds (hmsTimeString) {
+      const [hours, minutes, seconds] = hmsTimeString.split(':')
+      return (+hours) * 60 * 60 + (+minutes) * 60 + (+seconds)
+    },
+    async actionSaveSettings () {
+      this.savingSettings = true
+
+      const url = 'http://localhost:3003/api/devices/' + this.$route.params.id + '/settings'
+
+      const postBody = {
+        name: this.name
+      }
+      if (this.form.inputMeasuringInterval !== '<device default>') {
+        postBody.measuringInterval = this.hmsToSeconds(this.form.inputMeasuringInterval)
+      }
+
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postBody)
+      }
+
+      try {
+        await fetch(url, options)
+      } catch (err) {
+        console.log(err)
+      }
+
+      this.savingSettings = false
+    },
     actionEditDevice () {
       console.log('Edit device')
     },
@@ -136,12 +242,13 @@ export default {
         await fetch(url, options)
 
         this.removeDialogIsOpen = false
-        this.removingDevice = false
 
         this.$router.replace('/devices')
       } catch (err) {
         console.log(err)
       }
+
+      this.removingDevice = false
     },
     async fetchDevice () {
       const url = 'http://localhost:3003/api/devices/' + this.$route.params.id
