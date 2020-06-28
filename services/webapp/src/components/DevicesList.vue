@@ -3,7 +3,7 @@
     class="pa-0"
   >
     <v-list-item-group
-      v-if="devices.length > 0 && !fetchingDevices"
+      v-if="devices.length > 0"
     >
       <v-list>
         <v-list-item
@@ -24,7 +24,7 @@
     </v-list-item-group>
 
     <v-row
-      v-if="devices.length <= 0 && !fetchingDevices"
+      v-if="devices.length <= 0"
       justify="center"
       class="mt-4"
     >
@@ -39,11 +39,6 @@
         </p>
       </v-col>
     </v-row>
-
-    <LoadingIndicator
-      v-if="fetchingDevices"
-      type="page"
-    />
   </v-container>
 </template>
 
@@ -52,38 +47,13 @@
 </style>
 
 <script>
-import LoadingIndicator from '@/components/LoadingIndicator.vue'
-
 export default {
   name: 'DevicesList',
-  components: { LoadingIndicator },
-  data () {
-    return {
-      fetchingDevices: true,
-      devices: []
-    }
-  },
-  beforeMount () {
-    this.fetchingDevices = true
-    this.fetchDevices()
-  },
-  methods: {
-    async fetchDevices  () {
-      const url = 'http://localhost:3003/api/devices'
-
-      const options = {
-        method: 'GET',
-        accept: 'application/json'
-      }
-
-      try {
-        const res = await fetch(url, options)
-        const devices = await res.json()
-        this.fetchingDevices = false
-        this.devices = devices
-      } catch (err) {
-        console.log(err)
-      }
+  props: {
+    devices: {
+      type: Array,
+      required: false,
+      default: () => { return [] }
     }
   }
 }
