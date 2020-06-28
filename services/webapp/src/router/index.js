@@ -29,6 +29,16 @@ const routes = [
     component: () => import('../views/Devices.vue')
   },
   {
+    path: '/devices/add',
+    name: 'AddDevice',
+    component: () => import('../views/AddDevice.vue')
+  },
+  {
+    path: '/devices/:id',
+    name: 'Device',
+    component: () => import('../views/Device.vue')
+  },
+  {
     path: '/system',
     name: 'System',
     component: () => import('../views/System.vue')

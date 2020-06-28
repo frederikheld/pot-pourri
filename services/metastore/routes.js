@@ -16,10 +16,15 @@ router.route('/').get((req, res) => {
   res.status(200).send('Hello World! :-)')
 })
 
-router.post('/devices', actions.devices.create)
-router.get('/devices', actions.devices.getAll)
+router.get('/devices', actions.devices.get)
+router.post('/devices', actions.devices.post)
 
-router.get('/devices/:id', actions.devices.getDeviceById)
+router.get('/devices/:id', actions.devices.id.get)
+router.delete('/devices/:id', actions.devices.id.delete)
+
+router.get('/devices/:id/sensors', actions.devices.id.sensors.get)
+
+router.post('/devices/:id/settings', actions.devices.id.settings.post)
 
 // -- exports
 

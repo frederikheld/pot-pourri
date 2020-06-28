@@ -9,17 +9,45 @@ const fs = require('fs')
 const actions = {}
 
 actions.devices = {
-  // GET
-  getAll: (req, res) => {
-    res.status(200).send(getDevices())
+  get: (req, res) => {
+    res.status(200).send(db.getAllDevices())
   },
-  getDeviceById: (req, res) => {
-    res.status(200).send(getDeviceById(req.params.id))
-  },
+  post: (req, res) => {
+    if (db.createDevice(req.body)) {
+      res.status(201).send()
+    } else {
+      res.status(409).send({ error: 'Device with same "id" exists already.' })
+    }
+  }
+}
 
-  // POST
-  create: (req, res) => {
-    createDevice(req.body)
+actions.devices.id = {
+  get: (req, res) => {
+    const device = db.getDeviceById(req.params.id)
+    if (device) {
+      res.status(200).send(device)
+    } else {
+      res.status(404).send({ error: 'Device with given "id" does not exist.' })
+    }
+  },
+  delete: (req, res) => {
+    if (db.deleteDeviceById(req.params.id)) {
+      res.status(204).send()
+    } else {
+      // tbd
+    }
+  }
+}
+
+actions.devices.id.sensors = {
+  get: (req, res) => {
+    res.status(200).send(db.getSensorsByDeviceId(req.params.id))
+  }
+}
+
+actions.devices.id.settings = {
+  post: (req, res) => {
+    db.setSettingsByDeviceId(req.params.id, req.body)
     res.status(201).send()
   }
 }
@@ -32,20 +60,56 @@ actions.devices = {
  * easy to replace.
  */
 
-const getDevices = function () {
+const db = {}
+
+db.getAllDevices = function () {
   return JSON.parse(fs.readFileSync('store/devices.json'))
 }
 
-const getDeviceById = function (id) {
-  const devices = getDevices()
-  // eslint-disable-next-line eqeqeq
-  return devices.find((x) => x.id == id)
-  // note: it is intentional that this is not === as the id can be int or string
+db.getDeviceById = function (deviceId) {
+  const devices = db.getAllDevices()
+  return devices.find((x) => x.id === deviceId)
 }
 
-const createDevice = function (object) {
-  const devices = getDevices()
+db.createDevice = function (object) {
+  const devices = db.getAllDevices()
+
+  if (devices.find((x) => x.id === object.id)) {
+    return false
+  }
+
   fs.writeFileSync('store/devices.json', JSON.stringify([...devices, object]))
+
+  return true
+}
+
+db.deleteDeviceById = function (deviceId) {
+  const devices = db.getAllDevices()
+
+  const devicesNew = devices.filter((x) => {
+    return x.id !== deviceId
+  })
+
+  fs.writeFileSync('store/devices.json', JSON.stringify(devicesNew))
+  return true
+}
+
+db.getSensorsByDeviceId = function (deviceId) {
+  const device = db.getDeviceById(deviceId)
+  return device.sensors ? device.sensors : []
+}
+
+db.setSettingsByDeviceId = function (deviceId, settingsObject) {
+  const devices = db.getAllDevices()
+
+  const devicesNew = devices.filter((x) => {
+    if (x.id === deviceId) {
+      x.settings = settingsObject
+    }
+    return x
+  })
+
+  fs.writeFileSync('store/devices.json', JSON.stringify(devicesNew))
 }
 
 // -- exports

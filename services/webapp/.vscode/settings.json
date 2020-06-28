@@ -1,0 +1,16 @@
+{
+    "editor.renderControlCharacters": true,
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "vetur.format.enable": false,
+  
+    // Dirk Baeumer's "ESLint" extension:
+    "eslint.format.enable": true,
+    "eslint.workingDirectories": ["./"],
+    "eslint.validate": [
+      "javascript"
+    ]
+  
+  }

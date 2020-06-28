@@ -1,24 +1,30 @@
 <template>
-  <v-container>
-    <h1>Plants</h1>
-    <v-expansion-panels>
-      <v-expansion-panel
-        v-for="(plant, plant_id) in plants"
-        :key="plant_id"
-      >
-        <v-expansion-panel-header>
-          <span>{{ plant.deviceId }}</span>
-          <span><PlantStatusCompact :plant="plant" /></span>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <PlantCard
-            class="plant_card"
-            :plant="plant"
-          />
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
-  </v-container>
+  <div>
+    <AppBar
+      title="Plants"
+    />
+
+    <v-container>
+      <h1>Plants</h1>
+      <v-expansion-panels>
+        <v-expansion-panel
+          v-for="(plant, plant_id) in plants"
+          :key="plant_id"
+        >
+          <v-expansion-panel-header>
+            <span>{{ plant.deviceId }}</span>
+            <span><PlantStatusCompact :plant="plant" /></span>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <PlantCard
+              class="plant_card"
+              :plant="plant"
+            />
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </v-container>
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -27,6 +33,7 @@
 }
 </style>
 <script>
+import AppBar from '@/components/AppBar.vue'
 import PlantCard from '@/components/PlantCard.vue'
 import PlantStatusCompact from '@/components/PlantStatusCompact.vue'
 
@@ -37,7 +44,7 @@ global.Paho = {
 
 export default {
   name: 'Plants',
-  components: { PlantCard, PlantStatusCompact },
+  components: { AppBar, PlantCard, PlantStatusCompact },
   data () {
     return {
       plants: {},
