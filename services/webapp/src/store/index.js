@@ -30,6 +30,12 @@ export default new Vuex.Store({
   getters: {
     appSettings: function (state) {
       return state.appSettings
+    },
+    mqttServerAddress: function (state) {
+      return state.appSettings.network.mqtt.protocol + '://' + state.appSettings.network.mqtt.address + ':' + state.appSettings.network.mqtt.port
+    },
+    metastoreServerAddress: function (state) {
+      return state.appSettings.network.metastore.protocol + '://' + state.appSettings.network.metastore.address + ':' + state.appSettings.network.metastore.port
     }
   },
   mutations: {

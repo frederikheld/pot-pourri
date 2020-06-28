@@ -5,10 +5,13 @@
       back="/devices"
     >
       <ContextMenuDevice
-        :action-edit="actionEditDevice"
         :action-remove="actionRemoveDevice"
         justify="right"
       />
+      <!--
+        add to ContextMenuDevice as soon as implemented:
+        :action-edit="actionEditDevice"
+      //-->
     </AppBar>
     <v-container>
       <div v-if="!fetchingDevice">
@@ -30,7 +33,7 @@
               <v-spacer />
 
               <v-btn
-                color="secondary darken-1"
+                color="secondary"
                 text
                 @click="removeDialogIsOpen = false"
               >
@@ -38,7 +41,7 @@
               </v-btn>
 
               <v-btn
-                color="primary darken-1"
+                color="error"
                 text
                 :loading="removingDevice"
                 @click="removeDeviceConfirmed()"
@@ -144,6 +147,8 @@ import ContextMenuDevice from '@/components/ContextMenuDevice.vue'
 import DeviceSensorsList from '@/components/DeviceSensorsList.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Device',
   components: { AppBar, DeviceSensorsList, ContextMenuDevice, LoadingIndicator },
@@ -160,6 +165,11 @@ export default {
       },
       formIsValid: false
     }
+  },
+  computed: {
+    ...mapGetters([
+      'metastoreServerAddress'
+    ])
   },
   async beforeMount () {
     this.fetchingDevice = true
@@ -196,7 +206,7 @@ export default {
     async actionSaveSettings () {
       this.savingSettings = true
 
-      const url = 'http://localhost:3003/api/devices/' + this.$route.params.id + '/settings'
+      const url = this.metastoreServerAddress + '/api/devices/' + this.$route.params.id + '/settings'
 
       const postBody = {
         name: this.name
@@ -230,7 +240,7 @@ export default {
     async removeDeviceConfirmed () {
       this.removingDevice = true
 
-      const url = 'http://localhost:3003/api/devices/' + this.$route.params.id
+      const url = this.metastoreServerAddress + '/api/devices/' + this.$route.params.id
 
       const options = {
         method: 'DELETE',
@@ -250,7 +260,7 @@ export default {
       this.removingDevice = false
     },
     async fetchDevice () {
-      const url = 'http://localhost:3003/api/devices/' + this.$route.params.id
+      const url = this.metastoreServerAddress + '/api/devices/' + this.$route.params.id
 
       const options = {
         method: 'GET',

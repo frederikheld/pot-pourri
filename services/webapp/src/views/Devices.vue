@@ -29,6 +29,8 @@ import AppBar from '@/components/AppBar.vue'
 import DevicesList from '@/components/DevicesList.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Devices',
   components: { AppBar, DevicesList, LoadingIndicator },
@@ -38,13 +40,18 @@ export default {
       fetchingDevices: true
     }
   },
+  computed: {
+    ...mapGetters([
+      'metastoreServerAddress'
+    ])
+  },
   beforeMount () {
     this.fetchingDevices = true
     this.fetchDevices()
   },
   methods: {
     async fetchDevices  () {
-      const url = 'http://localhost:3003/api/devices'
+      const url = this.metastoreServerAddress + '/api/devices'
 
       const options = {
         method: 'GET',
