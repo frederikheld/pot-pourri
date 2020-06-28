@@ -110,7 +110,6 @@
                   <v-row>
                     <v-col class="text-right">
                       <v-btn
-
                         right
                         color="primary"
                         :loading="savingSettings"
