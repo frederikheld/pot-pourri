@@ -31,56 +31,42 @@
 .v-expansion-panel-header__icon {
   display: none !important;
 }
+
+#btn-add-plant {
+  margin-bottom: 55px;
+}
 </style>
 <script>
 import AppBar from '@/components/AppBar.vue'
 import PlantCard from '@/components/PlantCard.vue'
 import PlantStatusCompact from '@/components/PlantStatusCompact.vue'
 
-import Paho from '../assets/paho-mqtt-min.js'
-global.Paho = {
-  MQTT: Paho
-}
-
 export default {
   name: 'Plants',
   components: { AppBar, PlantCard, PlantStatusCompact },
   data () {
     return {
-      plants: {},
-      mqttClient: undefined
+      plants: { }
     }
   },
-  mounted () {
-    this.mqttInit()
-    this.mqttConnect()
+  computed: {
+    mqttLastMessage: function () {
+      return this.$store.state.mqtt.lastMessage
+    }
+  },
+  watch: {
+    mqttLastMessage: function (newMessage, oldMessage) {
+      if (newMessage !== undefined) {
+        this.updatePlants(newMessage)
+        return newMessage
+      } else if (oldMessage !== undefined) {
+        return oldMessage
+      }
+
+      return undefined
+    }
   },
   methods: {
-    mqttInit () {
-      this.mqttClient = new Paho.Client(
-        '192.168.0.105',
-        Number(1884),
-        'PotPourriWebApp'
-      )
-      this.mqttClient.onConnectionLost = this.onConnectionLost
-      this.mqttClient.onMessageArrived = this.onMessageArrived
-    },
-    mqttConnect () {
-      this.mqttClient.connect({ onSuccess: this.onConnect })
-    },
-    onConnect () {
-      // console.log('connected')
-      this.mqttClient.subscribe('devices/+/sensors/+', {
-        qos: 2
-      })
-    },
-    onConnectionLost (response) {
-      // console.log(response.errorCode + ' | ' + response.errorMessage)
-      this.mqttClient.connect({ onSuccess: this.onConnect })
-    },
-    onMessageArrived (message) {
-      this.updatePlants(message)
-    },
     updatePlants (message) {
       // extract device id:
       const deviceId = message.topic.match(/devices\/(.*)\/sensors\/.*/)[1]

@@ -25,6 +25,14 @@ export default new Vuex.Store({
           port: 3003
         }
       }
+    },
+    mqtt: {
+      client: undefined,
+      lastMessage: undefined
+    },
+    lab: {
+      count: 0,
+      countDirect: 0
     }
   },
   getters: {
@@ -36,11 +44,20 @@ export default new Vuex.Store({
     },
     metastoreServerAddress: function (state) {
       return state.appSettings.network.metastore.protocol + '://' + state.appSettings.network.metastore.address + ':' + state.appSettings.network.metastore.port
+    },
+    count (state) {
+      return state.lab.count
     }
   },
   mutations: {
     SAVE_APP_SETTINGS (state, newAppSettingsObject) {
       state.appSettings = newAppSettingsObject
+    },
+    INCREMENT_COUNTER (state) {
+      state.lab.count++
+    },
+    DECREMENT_COUNTER (state) {
+      state.lab.count--
     }
   },
   actions: {
