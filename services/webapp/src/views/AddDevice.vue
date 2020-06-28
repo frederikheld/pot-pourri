@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'AddDevice',
@@ -52,6 +53,11 @@ export default {
       name: undefined
     }
   },
+  computed: {
+    ...mapGetters([
+      'metastoreServerAddress'
+    ])
+  },
   methods: {
     onSubmit () {
       this.savingDevice = true
@@ -61,7 +67,7 @@ export default {
       this.$router.replace('/devices')
     },
     async addDevice (device) {
-      const url = 'http://localhost:3003/api/devices'
+      const url = this.metastoreServerAddress + '/api/devices'
 
       const options = {
         method: 'POST',

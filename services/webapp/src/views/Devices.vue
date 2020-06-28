@@ -11,21 +11,15 @@
       </v-btn>
     </AppBar>
     <v-container>
-      <DevicesList />
+      <DevicesList
+        v-if="!fetchingDevices"
+        :devices="devices"
+      />
 
-      <!-- <v-btn
-        dark
-        fab
-        bottom
-        right
-        fixed
-        color="primary"
-        style="z-index: 5; margin-bottom: 54px;"
-        to="/devices/add"
-        title="Add Device"
-      >
-        <v-icon>mdi-plus</v-icon>
-      </v-btn> -->
+      <LoadingIndicator
+        v-if="fetchingDevices"
+        type="page"
+      />
     </v-container>
   </div>
 </template>
@@ -33,9 +27,46 @@
 <script>
 import AppBar from '@/components/AppBar.vue'
 import DevicesList from '@/components/DevicesList.vue'
+import LoadingIndicator from '@/components/LoadingIndicator.vue'
+
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Devices',
-  components: { AppBar, DevicesList }
+  components: { AppBar, DevicesList, LoadingIndicator },
+  data () {
+    return {
+      devices: [],
+      fetchingDevices: true
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'metastoreServerAddress'
+    ])
+  },
+  beforeMount () {
+    this.fetchingDevices = true
+    this.fetchDevices()
+  },
+  methods: {
+    async fetchDevices  () {
+      const url = this.metastoreServerAddress + '/api/devices'
+
+      const options = {
+        method: 'GET',
+        accept: 'application/json'
+      }
+
+      try {
+        const res = await fetch(url, options)
+        const devices = await res.json()
+        this.fetchingDevices = false
+        this.devices = devices
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  }
 }
 </script>
