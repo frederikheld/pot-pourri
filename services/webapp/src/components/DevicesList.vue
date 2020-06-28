@@ -11,6 +11,10 @@
           :key="device.id"
           :to="'/devices/' + device.id"
         >
+          <v-list-item-icon>
+            <v-icon>mdi-radio-tower</v-icon>
+          </v-list-item-icon>
+
           <v-list-item-content>
             <v-list-item-title>{{ device.name }}</v-list-item-title>
             <v-list-item-subtitle>{{ device.id }}</v-list-item-subtitle>
