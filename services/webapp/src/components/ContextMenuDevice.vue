@@ -13,10 +13,16 @@
       </v-btn>
     </template>
     <v-list>
-      <v-list-item @click="onClickEdit">
+      <v-list-item
+        v-if="$props.actionEdit"
+        @click="onClickEdit"
+      >
         Edit Device
       </v-list-item>
-      <v-list-item @click="onClickRemove">
+      <v-list-item
+        v-if="$props.actionRemove"
+        @click="onClickRemove"
+      >
         Remove Device
       </v-list-item>
     </v-list>
@@ -29,11 +35,13 @@ export default {
   props: {
     actionEdit: {
       type: Function,
-      required: true
+      required: false,
+      default: null
     },
     actionRemove: {
       type: Function,
-      required: true
+      required: false,
+      default: null
     },
     justify: {
       type: String,
