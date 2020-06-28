@@ -32,7 +32,7 @@
       <router-view />
     </v-main>
 
-    <MQTTClient />
+    <!-- <MQTTClient /> -->
   </v-app>
 </template>
 
@@ -46,10 +46,11 @@
 
 <script>
 import NavDrawer from '@/components/NavDrawer.vue'
-import MQTTClient from '@/components/services/MQTTClient.vue'
+// import MQTTClient from '@/components/services/MQTTClient.vue'
 
 export default {
-  components: { NavDrawer, MQTTClient },
+  // components: { NavDrawer, MQTTClient },
+  components: { NavDrawer },
   data: () => ({ })
 
 }
