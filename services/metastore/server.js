@@ -19,13 +19,8 @@ const fs = require('fs')
 // -- server
 
 const server = app.listen(3003, () => {
-  const port = server.address().port
-  console.log('Metastore server is listening on port %s', port)
+  console.log('Metastore server is listening on port %s', 3003)
 })
-
-server.options = {
-  responseDelay: 0
-}
 
 // -- database
 
@@ -40,6 +35,10 @@ server.initDB = function (contents = JSON.stringify({})) {
 }
 
 // -- options
+
+server.options = {
+  responseDelay: 0
+}
 
 server.initOptions = function (options) {
   server.options = Object.assign({}, server.options, options)

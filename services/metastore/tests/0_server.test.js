@@ -24,11 +24,11 @@ const apiBasePath = '/api'
 
 describe('server.initOptions(options)', function () {
   this.slow(2000)
+  // this.timeout(10000)
   it('should slow down responses by the time in ms that is passed in "options.responseDelay"', async () => {
     mockFs({})
 
     // without artificial delay:
-
     server.initOptions()
 
     const startTime1 = process.hrtime.bigint()
@@ -43,7 +43,6 @@ describe('server.initOptions(options)', function () {
     Number(endTime1 - startTime1).should.be.lessThan(100 * 1000 * 1000) // < 200 ms
 
     // with artificial delay:
-
     server.initOptions({
       responseDelay: 500
     })
