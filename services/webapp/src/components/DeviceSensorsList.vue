@@ -8,6 +8,11 @@
           v-for="sensor in $props.device.sensors"
           :key="sensor.id"
         >
+          <v-list-item-icon>
+            <v-icon>
+              {{ iconMap[sensor.type] ? iconMap[sensor.type] : iconMap.default }}
+            </v-icon>
+          </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title>{{ sensor.type }}</v-list-item-title>
             <v-list-item-subtitle>{{ sensor.id }}</v-list-item-subtitle>
@@ -30,6 +35,18 @@ export default {
     device: {
       type: Object,
       required: true
+    }
+  },
+  data () {
+    return {
+      iconMap: {
+        default: 'mdi-gauge',
+        humidity: 'mdi-water',
+        light: 'mdi-weather-sunny',
+        rain: 'mdi-weather-pouring',
+        'ph-value': 'mdi-image-filter-hdr',
+        temperature: 'mdi-thermometer'
+      }
     }
   }
 }
