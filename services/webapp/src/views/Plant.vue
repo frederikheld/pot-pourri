@@ -99,13 +99,7 @@ export default {
       fetchingPlant: false,
       removingPlant: false,
       removeDialogIsOpen: false,
-      savingSettings: false,
-      plant: {},
-      tabs: null,
-      form: {
-        inputMeasuringInterval: null
-      },
-      formIsValid: false
+      plant: {}
     }
   },
   computed: {
@@ -120,59 +114,6 @@ export default {
     this.initializeForm()
   },
   methods: {
-    validateForm () {
-      this.formIsValid = this.validateInputMeasuringInterval()
-    },
-    validateInputMeasuringInterval (value) {
-      if (value === '<plant default>') {
-        return true
-      }
-
-      const [hours, minutes, seconds] = value.split(':')
-      if (
-        hours >= 0 &&
-        minutes >= 0 && minutes < 60 &&
-        seconds >= 0 && seconds < 60
-      ) {
-        return true
-      }
-      return false
-    },
-    initializeForm () {
-      this.form.inputMeasuringInterval = this.plant.settings && this.plant.settings.measuringInterval ? new Date(this.plant.settings.measuringInterval * 1000).toISOString().substr(11, 8) : '<plant default>'
-    },
-    hmsToSeconds (hmsTimeString) {
-      const [hours, minutes, seconds] = hmsTimeString.split(':')
-      return (+hours) * 60 * 60 + (+minutes) * 60 + (+seconds)
-    },
-    async actionSaveSettings () {
-      this.savingSettings = true
-
-      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/settings'
-
-      const postBody = {
-        name: this.name
-      }
-      if (this.form.inputMeasuringInterval !== '<plant default>') {
-        postBody.measuringInterval = this.hmsToSeconds(this.form.inputMeasuringInterval)
-      }
-
-      const options = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(postBody)
-      }
-
-      try {
-        await fetch(url, options)
-      } catch (err) {
-        console.log(err)
-      }
-
-      this.savingSettings = false
-    },
     actionEditPlant () {
       console.log('Edit plant')
     },
