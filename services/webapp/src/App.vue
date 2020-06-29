@@ -14,7 +14,7 @@
     >
       <v-btn to="/plants">
         <span>Plants</span>
-        <v-icon>mdi-flower</v-icon>
+        <v-icon>mdi-sprout</v-icon>
       </v-btn>
 
       <v-btn to="/house">

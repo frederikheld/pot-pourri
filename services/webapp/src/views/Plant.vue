@@ -1,20 +1,20 @@
 <template>
   <div>
     <AppBar
-      title="Device"
-      back="/devices"
+      title="Plant"
+      back="/plants"
     >
-      <ContextMenuDevice
-        :action-remove="actionRemoveDevice"
+      <ContextMenuPlant
+        :action-remove="actionRemovePlant"
         justify="right"
       />
       <!--
-        add to ContextMenuDevice as soon as implemented:
-        :action-edit="actionEditDevice"
+        add to ContextMenuPlant as soon as implemented:
+        :action-edit="actionEditPlant"
       //-->
     </AppBar>
     <v-container>
-      <div v-if="!fetchingDevice">
+      <div v-if="!fetchingPlant">
         <v-dialog
           v-model="removeDialogIsOpen"
           width="24rem"
@@ -22,7 +22,7 @@
         >
           <v-card>
             <v-card-title class="headline">
-              Remove Device {{ device.name }}?
+              Remove Plant {{ plant.name }}?
             </v-card-title>
 
             <v-card-text>
@@ -43,8 +43,8 @@
               <v-btn
                 color="error"
                 text
-                :loading="removingDevice"
-                @click="removeDeviceConfirmed()"
+                :loading="removingPlant"
+                @click="removePlantConfirmed()"
               >
                 Yes
               </v-btn>
@@ -54,7 +54,7 @@
         <v-row>
           <v-col>
             <v-img
-              src="https://images.pexels.com/photos/159220/printed-circuit-board-print-plate-via-macro-159220.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
+              src="https://images.pexels.com/photos/4505146/pexels-photo-4505146.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
               aspect-ratio="2"
               max-height="12rem"
             >
@@ -64,70 +64,16 @@
               >
                 <v-col style="background-color: rgba(0,0,0,0.5);">
                   <div class="subtitle-1">
-                    Foo
+                    {{ plant.name }}
                   </div>
                 </v-col>
               </v-row>
             </v-img>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col>
-            <v-tabs>
-              <v-tab>Sensors</v-tab>
-              <v-tab>Actors</v-tab>
-              <v-tab>Settings</v-tab>
-
-              <v-tab-item>
-                <DeviceSensorsList
-                  :device="device"
-                />
-              </v-tab-item>
-              <v-tab-item>
-                <v-row>
-                  <v-col>
-                    // todo
-                  </v-col>
-                </v-row>
-              </v-tab-item>
-              <v-tab-item>
-                <v-form
-                  v-model="formIsValid"
-                >
-                  <v-row>
-                    <v-col>
-                      <v-text-field
-                        v-model="form.inputMeasuringInterval"
-                        label="Measuring interval (HH:MM:SS)"
-                        append-icon="mdi-close"
-                        :rules="[v => validateInputMeasuringInterval(v) || 'Time format HH:MM:SS required!']"
-                        @click:append="form.inputMeasuringInterval = '<device default>'"
-                      >
-                        />
-                      </v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col class="text-right">
-                      <v-btn
-                        right
-                        color="primary"
-                        :loading="savingSettings"
-                        :disabled="!formIsValid"
-                        @click="actionSaveSettings()"
-                      >
-                        Save
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                </v-form>
-              </v-tab-item>
-            </v-tabs>
-          </v-col>
-        </v-row>
       </div>
       <LoadingIndicator
-        v-if="fetchingDevice"
+        v-if="fetchingPlant"
         type="page"
       />
     </v-container>
@@ -140,22 +86,21 @@
 
 <script>
 import AppBar from '@/components/AppBar.vue'
-import ContextMenuDevice from '@/components/ContextMenuDevice.vue'
-import DeviceSensorsList from '@/components/DeviceSensorsList.vue'
+import ContextMenuPlant from '@/components/ContextMenuPlant.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'Device',
-  components: { AppBar, DeviceSensorsList, ContextMenuDevice, LoadingIndicator },
+  name: 'Plant',
+  components: { AppBar, ContextMenuPlant, LoadingIndicator },
   data () {
     return {
-      fetchingDevice: false,
-      removingDevice: false,
+      fetchingPlant: false,
+      removingPlant: false,
       removeDialogIsOpen: false,
       savingSettings: false,
-      device: {},
+      plant: {},
       tabs: null,
       form: {
         inputMeasuringInterval: null
@@ -169,8 +114,8 @@ export default {
     ])
   },
   async beforeMount () {
-    this.fetchingDevice = true
-    await this.fetchDevice()
+    this.fetchingPlant = true
+    await this.fetchPlant()
 
     this.initializeForm()
   },
@@ -179,7 +124,7 @@ export default {
       this.formIsValid = this.validateInputMeasuringInterval()
     },
     validateInputMeasuringInterval (value) {
-      if (value === '<device default>') {
+      if (value === '<plant default>') {
         return true
       }
 
@@ -194,7 +139,7 @@ export default {
       return false
     },
     initializeForm () {
-      this.form.inputMeasuringInterval = this.device.settings && this.device.settings.measuringInterval ? new Date(this.device.settings.measuringInterval * 1000).toISOString().substr(11, 8) : '<device default>'
+      this.form.inputMeasuringInterval = this.plant.settings && this.plant.settings.measuringInterval ? new Date(this.plant.settings.measuringInterval * 1000).toISOString().substr(11, 8) : '<plant default>'
     },
     hmsToSeconds (hmsTimeString) {
       const [hours, minutes, seconds] = hmsTimeString.split(':')
@@ -203,12 +148,12 @@ export default {
     async actionSaveSettings () {
       this.savingSettings = true
 
-      const url = this.metastoreServerAddress + '/api/devices/' + this.$route.params.id + '/settings'
+      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/settings'
 
       const postBody = {
         name: this.name
       }
-      if (this.form.inputMeasuringInterval !== '<device default>') {
+      if (this.form.inputMeasuringInterval !== '<plant default>') {
         postBody.measuringInterval = this.hmsToSeconds(this.form.inputMeasuringInterval)
       }
 
@@ -228,16 +173,16 @@ export default {
 
       this.savingSettings = false
     },
-    actionEditDevice () {
-      console.log('Edit device')
+    actionEditPlant () {
+      console.log('Edit plant')
     },
-    actionRemoveDevice () {
+    actionRemovePlant () {
       this.removeDialogIsOpen = true
     },
-    async removeDeviceConfirmed () {
-      this.removingDevice = true
+    async removePlantConfirmed () {
+      this.removingPlant = true
 
-      const url = this.metastoreServerAddress + '/api/devices/' + this.$route.params.id
+      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
 
       const options = {
         method: 'DELETE',
@@ -249,15 +194,15 @@ export default {
 
         this.removeDialogIsOpen = false
 
-        this.$router.replace('/devices')
+        this.$router.replace('/plants')
       } catch (err) {
         console.log(err)
       }
 
-      this.removingDevice = false
+      this.removingPlant = false
     },
-    async fetchDevice () {
-      const url = this.metastoreServerAddress + '/api/devices/' + this.$route.params.id
+    async fetchPlant () {
+      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
 
       const options = {
         method: 'GET',
@@ -266,9 +211,9 @@ export default {
 
       try {
         const res = await fetch(url, options)
-        const device = await res.json()
-        this.fetchingDevice = false
-        this.device = device
+        const plant = await res.json()
+        this.fetchingPlant = false
+        this.plant = plant
       } catch (err) {
         console.log(err)
       }

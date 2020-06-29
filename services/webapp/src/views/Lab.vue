@@ -166,8 +166,8 @@
 
 <script>
 import AppBar from '@/components/AppBar.vue'
-import ChartTest from '@/components/ChartTest.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
+import ChartTest from '@/components/lab/ChartTest.vue'
 import Counter from '@/components/lab/Counter.vue'
 import CounterDirect from '@/components/lab/CounterDirect.vue'
 import LastMQTTMessage from '@/components/lab/LastMQTTMessage.vue'

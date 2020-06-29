@@ -2,17 +2,33 @@
   <div>
     <AppBar
       title="Plants"
-    />
+    >
+      <v-btn
+        icon
+        to="/plants/add"
+      >
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+    </AppBar>
 
     <v-container>
-      <h1>Plants</h1>
-      <v-expansion-panels>
+      <PlantsList
+        v-if="!fetchingPlants"
+        :plants="plants"
+      />
+
+      <LoadingIndicator
+        v-if="fetchingPlants"
+        type="page"
+      />
+
+      <!-- <v-expansion-panels>
         <v-expansion-panel
           v-for="(plant, plant_id) in plants"
           :key="plant_id"
         >
           <v-expansion-panel-header>
-            <span>{{ plant.deviceId }}</span>
+            <span>{{ plant.plantId }}</span>
             <span><PlantStatusCompact :plant="plant" /></span>
           </v-expansion-panel-header>
           <v-expansion-panel-content>
@@ -22,67 +38,101 @@
             />
           </v-expansion-panel-content>
         </v-expansion-panel>
-      </v-expansion-panels>
+      </v-expansion-panels> -->
     </v-container>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.v-expansion-panel-header__icon {
-  display: none !important;
-}
+// .v-expansion-panel-header__icon {
+//   display: none !important;
+// }
 
-#btn-add-plant {
-  margin-bottom: 55px;
-}
+// #btn-add-plant {
+//   margin-bottom: 55px;
+// }
 </style>
 <script>
 import AppBar from '@/components/AppBar.vue'
-import PlantCard from '@/components/PlantCard.vue'
-import PlantStatusCompact from '@/components/PlantStatusCompact.vue'
+import PlantsList from '@/components/PlantsList.vue'
+import LoadingIndicator from '@/components/LoadingIndicator.vue'
+// import PlantCard from '@/components/PlantCard.vue'
+// import PlantStatusCompact from '@/components/PlantStatusCompact.vue'
+
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Plants',
-  components: { AppBar, PlantCard, PlantStatusCompact },
+  // components: { AppBar, PlantCard, PlantStatusCompact },
+  components: { AppBar, PlantsList, LoadingIndicator },
   data () {
     return {
-      plants: { }
+      plants: [],
+      fetchingPlants: false
     }
   },
   computed: {
-    mqttLastMessage: function () {
-      return this.$store.state.mqtt.lastMessage
-    }
+    ...mapGetters([
+      'metastoreServerAddress'
+    ])
   },
-  watch: {
-    mqttLastMessage: function (newMessage, oldMessage) {
-      if (newMessage !== undefined) {
-        this.updatePlants(newMessage)
-        return newMessage
-      } else if (oldMessage !== undefined) {
-        return oldMessage
-      }
+  // computed: {
+  //   mqttLastMessage: function () {
+  //     return this.$store.state.mqtt.lastMessage
+  //   }
+  // },
+  // watch: {
+  //   mqttLastMessage: function (newMessage, oldMessage) {
+  //     if (newMessage !== undefined) {
+  //       this.updatePlants(newMessage)
+  //       return newMessage
+  //     } else if (oldMessage !== undefined) {
+  //       return oldMessage
+  //     }
 
-      return undefined
-    }
+  //     return undefined
+  //   }
+  // },
+  // methods: {
+  //   updatePlants (message) {
+  //     // extract plant id:
+  //     const plantId = message.topic.match(/plants\/(.*)\/sensors\/.*/)[1]
+
+  //     // compile data object:
+  //     const newPlants = this.plants
+  //     newPlants[plantId] = {
+  //       plantId: plantId,
+  //       humidity: {
+  //         value: ((1024 - parseInt(message.payloadString)) / 1024) * 100,
+  //         upperHealthyLimit: 70,
+  //         lowerHealthyLimit: 30
+  //       }
+  //     }
+
+  //     this.plants = Object.assign({}, newPlants)
+  //   }
+  // }
+  beforeMount () {
+    this.fetchingPlants = true
+    this.fetchPlants()
   },
   methods: {
-    updatePlants (message) {
-      // extract device id:
-      const deviceId = message.topic.match(/devices\/(.*)\/sensors\/.*/)[1]
+    async fetchPlants  () {
+      const url = this.metastoreServerAddress + '/api/plants'
 
-      // compile data object:
-      const newPlants = this.plants
-      newPlants[deviceId] = {
-        deviceId: deviceId,
-        humidity: {
-          value: ((1024 - parseInt(message.payloadString)) / 1024) * 100,
-          upperHealthyLimit: 70,
-          lowerHealthyLimit: 30
-        }
+      const options = {
+        method: 'GET',
+        accept: 'application/json'
       }
 
-      this.plants = Object.assign({}, newPlants)
+      try {
+        const res = await fetch(url, options)
+        const plants = await res.json()
+        this.fetchingPlants = false
+        this.plants = plants
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 }

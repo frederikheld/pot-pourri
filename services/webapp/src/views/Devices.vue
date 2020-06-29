@@ -10,6 +10,7 @@
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </AppBar>
+
     <v-container>
       <DevicesList
         v-if="!fetchingDevices"
