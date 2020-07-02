@@ -6,6 +6,7 @@
     >
       <ContextMenuPlant
         :action-remove="actionRemovePlant"
+        :action-edit="actionEditPlant"
         justify="right"
       />
       <!--
@@ -58,6 +59,49 @@
               aspect-ratio="2"
               max-height="12rem"
             >
+              <!-- <v-dialog
+                v-model="editPictureDialogIsOpen"
+                max-width="290"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    class="white--text px-0"
+                    style="position: absolute; top: 0.5rem; right: 0.5rem;"
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <v-icon>mdi-pencil</v-icon>
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title class="headline">
+                    Upload a new picture?
+                  </v-card-title>
+                  <v-card-text>
+                    La di dah
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn
+                      color="green darken-1"
+                      text
+                      @click="editPictureDialogIsOpen = false"
+                    >
+                      Cancel
+                    </v-btn>
+                    <v-btn
+                      color="green darken-1"
+                      text
+                      :loading="uploadingPicture"
+                      @click="uploadPictureConfirmed()"
+                    >
+                      Save
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog> -->
+
               <v-row
                 align="end"
                 class="pl-3 pr-3 white--text fill-height"
@@ -99,6 +143,8 @@ export default {
       fetchingPlant: false,
       removingPlant: false,
       removeDialogIsOpen: false,
+      editPictureDialogIsOpen: false,
+      uploadingPicture: false,
       plant: {}
     }
   },
@@ -111,11 +157,11 @@ export default {
     this.fetchingPlant = true
     await this.fetchPlant()
 
-    this.initializeForm()
+    // this.initializeForm()
   },
   methods: {
     actionEditPlant () {
-      console.log('Edit plant')
+      this.$router.push('/plants/' + this.$route.params.id + '/edit')
     },
     actionRemovePlant () {
       this.removeDialogIsOpen = true
