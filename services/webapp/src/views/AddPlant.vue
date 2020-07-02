@@ -12,9 +12,13 @@
         <v-col>
           <v-row>
             <v-text-field
+              ref="id"
               v-model="id"
               label="Unique ID of the plant"
+              :error-messages="form.errorMessages.id"
               autofocus
+              :rules="[value => !!value || 'ID is required']"
+              @focus="form.errorMessages.id=[]"
             />
           </v-row>
           <v-row>
@@ -60,7 +64,12 @@ export default {
     return {
       savingPlant: false,
       id: undefined,
-      name: undefined
+      name: undefined,
+      form: {
+        errorMessages: {
+          id: []
+        }
+      }
     }
   },
   computed: {
@@ -91,9 +100,15 @@ export default {
       }
 
       try {
-        await fetch(url, options)
+        const res = await fetch(url, options)
+        console.log(res)
+        if (res.status === 409) {
+          console.log('status 409')
+          this.form.errorMessages.id.push('Plant with same ID exist already!')
+        } else {
+          this.$router.replace('/plants/' + this.id)
+        }
         this.savingPlant = false
-        this.$router.replace('/plants/' + this.id)
       } catch (err) {
         console.log(err)
       }
