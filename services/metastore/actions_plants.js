@@ -30,6 +30,10 @@ actions.plants.id = {
       res.status(404).send({ error: 'Device with given "id" does not exist.' })
     }
   },
+  put: (req, res) => {
+    db.updatePlantById(req.params.id, req.body)
+    res.status(200).send()
+  },
   delete: (req, res) => {
     if (db.deletePlantById(req.params.id)) {
       res.status(204).send()
@@ -65,9 +69,24 @@ db.createPlant = function (object) {
     return false
   }
 
-  fs.writeFileSync('store/plants.json', JSON.stringify([...plants, object]))
+  db.writeToDatabase([...plants, object])
 
   return true
+}
+
+db.updatePlantById = function (plantId, object) {
+  const plants = db.getAllPlants()
+
+  // look for existing object with given plantId:
+  const arrayKey = plants.map(function (x) { return x.id }).indexOf(plantId)
+
+  if (arrayKey > -1) {
+    plants[arrayKey] = object
+  } else {
+    plants.push(object)
+  }
+
+  db.writeToDatabase(plants)
 }
 
 db.deletePlantById = function (plantId) {
@@ -77,8 +96,13 @@ db.deletePlantById = function (plantId) {
     return x.id !== plantId
   })
 
-  fs.writeFileSync('store/plants.json', JSON.stringify(plantsNew))
+  db.writeToDatabase(plantsNew)
+
   return true
+}
+
+db.writeToDatabase = function (object) {
+  fs.writeFileSync('store/plants.json', JSON.stringify(object))
 }
 
 // -- exports

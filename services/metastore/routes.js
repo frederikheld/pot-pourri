@@ -39,6 +39,7 @@ router.get('/plants', actions.plants.get)
 router.post('/plants', actions.plants.post)
 
 router.get('/plants/:id', actions.plants.id.get)
+router.put('/plants/:id', actions.plants.id.put)
 router.delete('/plants/:id', actions.plants.id.delete)
 
 // -- EXPORTS

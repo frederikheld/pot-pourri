@@ -17,6 +17,7 @@ chai.use(chaiHttp)
 chai.use(chaiFs)
 
 const server = require('../server')
+const { plants } = require('../actions_plants')
 
 const apiBasePath = '/api'
 
@@ -91,8 +92,8 @@ describe('/plants/:id', () => {
     mockFs({
       store: {
         'plants.json': JSON.stringify([
-          { id: '0' },
-          { id: '1' },
+          { id: '0', name: 'item one' },
+          { id: '1', name: 'item' },
           { id: 'green' }
         ])
       }
@@ -106,7 +107,7 @@ describe('/plants/:id', () => {
   })
 
   describe('GET', () => {
-    it('should return the json object of the plant with the given id', async () => {
+    it('should return the json object of the plant with the given :id', async () => {
       const res1 = await chai.request(server)
         .get(apiBasePath + '/plants/1')
 
@@ -122,12 +123,49 @@ describe('/plants/:id', () => {
       res2.body.id.should.eql('green')
     })
 
-    it('should return 404 with an error message if the plant with the given id doesn\'t exist', async () => {
+    it('should return 404 with an error message if the plant with the given :id doesn\'t exist', async () => {
       const res = await chai.request(server)
         .get(apiBasePath + '/plants/bielefeld')
 
       res.should.have.status(404)
       res.body.error.should.eql('Device with given "id" does not exist.')
+    })
+  })
+
+  describe('PUT', () => {
+    it('should replace object in the database with the object passed in the body an return 200, if an object with the given :id exists', async () => {
+      const res = await chai.request(server)
+        .put(apiBasePath + '/plants/1')
+        .type('json')
+        .send({ id: '42', name: 'something else' })
+
+      res.should.have.status(200)
+
+      const plants = JSON.parse(fs.readFileSync('store/plants.json'))
+
+      plants.should.eql([
+        { id: '0', name: 'item one' },
+        { id: '42', name: 'something else' },
+        { id: 'green' }
+      ])
+    })
+
+    it('should append the object to the database if no object with the given :id exists', async () => {
+      const res = await chai.request(server)
+        .put(apiBasePath + '/plants/15')
+        .type('json')
+        .send({ id: '42', name: 'something else' })
+
+      res.should.have.status(200)
+
+      const plants = JSON.parse(fs.readFileSync('store/plants.json'))
+
+      plants.should.eql([
+        { id: '0', name: 'item one' },
+        { id: '1', name: 'item' },
+        { id: 'green' },
+        { id: '42', name: 'something else' }
+      ])
     })
   })
 
@@ -141,7 +179,7 @@ describe('/plants/:id', () => {
       const plants = JSON.parse(fs.readFileSync('store/plants.json'))
 
       plants.should.eql([
-        { id: '0' },
+        { id: '0', name: 'item one' },
         { id: 'green' }
       ])
     })
