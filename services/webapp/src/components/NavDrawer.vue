@@ -1,22 +1,10 @@
 <template>
   <v-navigation-drawer
-    v-model="isOpen"
+    v-model="navDrawerIsOpen"
     app
+    @input="transitioned"
   >
     <v-list>
-      <v-subheader class="pa-3 ma-0">
-        <v-list-item-action>
-          <v-btn
-            icon
-            small
-            class="ma-0 pa-0 nav-drawer-icon-close"
-            @click.stop="isOpen = false"
-          >
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-list-item-action>
-      </v-subheader>
-
       <v-list-item
         link
         to="/lab"
@@ -76,19 +64,41 @@ export default {
   name: 'NavDrawer',
   data () {
     return {
-      isOpen: false
+      navDrawerIsOpen: null
     }
   },
   created () {
-    this.$eventBus.$on('openDavDrawer', this.openNavDrawer)
+    this.$eventBus.$on('openNavDrawer', this.openNavDrawer)
+    this.$eventBus.$on('closeNavDrawer', this.closeNavDrawer)
+    this.$eventBus.$on('toggleNavDrawer', this.toggleNavDrawer)
   },
   beforeDestroy () {
-    this.$eventBus.$off('openDavDrawer')
+    this.$eventBus.$off('openNavDrawer')
+    this.$eventBus.$off('closeNavDrawer')
+    this.$eventBus.$off('toggleNavDrawer')
   },
   methods: {
     openNavDrawer () {
-      console.log('NavDrawer received global event')
-      this.isOpen = true
+      this.navDrawerIsOpen = true
+      this.$eventBus.$emit('navDrawerWasOpened')
+    },
+    closeNavDrawer () {
+      this.navDrawerIsOpen = false
+      this.$eventBus.$emit('navDrawerWasClosed')
+    },
+    toggleNavDrawer () {
+      if (this.navDrawerIsOpen) {
+        this.closeNavDrawer()
+      } else {
+        this.openNavDrawer()
+      }
+    },
+    transitioned (event) {
+      if (event === true) {
+        this.openNavDrawer()
+      } else {
+        this.closeNavDrawer()
+      }
     }
   }
 }

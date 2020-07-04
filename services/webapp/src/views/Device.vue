@@ -58,9 +58,6 @@
               aspect-ratio="2"
               max-height="12rem"
             >
-              <!-- Dummy picture for plants
-              src="https://images.pexels.com/photos/4505146/pexels-photo-4505146.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" -->
-
               <v-row
                 align="end"
                 class="pl-3 pr-3 white--text fill-height"

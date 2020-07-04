@@ -24,13 +24,17 @@ const server = app.listen(3003, () => {
 
 // -- database
 
-server.initDB = function (contents = JSON.stringify({})) {
+server.initDB = function (contents = {}) {
   if (!fs.existsSync('./store')) {
     fs.mkdirSync('./store')
   }
 
   if (!fs.existsSync('./store/devices.json')) {
-    fs.writeFileSync('./store/devices.json', contents)
+    fs.writeFileSync('./store/devices.json', JSON.stringify(contents.devices ? contents.devices : []))
+  }
+
+  if (!fs.existsSync('./store/plants.json')) {
+    fs.writeFileSync('./store/plants.json', JSON.stringify(contents.plants ? contents.plants : []))
   }
 }
 

@@ -3,33 +3,38 @@ skinparam componentStyle uml2
 
 title Technical Architecture Design Diagram
 
-actor User
+actor Gardener
+actor :Data Scientist:
 
 package "pot-pourri" {
 
     package "mqtt-broker" #LightBlue {  
         [HiveMQ] as MQTTBroker
     }
-
-    package "event-engine" #LightGrey {
-        [Event Engine] #LightGrey
+    
+    package "visualization" {
+        [Grafana]
     }
 
     package "persistence" {
         [InfluxDB]
         [Telegraf]
     }
-    
-    package "visualization" {
-        [Grafana]
+
+    package "metastore" {
+        [Metastore]
     }
+
+    package "event-engine" #LightGrey {
+        [Event Engine] #LightGrey
+    }
+
+    ' package "datastore" {
+    '     [Datastore] #LightGrey
+    ' }
 
     package "webapp" {
         [Web App] #LightGrey
-    }
-
-    package "datastore" {
-        [Datastore] #LightGrey
     }
 }
 
@@ -40,20 +45,21 @@ package "pot-pourri-devices" {
     }
 }
 
-User --> [Grafana]
-
-[Grafana] --> [InfluxDB] : get data
+:Data Scientist: --> [Grafana]
+[Grafana] -[norank]-> [InfluxDB] : get data
 
 [Sensor] --> [Telegraf] #CornflowerBlue : send value
-[Sensor] --> [Datastore] #CornflowerBlue : send value
+' [Sensor] --> [Datastore] #CornflowerBlue : send value
 [Telegraf] --> [InfluxDB] : set data
 
-User --> [Web App]
-[Web App] --> [Datastore] : get/set meta data
+Gardener --> [Web App]
+[Web App] -> [Metastore] : get/set meta data
+[Web App] --> [Event Engine] : get/set events
 [Web App] --> [InfluxDB] : get data
 
-[Event Engine] --> [Datastore] : get data
-[Actuator] --> [Event Engine] #CornflowerBlue : request command
+[Event Engine] -> [InfluxDB] : get data
+[Event Engine] -> [Metastore] : get meta data
+[Actuator] -> [Event Engine] #CornflowerBlue : request command
 
 legend 
     - arrows are pointing from the calling element to the one that is being called

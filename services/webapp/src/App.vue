@@ -14,7 +14,7 @@
     >
       <v-btn to="/plants">
         <span>Plants</span>
-        <v-icon>mdi-flower</v-icon>
+        <v-icon>mdi-sprout</v-icon>
       </v-btn>
 
       <v-btn to="/house">
@@ -31,14 +31,12 @@
     <v-main class="fill-height">
       <router-view />
     </v-main>
+
+    <!-- <MQTTClient /> -->
   </v-app>
 </template>
 
 <style lang="scss">
-html {
-  overflow-y: auto;
-}
-
 // fixes bug with misplaced buttons in bottom-navigation
 // see: https://github.com/vuetifyjs/vuetify/issues/8067
 .v-item-group.v-bottom-navigation .v-btn.v-size--default {
@@ -48,9 +46,12 @@ html {
 
 <script>
 import NavDrawer from '@/components/NavDrawer.vue'
+// import MQTTClient from '@/components/services/MQTTClient.vue'
 
 export default {
+  // components: { NavDrawer, MQTTClient },
   components: { NavDrawer },
   data: () => ({ })
+
 }
 </script>

@@ -15,35 +15,47 @@ fs.rmdirSync('store', { recursive: true })
 // uncomment the above line if you want to keep
 // the database from the last debug run.
 
-server.initDB(JSON.stringify([
-  {
-    id: '0',
-    name: 'foo',
-    sensors: [
-      { id: '0', type: 'humidity' },
-      { id: '1', type: 'light' }
-    ],
-    settings: {
-      measuringInterval: 300 // 5 minutes
+server.initDB({
+  devices: [
+    {
+      id: '0',
+      name: 'foo',
+      sensors: [
+        { id: '0', type: 'humidity' },
+        { id: '1', type: 'light' }
+      ],
+      settings: {
+        measuringInterval: 300 // 5 minutes
+      }
+    },
+    {
+      id: '1',
+      name: 'bar',
+      sensors: [
+        { id: '0', type: 'humidity' },
+        { id: '1', type: 'temperature' }
+      ],
+      settings: {
+        measuringInterval: 3600 // 1 hour
+      }
+    },
+    {
+      id: '2',
+      name: 'baz'
     }
-  },
-  {
-    id: '1',
-    name: 'bar',
-    sensors: [
-      { id: '0', type: 'humidity' },
-      { id: '1', type: 'temperature' }
-    ],
-    settings: {
-      measuringInterval: 3600 // 1 hour
+  ],
+  plants: [
+    {
+      id: '0',
+      name: 'Erika'
+    },
+    {
+      id: 'someplant',
+      name: 'Basilikum'
     }
-  },
-  {
-    id: '2',
-    name: 'baz'
-  }
-]))
+  ]
+})
 
 server.initOptions({
-  responseDelay: 1000
+  responseDelay: 500
 })

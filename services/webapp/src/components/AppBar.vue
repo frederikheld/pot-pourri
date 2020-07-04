@@ -15,13 +15,34 @@
     </v-app-bar-nav-icon>
 
     <v-app-bar-nav-icon
-      v-if="$props.back == ''"
-      @click.stop="openNavDrawer()"
+      v-if="$props.back == '' && $vuetify.breakpoint.mobile"
+      @click.stop="toggleNavDrawer()"
     >
-      <v-icon>mdi-menu</v-icon>
+      <v-icon>
+        mdi-menu
+      </v-icon>
+
+      <!--
+        This is the option to toggle
+        between burger and x icon
+        for open and close menu:
+      <v-icon v-if="!navDrawerIsOpen">
+        mdi-menu
+      </v-icon>
+      <v-icon v-if="navDrawerIsOpen">
+        mdi-close
+      </v-icon>//-->
     </v-app-bar-nav-icon>
 
-    <v-toolbar-title>{{ title }}</v-toolbar-title>
+    <v-toolbar-title
+      v-if="$props.back == '' && !$vuetify.breakpoint.mobile"
+      style="margin-left: 56px;"
+    >
+      {{ title }}
+    </v-toolbar-title>
+    <v-toolbar-title v-else>
+      {{ title }}
+    </v-toolbar-title>
 
     <v-spacer />
 
@@ -43,13 +64,29 @@ export default {
       default: ''
     }
   },
+  data () {
+    return {
+      navDrawerIsOpen: null
+    }
+  },
+  created () {
+    this.$eventBus.$on('navDrawerWasOpened', () => {
+      this.navDrawerIsOpen = true
+    })
+    this.$eventBus.$on('navDrawerWasClosed', () => {
+      this.navDrawerIsOpen = false
+    })
+  },
+  beforeDestroy () {
+    this.$eventBus.$off('navDrawerWasOpened')
+    this.$eventBus.$off('navDrawerWasClosed')
+  },
   methods: {
     navigateBack () {
       this.$router.replace(this.$props.back)
     },
-    openNavDrawer () {
-      console.log('AppBar sends global event')
-      this.$eventBus.$emit('openDavDrawer')
+    toggleNavDrawer () {
+      this.$eventBus.$emit('toggleNavDrawer')
     }
   }
 }

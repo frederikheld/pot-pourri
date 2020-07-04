@@ -4,7 +4,11 @@
       title="About"
     />
     <v-container>
-      <h1>About</h1>
+      <v-row>
+        <v-col>
+          <p>...</p>
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>

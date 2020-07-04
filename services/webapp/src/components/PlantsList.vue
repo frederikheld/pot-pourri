@@ -3,28 +3,28 @@
     class="pa-0"
   >
     <v-list-item-group
-      v-if="devices.length > 0"
+      v-if="plants.length > 0"
     >
       <v-list>
         <v-list-item
-          v-for="device in devices"
-          :key="device.id"
-          :to="'/devices/' + device.id"
+          v-for="plant in plants"
+          :key="plant.id"
+          :to="'/plants/' + plant.id"
         >
           <v-list-item-icon>
-            <v-icon>mdi-router-wireless</v-icon>
+            <v-icon>mdi-sprout</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>{{ device.name }}</v-list-item-title>
-            <v-list-item-subtitle>{{ device.id }}</v-list-item-subtitle>
+            <v-list-item-title>{{ plant.name }}</v-list-item-title>
+            <v-list-item-subtitle>{{ plant.id }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-list-item-group>
 
     <v-row
-      v-if="devices.length <= 0"
+      v-if="plants.length <= 0"
       justify="center"
       class="mt-4"
     >
@@ -32,7 +32,7 @@
         class="text-center"
       >
         <p class="body-1">
-          You don't have any devices configured yet.
+          You don't have any plants added yet.
         </p>
         <p class="body-2">
           Tap the + button to create one!
@@ -50,7 +50,7 @@
 export default {
   name: 'DevicesList',
   props: {
-    devices: {
+    plants: {
       type: Array,
       required: false,
       default: () => { return [] }
