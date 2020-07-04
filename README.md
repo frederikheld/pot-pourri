@@ -64,6 +64,12 @@ It will:
 
 Right now it is capable of displaying the current humidity for each plant. All other features are not done yet and partly depend on planned features of _datastore_.
 
+### metastore
+
+Stores meta information like plant profiles, device settings and links between such entities.
+
+It is accessible by other services via a REST API.
+
 ### datastore
 
 > Note: This service is work in progress!
