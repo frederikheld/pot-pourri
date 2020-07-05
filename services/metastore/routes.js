@@ -18,7 +18,9 @@ const actions = {
 // -- root
 
 router.route('/').get((req, res) => {
-  res.status(200).send('Hello World! :-)')
+  res.status(200).send({
+    message: 'Hello World! :-)'
+  })
 })
 
 // -- devices
@@ -41,6 +43,8 @@ router.post('/plants', actions.plants.post)
 router.get('/plants/:id', actions.plants.id.get)
 router.put('/plants/:id', actions.plants.id.put)
 router.delete('/plants/:id', actions.plants.id.delete)
+
+router.get('/plants/:id/profile-picture', actions.plants.id.profilePicture.get)
 
 // -- EXPORTS
 

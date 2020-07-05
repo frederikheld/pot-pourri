@@ -51,6 +51,11 @@ server.initDB({
       profilePicture: 'plants-0-profilePicture.jpg'
     },
     {
+      id: '1',
+      name: 'Peter',
+      profilePicture: 'plants-1-profilePicture.jpg'
+    },
+    {
       id: 'someplant',
       name: 'Basilikum'
     }

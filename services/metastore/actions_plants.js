@@ -3,6 +3,7 @@
 // -- imports
 
 const fs = require('fs')
+const path = require('path')
 
 // -- actions
 
@@ -36,9 +37,29 @@ actions.plants.id = {
   },
   delete: (req, res) => {
     if (db.deletePlantById(req.params.id)) {
-      res.status(204).send()
+      res.status(204).end()
     } else {
       // tbd
+    }
+  }
+}
+
+actions.plants.id.profilePicture = {
+  get: (req, res) => {
+    const plant = db.getPlantById(req.params.id)
+
+    if (!plant) {
+      res.status(404).send({
+        error: 'plant does not exist'
+      })
+    } else {
+      if (plant.profilePicture && fs.existsSync(path.join(__dirname, 'store', 'blob', plant.profilePicture))) {
+        res.sendFile(path.join(__dirname, 'store', 'blob', plant.profilePicture))
+      } else {
+        res.status(404).send({
+          error: 'plant has no profile picture'
+        })
+      }
     }
   }
 }

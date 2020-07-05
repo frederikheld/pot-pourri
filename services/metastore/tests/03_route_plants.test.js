@@ -186,12 +186,74 @@ describe('/plants/:id', () => {
   })
 })
 
+describe('/plants/:id/picture', () => {
+  beforeEach(() => {
+    mockFs({
+      store: {
+        'plants.json': JSON.stringify([
+          {
+            id: '0',
+            name: 'item one',
+            profilePicture: 'plant-0-profilePicture.png'
+          },
+          {
+            id: '1',
+            name: 'item',
+            profilePicture: 'plant-1-profilePicture.jpg'
+          },
+          { id: 'green' }
+        ]),
+        blob: {
+          'plant-0-profilePicture.png': Buffer.from([0, 255, 0]),
+          'plant-1-profilePicture.jpg': Buffer.from([255, 255, 0])
+        }
+      }
+    })
+
+    server.initDB()
+  })
+
+  afterEach(() => {
+    mockFs.restore()
+  })
+
+  it('should return the profile picture of the plant with the given :id', async () => {
+    const res1 = await chai.request(server)
+      .get(apiBasePath + '/plants/0/profile-picture')
+
+    res1.should.have.status(200)
+    res1.should.have.header('content-type', 'image/png')
+
+    const res2 = await chai.request(server)
+      .get(apiBasePath + '/plants/1/profile-picture')
+
+    res2.should.have.status(200)
+    res2.should.have.header('content-type', 'image/jpeg')
+  })
+
+  it('should return status 404 wit error message "plant has no profile picture" if the plant has no profile picture', async () => {
+    const res = await chai.request(server)
+      .get(apiBasePath + '/plants/green/profile-picture')
+
+    res.should.have.status(404)
+    res.body.error.should.equal('plant has no profile picture')
+  })
+
+  it('should return 404 with error message "plant does not exist" if the plant doesn\'t exist', async () => {
+    const res = await chai.request(server)
+      .get(apiBasePath + '/plants/bielefeld/profile-picture')
+
+    res.should.have.status(404)
+    res.body.error.should.equal('plant does not exist')
+  })
+})
+
 after(() => {
   mockFs.restore()
   /**
      * This step is important because otherwise subsequent programs
      * that write to the file system won't work.
-     * Istanbul (nyc) is one example that is also documented
+     * Istanbul (nyc) is one example that is documented
      * in the mock-fs docs: https://github.com/tschaub/mock-fs
      */
 })
