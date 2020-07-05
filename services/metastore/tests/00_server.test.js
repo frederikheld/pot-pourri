@@ -7,6 +7,7 @@ require('iconv-lite/encodings')
 const mockFs = require('mock-fs')
 
 const fs = require('fs')
+const path = require('path')
 const process = require('process')
 
 const chai = require('chai')
@@ -153,7 +154,7 @@ describe('server.initDB(contents)', () => {
       expect('store/plants.json').to.be.a.file().with.contents(JSON.stringify(dbContents.plants))
     })
 
-    it('should init "store/plants.json" with an empty array if "contents.plants" isn\'t passed', () => {
+    it('should init "store/plants.json" with an empty array if "contents.plants" is not set', () => {
       mockFs({})
 
       server.initDB()
@@ -162,5 +163,60 @@ describe('server.initDB(contents)', () => {
 
       mockFs.restore()
     })
+  })
+})
+
+describe('server.initBlobStorage(inputDirectory)', () => {
+  it('should create an empty folder "store/blob", which will hold binary objects like file uploads', () => {
+    mockFs({
+      store: {}
+    })
+
+    server.initBlobStorage()
+
+    expect('store/blob').to.be.a.directory()
+
+    mockFs.restore()
+  })
+
+  it('will create directory "store" if it doesn\'t exist already', () => {
+    mockFs({ })
+
+    server.initBlobStorage()
+
+    expect('store/blob').to.be.a.directory()
+
+    mockFs.restore()
+  })
+
+  it('should init "store/blob" by copying all files found in "inputDirectory" to "store/blob"', () => {
+    mockFs({
+      store: {},
+      mocks: {
+        blob: {
+          'plants-0-profilePicture.jpg': Buffer.from([255, 0, 255]),
+          'some-file.txt': Buffer.from([0, 255, 0])
+        }
+      }
+    })
+
+    server.initBlobStorage(path.join('mocks', 'blob'))
+
+    expect('store/blob').to.have.files([
+      'plants-0-profilePicture.jpg',
+      'some-file.txt'
+    ])
+  })
+
+  it('should init "store/blob" as an empty directory if "inputDirectory" is not set', () => {
+    mockFs({
+      store: {}
+    })
+
+    server.initBlobStorage()
+
+    expect('store/blob').to.be.a.directory().which.is.empty
+
+    mockFs.restore()
   })
 })

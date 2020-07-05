@@ -47,7 +47,8 @@ server.initDB({
   plants: [
     {
       id: '0',
-      name: 'Erika'
+      name: 'Erika',
+      profilePicture: 'plants-0-profilePicture.jpg'
     },
     {
       id: 'someplant',
@@ -55,6 +56,8 @@ server.initDB({
     }
   ]
 })
+
+server.initBlobStorage('./debug/blob')
 
 server.initOptions({
   responseDelay: 500

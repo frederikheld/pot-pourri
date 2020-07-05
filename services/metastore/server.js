@@ -2,6 +2,8 @@
 
 // -- imports
 
+const path = require('path')
+
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
@@ -35,6 +37,25 @@ server.initDB = function (contents = {}) {
 
   if (!fs.existsSync('./store/plants.json')) {
     fs.writeFileSync('./store/plants.json', JSON.stringify(contents.plants ? contents.plants : []))
+  }
+}
+
+server.initBlobStorage = function (inputDirectory = null) {
+  if (!fs.existsSync(path.join(__dirname, 'store'))) {
+    fs.mkdirSync(path.join(__dirname, 'store'))
+  }
+
+  if (!fs.existsSync(path.join(__dirname, 'store', 'blob'))) {
+    fs.mkdirSync(path.join(__dirname, 'store', 'blob'))
+  }
+
+  if (inputDirectory) {
+    fs.readdirSync(inputDirectory).forEach((file) => {
+      fs.copyFileSync(
+        path.join(inputDirectory, file),
+        path.join(__dirname, 'store', 'blob', file)
+      )
+    })
   }
 }
 
