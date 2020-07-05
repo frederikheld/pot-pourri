@@ -216,35 +216,36 @@ describe('/plants/:id/picture', () => {
   afterEach(() => {
     mockFs.restore()
   })
+  describe('GET', () => {
+    it('should return the profile picture of the plant with the given :id', async () => {
+      const res1 = await chai.request(server)
+        .get(apiBasePath + '/plants/0/profile-picture')
 
-  it('should return the profile picture of the plant with the given :id', async () => {
-    const res1 = await chai.request(server)
-      .get(apiBasePath + '/plants/0/profile-picture')
+      res1.should.have.status(200)
+      res1.should.have.header('content-type', 'image/png')
 
-    res1.should.have.status(200)
-    res1.should.have.header('content-type', 'image/png')
+      const res2 = await chai.request(server)
+        .get(apiBasePath + '/plants/1/profile-picture')
 
-    const res2 = await chai.request(server)
-      .get(apiBasePath + '/plants/1/profile-picture')
+      res2.should.have.status(200)
+      res2.should.have.header('content-type', 'image/jpeg')
+    })
 
-    res2.should.have.status(200)
-    res2.should.have.header('content-type', 'image/jpeg')
-  })
+    it('should return status 404 wit error message "plant has no profile picture" if the plant has no profile picture', async () => {
+      const res = await chai.request(server)
+        .get(apiBasePath + '/plants/green/profile-picture')
 
-  it('should return status 404 wit error message "plant has no profile picture" if the plant has no profile picture', async () => {
-    const res = await chai.request(server)
-      .get(apiBasePath + '/plants/green/profile-picture')
+      res.should.have.status(404)
+      res.body.error.should.equal('plant has no profile picture')
+    })
 
-    res.should.have.status(404)
-    res.body.error.should.equal('plant has no profile picture')
-  })
+    it('should return 404 with error message "plant does not exist" if the plant doesn\'t exist', async () => {
+      const res = await chai.request(server)
+        .get(apiBasePath + '/plants/bielefeld/profile-picture')
 
-  it('should return 404 with error message "plant does not exist" if the plant doesn\'t exist', async () => {
-    const res = await chai.request(server)
-      .get(apiBasePath + '/plants/bielefeld/profile-picture')
-
-    res.should.have.status(404)
-    res.body.error.should.equal('plant does not exist')
+      res.should.have.status(404)
+      res.body.error.should.equal('plant does not exist')
+    })
   })
 })
 
