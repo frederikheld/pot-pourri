@@ -108,8 +108,7 @@ export default {
       fetchingPlant: false,
       savingPlant: false,
       plant: {},
-      plantPicture: 'https://images.pexels.com/photos/4505146/pexels-photo-4505146.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
-      plantPictureRaw: null,
+      plantPicture: '',
       form: {
         picture: undefined,
         id: undefined,
@@ -123,7 +122,6 @@ export default {
     ])
   },
   async beforeMount () {
-    this.fetchingPlant = true
     await this.fetchPlantProfile()
 
     this.initializeForm()
@@ -134,6 +132,8 @@ export default {
       this.form.name = this.plant.name
     },
     async fetchPlantProfile () {
+      this.fetchingPlant = true
+
       // fetch plant meta:
       const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
 
@@ -163,7 +163,6 @@ export default {
       try {
         const res2 = await fetch(url2, options2)
         const plantPictureRaw = await res2.blob()
-        this.plantPictureRaw = plantPictureRaw
         this.plantPicture = URL.createObjectURL(plantPictureRaw)
       } catch (err) {
         console.error(err)
@@ -186,7 +185,6 @@ export default {
     async onSubmit () {
       this.savingPlant = true
       await this.updatePlant(this.plant)
-      // await this.updateProfilePicture(this.plant, this.plantPictureRaw)
       await this.updateProfilePicture(this.plant, this.form.picture)
       this.savingPlant = false
       this.$router.replace('/plants/' + this.form.id) // forwards to new id, in case id was changed
