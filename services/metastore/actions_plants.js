@@ -61,6 +61,21 @@ actions.plants.id.profilePicture = {
         })
       }
     }
+  },
+  put: (req, res) => {
+    const filename = 'plants-' + req.params.id + '-profilePicture.' + req.file.mimetype.split('/')[1]
+    // security: is this a possible security issue? Can this be exploited by passing mime types that somehow allow to execute code? Better solution would be to use a mapping between mime type and file type extension and use a generic/none extension for all that are not part of the list. Using fileFilter in Multer should do the job as well.
+
+    // store file in blob storage following naming scheme:
+    fs.writeFileSync(path.join('store', 'blob', filename), req.file.buffer)
+
+    // link filename in plant object:
+    const plant = db.getPlantById(req.params.id)
+    plant.profilePicture = filename
+    db.updatePlantById(req.params.id, plant)
+
+    // return status:
+    res.status(200).end()
   }
 }
 

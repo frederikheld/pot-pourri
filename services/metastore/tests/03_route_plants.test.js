@@ -12,6 +12,7 @@ const chai = require('chai')
 const chaiHttp = require('chai-http')
 const chaiFs = require('chai-fs')
 chai.should()
+const expect = chai.expect
 
 chai.use(chaiHttp)
 chai.use(chaiFs)
@@ -133,23 +134,6 @@ describe('/plants/:id', () => {
   })
 
   describe('PUT', () => {
-    it('should replace object in the database with the object passed in the body an return 200, if an object with the given :id exists', async () => {
-      const res = await chai.request(server)
-        .put(apiBasePath + '/plants/1')
-        .type('json')
-        .send({ id: '42', name: 'something else' })
-
-      res.should.have.status(200)
-
-      const plants = JSON.parse(fs.readFileSync('store/plants.json'))
-
-      plants.should.eql([
-        { id: '0', name: 'item one' },
-        { id: '42', name: 'something else' },
-        { id: 'green' }
-      ])
-    })
-
     it('should append the object to the database if no object with the given :id exists', async () => {
       const res = await chai.request(server)
         .put(apiBasePath + '/plants/15')
@@ -165,6 +149,23 @@ describe('/plants/:id', () => {
         { id: '1', name: 'item' },
         { id: 'green' },
         { id: '42', name: 'something else' }
+      ])
+    })
+
+    it('should replace object in the database with the object passed in the body an return 200, if an object with the given :id exists', async () => {
+      const res = await chai.request(server)
+        .put(apiBasePath + '/plants/1')
+        .type('json')
+        .send({ id: '42', name: 'something else' })
+
+      res.should.have.status(200)
+
+      const plants = JSON.parse(fs.readFileSync('store/plants.json'))
+
+      plants.should.eql([
+        { id: '0', name: 'item one' },
+        { id: '42', name: 'something else' },
+        { id: 'green' }
       ])
     })
   })
@@ -194,28 +195,31 @@ describe('/plants/:id/picture', () => {
           {
             id: '0',
             name: 'item one',
-            profilePicture: 'plant-0-profilePicture.png'
+            profilePicture: 'plants-0-profilePicture.png'
           },
           {
             id: '1',
             name: 'item',
-            profilePicture: 'plant-1-profilePicture.jpg'
+            profilePicture: 'plants-1-profilePicture.jpg'
           },
           { id: 'green' }
+
         ]),
         blob: {
-          'plant-0-profilePicture.png': Buffer.from([0, 255, 0]),
-          'plant-1-profilePicture.jpg': Buffer.from([255, 255, 0])
+          'plants-0-profilePicture.png': Buffer.from([0, 255, 0]),
+          'plants-1-profilePicture.jpg': Buffer.from([255, 255, 0])
         }
       }
     })
 
     server.initDB()
+    server.initBlobStorage()
   })
 
   afterEach(() => {
     mockFs.restore()
   })
+
   describe('GET', () => {
     it('should return the profile picture of the plant with the given :id', async () => {
       const res1 = await chai.request(server)
@@ -245,6 +249,28 @@ describe('/plants/:id/picture', () => {
 
       res.should.have.status(404)
       res.body.error.should.equal('plant does not exist')
+    })
+  })
+
+  describe('PUT', () => {
+    it('should store the attached profile picture in the blob storage and link the filename as "profilePicture" in the plant profile and return 200, if no profile picture for the given plant :id exists', async () => {
+      const res = await chai.request(server)
+        .put(apiBasePath + '/plants/green/profile-picture')
+        .set('Content-Type', 'multipart/form-data')
+        .attach('profilePicture', Buffer.from([255, 0, 255]), 'someFileName.png')
+
+      res.should.have.status(200)
+
+      // check if file was written to blob storage
+      // following naming scheme:
+      expect('store/blob/plants-green-profilePicture.png').to.be.a.file()
+
+      const fileContents = fs.readFileSync('store/blob/plants-green-profilePicture.png')
+      Buffer.compare(fileContents, (Buffer.from([255, 0, 255]))).should.equal(0)
+
+      // check if filename was linked in plant object:
+      const plants = JSON.parse(fs.readFileSync('store/plants.json'))
+      plants[2].profilePicture.should.equal('plants-green-profilePicture.png')
     })
   })
 })

@@ -57,6 +57,10 @@ server.initBlobStorage = function (inputDirectory = null) {
       )
     })
   }
+
+  // if (!fs.existsSync(path.join(__dirname, 'store', 'blob', 'temp'))) {
+  //   fs.mkdirSync(path.join(__dirname, 'store', 'blob', 'temp'))
+  // }
 }
 
 // -- options
