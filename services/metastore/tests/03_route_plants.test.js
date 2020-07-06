@@ -272,6 +272,54 @@ describe('/plants/:id/picture', () => {
       const plants = JSON.parse(fs.readFileSync('store/plants.json'))
       plants[2].profilePicture.should.equal('plants-green-profilePicture.png')
     })
+
+    it('should not link the filename as "profilePicture" in the plant profile and return 500 with an message, if storing the profile picture failed', async () => {
+      mockFs({
+        store: {
+          'plants.json': JSON.stringify([
+            {
+              id: '0',
+              name: 'item one',
+              profilePicture: 'plants-0-profilePicture.png'
+            },
+            {
+              id: '1',
+              name: 'item',
+              profilePicture: 'plants-1-profilePicture.jpg'
+            },
+            { id: 'green' }
+          ])
+        }
+        // if "store/blob" does not exist, writing the file
+        // will fail. This should result in an internal
+        // server error.
+      })
+
+      const res = await chai.request(server)
+        .put(apiBasePath + '/plants/green/profile-picture')
+        .set('Content-Type', 'multipart/form-data')
+        .attach('profilePicture', Buffer.from([255, 0, 255]), 'someFileName.png')
+
+      res.should.have.status(500)
+      res.body.error.should.equal('Could not save profile picture.')
+
+      const plants = JSON.parse(fs.readFileSync('store/plants.json'))
+      plants.should.eql([
+        {
+          id: '0',
+          name: 'item one',
+          profilePicture: 'plants-0-profilePicture.png'
+        },
+        {
+          id: '1',
+          name: 'item',
+          profilePicture: 'plants-1-profilePicture.jpg'
+        },
+        { id: 'green' }
+      ])
+
+      mockFs.restore()
+    })
   })
 })
 
