@@ -223,7 +223,7 @@ export default {
       try {
         await fetch(url, options)
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
 
       this.savingSettings = false
@@ -251,7 +251,7 @@ export default {
 
         this.$router.replace('/devices')
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
 
       this.removingDevice = false
@@ -270,7 +270,7 @@ export default {
         this.fetchingDevice = false
         this.device = device
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
     }
   }

@@ -65,7 +65,7 @@ export default {
         this.fetchingDevices = false
         this.devices = devices
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
     }
   }

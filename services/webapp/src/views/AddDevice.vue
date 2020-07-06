@@ -85,7 +85,7 @@ export default {
         this.savingDevice = false
         this.$router.replace('/devices/' + this.id)
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
     }
   }

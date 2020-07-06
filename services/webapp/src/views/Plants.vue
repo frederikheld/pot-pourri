@@ -131,7 +131,7 @@ export default {
         this.fetchingPlants = false
         this.plants = plants
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
     }
   }

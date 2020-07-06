@@ -147,7 +147,7 @@ export default {
         const plant = await res.json()
         this.plant = plant
       } catch (err) {
-        console.err(err)
+        console.error(err)
       }
 
       // fetch profile picture:
@@ -166,7 +166,7 @@ export default {
         this.plantPictureRaw = plantPictureRaw
         this.plantPicture = URL.createObjectURL(plantPictureRaw)
       } catch (err) {
-        console.err(err)
+        console.error(err)
       }
 
       this.fetchingPlant = false
@@ -211,22 +211,15 @@ export default {
       try {
         return fetch(url, options)
       } catch (err) {
-        console.err(err)
+        console.error(err)
       }
     },
     async updateProfilePicture (plant, profilePictureRaw) {
       const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/profile-picture'
 
-      console.log('url', url)
-
       const formData = new FormData()
 
       formData.append('profilePicture', new Blob([profilePictureRaw], { type: 'image/jpg' }), 'somefile.jpg')
-
-      console.log(formData)
-      for (var [key, value] of formData.entries()) {
-        console.log(key, value)
-      }
 
       const options = {
         method: 'PUT',
@@ -236,7 +229,7 @@ export default {
       try {
         return fetch(url, options)
       } catch (err) {
-        console.err(err)
+        console.error(err)
       }
     }
   }

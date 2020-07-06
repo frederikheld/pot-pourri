@@ -183,7 +183,7 @@ export default {
 
         this.$router.replace('/plants')
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
 
       this.removingPlant = false
@@ -202,7 +202,7 @@ export default {
         this.fetchingPlant = false
         this.plant = plant
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
     }
   }
