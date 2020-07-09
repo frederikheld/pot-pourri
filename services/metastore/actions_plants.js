@@ -86,6 +86,22 @@ actions.plants.id.profilePicture = {
   }
 }
 
+actions.plants.id.attachedDevices = {
+  get: (req, res) => {
+    const plant = db.getPlantById(req.params.id)
+
+    if (plant) {
+      if (plant.attachedDevices) {
+        res.status(200).send(plant.attachedDevices)
+      } else {
+        res.status(200).send([])
+      }
+    } else {
+      res.status(404).send({ error: 'plant does not exist' })
+    }
+  }
+}
+
 // -- database functions
 /**
  * For the sake of simplicity, the database is just

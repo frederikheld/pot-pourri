@@ -235,7 +235,7 @@ describe('/plants/:id/picture', () => {
       res2.should.have.header('content-type', 'image/jpeg')
     })
 
-    it('should return status 404 wit error message "plant has no profile picture" if the plant has no profile picture', async () => {
+    it('should return status 404 with error message "plant has no profile picture" if the plant has no profile picture', async () => {
       const res = await chai.request(server)
         .get(apiBasePath + '/plants/green/profile-picture')
 
@@ -243,7 +243,7 @@ describe('/plants/:id/picture', () => {
       res.body.error.should.equal('plant has no profile picture')
     })
 
-    it('should return 404 with error message "plant does not exist" if the plant doesn\'t exist', async () => {
+    it('should return status 404 with error message "plant does not exist" if the plant doesn\'t exist', async () => {
       const res = await chai.request(server)
         .get(apiBasePath + '/plants/bielefeld/profile-picture')
 
@@ -253,7 +253,7 @@ describe('/plants/:id/picture', () => {
   })
 
   describe('PUT', () => {
-    it('should store the attached profile picture in the blob storage and link the filename as "profilePicture" in the plant profile and return 200, if no profile picture for the given plant :id exists', async () => {
+    it('should store the attached profile picture in the blob storage and link the filename as "profilePicture" in the plant profile and return status 200, if no profile picture for the given plant :id exists', async () => {
       const res = await chai.request(server)
         .put(apiBasePath + '/plants/green/profile-picture')
         .set('Content-Type', 'multipart/form-data')
@@ -319,6 +319,74 @@ describe('/plants/:id/picture', () => {
       ])
 
       mockFs.restore()
+    })
+  })
+})
+
+describe('/plants/:id/attached-devices', () => {
+  beforeEach(() => {
+    mockFs({
+      store: {
+        'plants.json': JSON.stringify([
+          {
+            id: '0',
+            name: 'item one',
+            attachedDevices: ['0', '7', 'red']
+          },
+          {
+            id: '1',
+            name: 'item',
+            attachedDevices: []
+          },
+          { id: 'green' }
+        ])
+      }
+    })
+
+    server.initDB()
+  })
+
+  afterEach(() => {
+    mockFs.restore()
+  })
+
+  describe('GET', () => {
+    it('should return an array that contains all id\'s of attached devices with status 200', async () => {
+      const res = await chai.request(server)
+        .get(apiBasePath + '/plants/0/attached-devices')
+
+      res.should.have.status(200)
+      res.body.should.be.an('array')
+      res.body.length.should.eql(3)
+      res.body.should.eql(['0', '7', 'red'])
+    })
+
+    it('should return an empty array with status 200 if no devices are attached', async () => {
+      // empty list:
+      const res1 = await chai.request(server)
+        .get(apiBasePath + '/plants/1/attached-devices')
+
+      res1.should.have.status(200)
+      res1.body.should.be.an('array')
+      res1.body.length.should.eql(0)
+      res1.body.should.eql([])
+
+      // key "devices" undefined:
+      const res2 = await chai.request(server)
+        .get(apiBasePath + '/plants/green/attached-devices')
+
+      res2.should.have.status(200)
+      res2.body.should.be.an('array')
+      res2.body.length.should.eql(0)
+      res2.body.should.eql([])
+    })
+
+    it('should return status 404 with error message "plant does not exist" if plant doesn\'t exist', async () => {
+      const res = await chai.request(server)
+        .get(apiBasePath + '/plants/2/attached-devices')
+
+      res.should.have.status(404)
+      res.body.error.should.equal('plant does not exist')
     })
   })
 })
