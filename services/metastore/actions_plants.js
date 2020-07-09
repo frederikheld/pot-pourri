@@ -99,6 +99,21 @@ actions.plants.id.attachedDevices = {
     } else {
       res.status(404).send({ error: 'plant does not exist' })
     }
+  },
+  post: (req, res) => {
+    const plant = db.getPlantById(req.params.id)
+
+    if (!plant.attachedDevices) {
+      plant.attachedDevices = []
+    }
+
+    req.body.forEach((deviceId) => {
+      plant.attachedDevices.push(deviceId)
+    })
+
+    db.updatePlantById(req.params.id, plant)
+
+    res.status(200).send()
   }
 }
 

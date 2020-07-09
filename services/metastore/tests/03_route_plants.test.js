@@ -331,14 +331,26 @@ describe('/plants/:id/attached-devices', () => {
           {
             id: '0',
             name: 'item one',
-            attachedDevices: ['0', '7', 'red']
+            attachedDevices: ['0', '1', '2']
           },
           {
             id: '1',
             name: 'item',
             attachedDevices: []
           },
-          { id: 'green' }
+          { id: 'green' },
+          { id: 'red' }
+        ]),
+        'devices.json': JSON.stringify([
+          { id: '0' },
+          { id: '1' },
+          { id: '2' },
+          { id: '3' },
+          { id: '4' },
+          { id: '5' },
+          { id: '6' },
+          { id: '7' },
+          { id: '8' }
         ])
       }
     })
@@ -358,7 +370,7 @@ describe('/plants/:id/attached-devices', () => {
       res.should.have.status(200)
       res.body.should.be.an('array')
       res.body.length.should.eql(3)
-      res.body.should.eql(['0', '7', 'red'])
+      res.body.should.eql(['0', '1', '2'])
     })
 
     it('should return an empty array with status 200 if no devices are attached', async () => {
@@ -387,6 +399,65 @@ describe('/plants/:id/attached-devices', () => {
 
       res.should.have.status(404)
       res.body.error.should.equal('plant does not exist')
+    })
+  })
+
+  describe('POST array of deviceID\'s', () => {
+    it('should return status 200 if the device was successfully linked', async () => {
+      // add to existing list of attached devices:
+      const res1 = await chai.request(server)
+        .post(apiBasePath + '/plants/0/attached-devices')
+        .type('json')
+        .send(['3'])
+
+      res1.should.have.status(200)
+
+      // attach to empty list of attached devices:
+      const res2 = await chai.request(server)
+        .post(apiBasePath + '/plants/1/attached-devices')
+        .type('json')
+        .send(['4'])
+
+      res2.should.have.status(200)
+
+      // attach if key doesn't exist:
+      const res3 = await chai.request(server)
+        .post(apiBasePath + '/plants/green/attached-devices')
+        .type('json')
+        .send(['5'])
+
+      res3.should.have.status(200)
+
+      // attach multiple devices:
+      const res4 = await chai.request(server)
+        .post(apiBasePath + '/plants/red/attached-devices')
+        .type('json')
+        .send(['6', '7', '8'])
+
+      res4.should.have.status(200)
+
+      // check changes in database:
+      const plants = JSON.parse(fs.readFileSync('store/plants.json'))
+      plants.should.eql([
+        {
+          id: '0',
+          name: 'item one',
+          attachedDevices: ['0', '1', '2', '3']
+        },
+        {
+          id: '1',
+          name: 'item',
+          attachedDevices: ['4']
+        },
+        {
+          id: 'green',
+          attachedDevices: ['5']
+        },
+        {
+          id: 'red',
+          attachedDevices: ['6', '7', '8']
+        }
+      ])
     })
   })
 })
