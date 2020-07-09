@@ -50,11 +50,8 @@
         </v-dialog>
         <v-row>
           <v-col>
-            <v-img
-              id="plant-picture"
+            <ProfilePicture
               :src="plantPicture"
-              aspect-ratio="2"
-              max-height="12rem"
             >
               <v-row
                 align="end"
@@ -66,7 +63,7 @@
                   </div>
                 </v-col>
               </v-row>
-            </v-img>
+            </ProfilePicture>
           </v-col>
         </v-row>
       </div>
@@ -79,27 +76,19 @@
 </template>
 
 <style lang="scss" scoped>
-#plant-picture {
-  background: repeating-linear-gradient(
-  45deg,
-  #ddd,
-  #ddd 10px,
-  #eee 10px,
-  #eee 20px
-);
-}
 </style>
 
 <script>
 import AppBar from '@/components/AppBar.vue'
 import ContextMenuPlant from '@/components/ContextMenuPlant.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
+import ProfilePicture from '@/components/ProfilePicture.vue'
 
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'Plant',
-  components: { AppBar, ContextMenuPlant, LoadingIndicator },
+  components: { AppBar, ContextMenuPlant, LoadingIndicator, ProfilePicture },
   data () {
     return {
       fetchingPlant: false,

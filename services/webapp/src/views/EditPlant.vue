@@ -12,10 +12,8 @@
         >
           <v-col>
             <v-row>
-              <v-img
+              <ProfilePicture
                 :src="plantPicture"
-                aspect-ratio="2"
-                max-height="12rem"
               >
                 <!-- <v-btn
                   icon
@@ -38,7 +36,7 @@
                   style="color: #fff;"
                   @change="previewPicture"
                 />
-              </v-img>
+              </ProfilePicture>
             </v-row>
           </v-col>
           <v-col>
@@ -81,6 +79,8 @@
 .center-box {
   display: block;
   position: relative;
+  margin: 0;
+  padding: 0;
   width: 24px;
   height: 24px;
   left: calc(50% - 12px);
@@ -89,20 +89,22 @@
 }
 
 .center-box:hover {
-  transform: scale(1.1);
+  transform: scale(1.4);
 }
 </style>
 
 <script>
 import AppBar from '@/components/AppBar.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
+import ProfilePicture from '@/components/ProfilePicture.vue'
+
 import * as blueimpLoadImage from 'blueimp-load-image'
 
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'EditPlant',
-  components: { AppBar, LoadingIndicator },
+  components: { AppBar, LoadingIndicator, ProfilePicture },
   data () {
     return {
       fetchingPlant: false,
