@@ -17,8 +17,10 @@ describe('/', () => {
         .get(apiBasePath + '/')
 
       res.should.have.status(200)
-      res.text.should.be.a('string')
-      res.text.should.eql('Hello World! :-)')
+      res.body.should.be.an('object')
+      res.body.should.eql({
+        message: 'Hello World! :-)'
+      })
     })
   })
 })

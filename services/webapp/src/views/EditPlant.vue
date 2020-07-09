@@ -12,10 +12,8 @@
         >
           <v-col>
             <v-row>
-              <v-img
+              <ProfilePicture
                 :src="plantPicture"
-                aspect-ratio="2"
-                max-height="12rem"
               >
                 <!-- <v-btn
                   icon
@@ -31,14 +29,14 @@
                 <v-file-input
                   v-model="form.picture"
                   prepend-icon="mdi-camera"
-                  accept="image/png, image/jpeg, image/bmp"
+                  accept="image/png, image/jpeg, image/jpg"
                   hide-input
                   light
                   class="center-box"
                   style="color: #fff;"
-                  @change="updatePicture"
+                  @change="previewPicture"
                 />
-              </v-img>
+              </ProfilePicture>
             </v-row>
           </v-col>
           <v-col>
@@ -81,6 +79,8 @@
 .center-box {
   display: block;
   position: relative;
+  margin: 0;
+  padding: 0;
   width: 24px;
   height: 24px;
   left: calc(50% - 12px);
@@ -89,26 +89,28 @@
 }
 
 .center-box:hover {
-  transform: scale(1.1);
+  transform: scale(1.4);
 }
 </style>
 
 <script>
 import AppBar from '@/components/AppBar.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
-import * as loadImage from 'blueimp-load-image'
+import ProfilePicture from '@/components/ProfilePicture.vue'
+
+import * as blueimpLoadImage from 'blueimp-load-image'
 
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'EditPlant',
-  components: { AppBar, LoadingIndicator },
+  components: { AppBar, LoadingIndicator, ProfilePicture },
   data () {
     return {
       fetchingPlant: false,
       savingPlant: false,
       plant: {},
-      plantPicture: 'https://images.pexels.com/photos/4505146/pexels-photo-4505146.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+      plantPicture: '',
       form: {
         picture: undefined,
         id: undefined,
@@ -122,8 +124,7 @@ export default {
     ])
   },
   async beforeMount () {
-    this.fetchingPlant = true
-    await this.fetchPlant()
+    await this.fetchPlantProfile()
 
     this.initializeForm()
   },
@@ -132,7 +133,10 @@ export default {
       this.form.id = this.plant.id
       this.form.name = this.plant.name
     },
-    async fetchPlant () {
+    async fetchPlantProfile () {
+      this.fetchingPlant = true
+
+      // fetch plant meta:
       const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
 
       const options = {
@@ -143,21 +147,33 @@ export default {
       try {
         const res = await fetch(url, options)
         const plant = await res.json()
-        this.fetchingPlant = false
         this.plant = plant
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
-    },
-    getPictureURL () {
-      if (this.form.picture) {
-        return URL.createObjectURL(this.form.picture)
-      } else {
-        return 'https://images.pexels.com/photos/4505146/pexels-photo-4505146.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940'
+
+      // fetch profile picture:
+      const url2 = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/profile-picture'
+
+      const options2 = {
+        method: 'GET',
+        headers: {
+          Accept: 'image/png, image/jpg, image/jpeg'
+        }
       }
+
+      try {
+        const res2 = await fetch(url2, options2)
+        const plantPictureRaw = await res2.blob()
+        this.plantPicture = URL.createObjectURL(plantPictureRaw)
+      } catch (err) {
+        console.error(err)
+      }
+
+      this.fetchingPlant = false
     },
-    updatePicture (data) {
-      loadImage(
+    previewPicture (data) {
+      blueimpLoadImage(
         data,
         (image) => {
           this.plantPicture = image.toDataURL()
@@ -168,9 +184,12 @@ export default {
           canvas: true
         })
     },
-    onSubmit () {
+    async onSubmit () {
       this.savingPlant = true
-      this.updatePlant(this.plant)
+      await this.updatePlant(this.plant)
+      await this.updateProfilePicture(this.plant, this.form.picture)
+      this.savingPlant = false
+      this.$router.replace('/plants/' + this.form.id) // forwards to new id, in case id was changed
     },
     onCancel () {
       this.$router.replace('/plants/' + this.$route.params.id)
@@ -190,11 +209,27 @@ export default {
       }
 
       try {
-        await fetch(url, options)
-        this.savingPlant = false
-        this.$router.replace('/plants/' + this.form.id) // forwards to new id, in case id was changed
+        return fetch(url, options)
       } catch (err) {
-        console.log(err)
+        console.error(err)
+      }
+    },
+    async updateProfilePicture (plant, profilePictureRaw) {
+      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/profile-picture'
+
+      const formData = new FormData()
+
+      formData.append('profilePicture', new Blob([profilePictureRaw], { type: 'image/jpg' }), 'somefile.jpg')
+
+      const options = {
+        method: 'PUT',
+        body: formData
+      }
+
+      try {
+        return fetch(url, options)
+      } catch (err) {
+        console.error(err)
       }
     }
   }

@@ -101,16 +101,14 @@ export default {
 
       try {
         const res = await fetch(url, options)
-        console.log(res)
         if (res.status === 409) {
-          console.log('status 409')
           this.form.errorMessages.id.push('Plant with same ID exist already!')
         } else {
           this.$router.replace('/plants/' + this.id)
         }
         this.savingPlant = false
       } catch (err) {
-        console.log(err)
+        console.error(err)
       }
     }
   }
