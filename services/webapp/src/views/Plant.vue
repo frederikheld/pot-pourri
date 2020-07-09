@@ -66,6 +66,15 @@
             </ProfilePicture>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col>
+            <h2>Linked Devices</h2>
+            <DevicesList
+              v-if="!fetchingDevices"
+              :devices="devices"
+            />
+          </v-col>
+        </v-row>
       </div>
       <LoadingIndicator
         v-if="fetchingPlant"
@@ -81,14 +90,17 @@
 <script>
 import AppBar from '@/components/AppBar.vue'
 import ContextMenuPlant from '@/components/ContextMenuPlant.vue'
+import DevicesList from '@/components/DevicesList.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import ProfilePicture from '@/components/ProfilePicture.vue'
 
 import { mapGetters } from 'vuex'
 
+// const querystring = require('querystring')
+
 export default {
   name: 'Plant',
-  components: { AppBar, ContextMenuPlant, LoadingIndicator, ProfilePicture },
+  components: { AppBar, ContextMenuPlant, DevicesList, LoadingIndicator, ProfilePicture },
   data () {
     return {
       fetchingPlant: false,
@@ -173,7 +185,32 @@ export default {
         console.error(err)
       }
 
+      // fetch linked devices:
+      this.devices = await this.fetchLinkedDevices(this.plant.attachedDevices)
+
       this.fetchingPlant = false
+    },
+    async fetchLinkedDevices (list) {
+      const baseUrl = this.metastoreServerAddress + '/api/devices/'
+
+      const options = {
+        method: 'GET',
+        accept: 'application/json'
+      }
+
+      const devices = []
+
+      for (let i = 0; i < list.length; i++) {
+        try {
+          const res = await fetch(baseUrl + list[i], options)
+          this.fetchingDevices = false
+          devices.push(await res.json())
+        } catch (err) {
+          console.error(err)
+        }
+      }
+
+      return devices
     }
   }
 }

@@ -46,12 +46,13 @@ export default {
       'metastoreServerAddress'
     ])
   },
-  beforeMount () {
-    this.fetchingDevices = true
-    this.fetchDevices()
+  async beforeMount () {
+    await this.fetchDevices()
   },
   methods: {
     async fetchDevices  () {
+      this.fetchingDevices = true
+
       const url = this.metastoreServerAddress + '/api/devices'
 
       const options = {
