@@ -342,9 +342,9 @@ describe('/plants/:id/linked-devices', () => {
           { id: 'red' }
         ]),
         'devices.json': JSON.stringify([
-          { id: '0' },
-          { id: '1' },
-          { id: '2' },
+          { id: '0', linkedPlant: '0' },
+          { id: '1', linkedPlant: '0' },
+          { id: '2', linkedPlant: '0' },
           { id: '3' },
           { id: '4' },
           { id: '5' },
@@ -404,6 +404,10 @@ describe('/plants/:id/linked-devices', () => {
 
   describe('POST array of deviceID\'s', () => {
     it('should return status 200 if the device was successfully linked', async () => {
+      // this will create a n:1 two-way link
+      // one plant can be linked with 0..n devices
+      // one device can be linked with 0..1 plants
+
       // add to existing list of attached devices:
       const res1 = await chai.request(server)
         .post(apiBasePath + '/plants/0/linked-devices')
@@ -436,7 +440,7 @@ describe('/plants/:id/linked-devices', () => {
 
       res4.should.have.status(200)
 
-      // check changes in database:
+      // check changes in plants database:
       const plants = JSON.parse(fs.readFileSync('store/plants.json'))
       plants.should.eql([
         {
@@ -458,7 +462,31 @@ describe('/plants/:id/linked-devices', () => {
           linkedDevices: ['6', '7', '8']
         }
       ])
+
+      // check changes in devices database:
+      const devices = JSON.parse(fs.readFileSync('store/devices.json'))
+      devices.should.eql([
+        { id: '0', linkedPlant: '0' },
+        { id: '1', linkedPlant: '0' },
+        { id: '2', linkedPlant: '0' },
+        { id: '3', linkedPlant: '0' },
+        { id: '4', linkedPlant: '1' },
+        { id: '5', linkedPlant: 'green' },
+        { id: '6', linkedPlant: 'red' },
+        { id: '7', linkedPlant: 'red' },
+        { id: '8', linkedPlant: 'red' }
+      ])
     })
+
+    // it('should return status 400 with error "device already linked to another plant", if the device is already linked to another plant', async () => {
+    //   // add to existing list of attached devices:
+    //   const res = await chai.request(server)
+    //     .post(apiBasePath + '/plants/0/linked-devices')
+    //     .type('json')
+    //     .send(['0'])
+
+    //   res.should.have.status(400)
+    // })
   })
 
   describe('DELETE array of deviceID\'s', () => {
@@ -469,7 +497,8 @@ describe('/plants/:id/linked-devices', () => {
         .send(['0', '1'])
 
       res.should.have.status(204)
-      // check changes in database:
+
+      // check changes in plants database:
       const plants = JSON.parse(fs.readFileSync('store/plants.json'))
       plants.should.eql([
         {
@@ -484,6 +513,20 @@ describe('/plants/:id/linked-devices', () => {
         },
         { id: 'green' },
         { id: 'red' }
+      ])
+
+      // check changes in devices database:
+      const devices = JSON.parse(fs.readFileSync('store/devices.json'))
+      devices.should.eql([
+        { id: '0' },
+        { id: '1' },
+        { id: '2', linkedPlant: '0' },
+        { id: '3' },
+        { id: '4' },
+        { id: '5' },
+        { id: '6' },
+        { id: '7' },
+        { id: '8' }
       ])
     })
   })

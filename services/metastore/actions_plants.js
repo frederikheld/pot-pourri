@@ -101,6 +101,7 @@ actions.plants.id.linkedDevices = {
     }
   },
   post: (req, res) => {
+    // save link in plant object:
     const plant = db.getPlantById(req.params.id)
 
     if (!plant.linkedDevices) {
@@ -113,14 +114,25 @@ actions.plants.id.linkedDevices = {
 
     db.updatePlantById(req.params.id, plant)
 
+    // save link in device objects:
+    req.body.forEach((deviceId) => {
+      const device = db.getDeviceById(deviceId)
+      device.linkedPlant = req.params.id
+
+      db.updateDeviceById(deviceId, device)
+    })
+
+    // send status:
     res.status(200).send()
   },
   delete: (req, res) => {
-    if (
-      db.unlinkDeviceFromPlant(req.params.id, req.body)
-    ) {
-      res.status(204).end()
-    }
+    db.unlinkDevicesFromPlant(req.params.id, req.body)
+
+    req.body.forEach((deviceId) => {
+      db.unlinkPlantFromDevice(deviceId)
+    })
+
+    res.status(204).end()
   }
 }
 
@@ -150,7 +162,7 @@ db.createPlant = function (object) {
     return false
   }
 
-  db.writeToDatabase([...plants, object])
+  db.writeToDatabase('plants', [...plants, object])
 
   return true
 }
@@ -167,7 +179,7 @@ db.updatePlantById = function (plantId, object) {
     plants.push(object)
   }
 
-  db.writeToDatabase(plants)
+  db.writeToDatabase('plants', plants)
 }
 
 db.deletePlantById = function (plantId) {
@@ -177,12 +189,12 @@ db.deletePlantById = function (plantId) {
     return x.id !== plantId
   })
 
-  db.writeToDatabase(plantsNew)
+  db.writeToDatabase('plants', plantsNew)
 
   return true
 }
 
-db.unlinkDeviceFromPlant = function (plantId, deviceIdsArray) {
+db.unlinkDevicesFromPlant = function (plantId, deviceIdsArray) {
   const plant = db.getPlantById(plantId)
 
   const linkedDevicesNew = plant.linkedDevices.filter((element) => {
@@ -196,8 +208,43 @@ db.unlinkDeviceFromPlant = function (plantId, deviceIdsArray) {
   return true
 }
 
-db.writeToDatabase = function (object) {
-  fs.writeFileSync('store/plants.json', JSON.stringify(object))
+db.unlinkPlantFromDevice = function (deviceId) {
+  const device = db.getDeviceById(deviceId)
+
+  delete device.linkedPlant
+
+  db.updateDeviceById(deviceId, device)
+}
+
+db.writeToDatabase = function (collection, object) {
+  fs.writeFileSync('store/' + collection + '.json', JSON.stringify(object))
+}
+
+// duplicates form actions_devices.js
+// TODO: make a shared library out of db!
+
+db.getAllDevices = function () {
+  return JSON.parse(fs.readFileSync('store/devices.json'))
+}
+
+db.getDeviceById = function (deviceId) {
+  const devices = db.getAllDevices()
+  return devices.find((x) => x.id === deviceId)
+}
+
+db.updateDeviceById = function (deviceId, object) {
+  const devices = db.getAllDevices()
+
+  // look for existing object with given deviceId:
+  const arrayKey = devices.map(function (x) { return x.id }).indexOf(deviceId)
+
+  if (arrayKey > -1) {
+    devices[arrayKey] = object
+  } else {
+    devices.push(object)
+  }
+
+  db.writeToDatabase('devices', devices)
 }
 
 // -- exports
