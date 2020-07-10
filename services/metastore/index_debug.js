@@ -26,7 +26,8 @@ server.initDB({
       ],
       settings: {
         measuringInterval: 300 // 5 minutes
-      }
+      },
+      linkedPlant: '0'
     },
     {
       id: '1',
@@ -37,11 +38,17 @@ server.initDB({
       ],
       settings: {
         measuringInterval: 3600 // 1 hour
-      }
+      },
+      linkedPlant: '1'
     },
     {
       id: '2',
-      name: 'baz'
+      name: 'baz',
+      linkedPlant: '1'
+    },
+    {
+      id: '3',
+      name: 'free'
     }
   ],
   plants: [
