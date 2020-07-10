@@ -112,7 +112,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'metastoreServerAddress'
+      'metastoreServerAddress',
+      'iconsMap'
     ])
   },
   async beforeMount () {

@@ -20,14 +20,20 @@
         </v-list-item>
       </v-list>
     </v-list-item-group>
-    <p v-else>
-      No sensors attached yet!
-    </p>
+    <v-row v-else>
+      <v-col>
+        <p>
+          No sensors attached yet!
+        </p>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
 /* Can be used for actors as well if implemented more generic! */
+
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'DeviceSensorsList',
@@ -37,17 +43,10 @@ export default {
       required: true
     }
   },
-  data () {
-    return {
-      iconMap: {
-        default: 'mdi-gauge',
-        humidity: 'mdi-water',
-        light: 'mdi-weather-sunny',
-        rain: 'mdi-weather-pouring',
-        'ph-value': 'mdi-image-filter-hdr',
-        temperature: 'mdi-thermometer'
-      }
-    }
+  computed: {
+    ...mapGetters([
+      'iconMap'
+    ])
   }
 }
 </script>

@@ -19,6 +19,15 @@
             <v-list-item-title>{{ device.name }}</v-list-item-title>
             <v-list-item-subtitle>{{ device.id }}</v-list-item-subtitle>
           </v-list-item-content>
+
+          <v-list-item-icon>
+            <v-icon
+              v-for="sensor in device.sensors"
+              :key="sensor.id"
+            >
+              {{ iconMap[sensor.type] }}
+            </v-icon>
+          </v-list-item-icon>
         </v-list-item>
       </v-list>
     </v-list-item-group>
@@ -47,6 +56,8 @@
 </style>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'DevicesList',
   props: {
@@ -55,6 +66,11 @@ export default {
       required: false,
       default: () => { return [] }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'iconMap'
+    ])
   }
 }
 </script>
