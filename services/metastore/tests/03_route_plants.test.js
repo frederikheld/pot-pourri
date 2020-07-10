@@ -460,6 +460,33 @@ describe('/plants/:id/attached-devices', () => {
       ])
     })
   })
+
+  describe('DELETE array of deviceID\'s', () => {
+    it('should remove link between plant with the given :ids and the devices with the ids passed in the request body and return status 204', async () => {
+      const res = await chai.request(server)
+        .delete(apiBasePath + '/plants/0/attached-devices')
+        .type('json')
+        .send(['0', '1'])
+
+      res.should.have.status(204)
+      // check changes in database:
+      const plants = JSON.parse(fs.readFileSync('store/plants.json'))
+      plants.should.eql([
+        {
+          id: '0',
+          name: 'item one',
+          attachedDevices: ['2']
+        },
+        {
+          id: '1',
+          name: 'item',
+          attachedDevices: []
+        },
+        { id: 'green' },
+        { id: 'red' }
+      ])
+    })
+  })
 })
 
 after(() => {

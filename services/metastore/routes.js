@@ -85,6 +85,7 @@ router.put(
 
 router.get('/plants/:id/attached-devices', actions.plants.id.attachedDevices.get)
 router.post('/plants/:id/attached-devices', actions.plants.id.attachedDevices.post)
+router.delete('/plants/:id/attached-devices', actions.plants.id.attachedDevices.delete)
 
 // -- EXPORTS
 

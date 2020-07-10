@@ -114,6 +114,13 @@ actions.plants.id.attachedDevices = {
     db.updatePlantById(req.params.id, plant)
 
     res.status(200).send()
+  },
+  delete: (req, res) => {
+    if (
+      db.unlinkDeviceFromPlant(req.params.id, req.body)
+    ) {
+      res.status(204).end()
+    }
   }
 }
 
@@ -171,6 +178,20 @@ db.deletePlantById = function (plantId) {
   })
 
   db.writeToDatabase(plantsNew)
+
+  return true
+}
+
+db.unlinkDeviceFromPlant = function (plantId, deviceIdsArray) {
+  const plant = db.getPlantById(plantId)
+
+  const linkedDevicesNew = plant.attachedDevices.filter((element) => {
+    return !deviceIdsArray.includes(element)
+  })
+
+  plant.attachedDevices = linkedDevicesNew
+
+  db.updatePlantById(plantId, plant)
 
   return true
 }
