@@ -6,12 +6,11 @@
     >
       <template v-slot:activator="{ on, attrs }">
         <v-btn
-          class="float-right"
-          icon
+          class="primary"
           v-bind="attrs"
           v-on="on"
         >
-          <v-icon>mdi-plus</v-icon>
+          link device
         </v-btn>
       </template>
 

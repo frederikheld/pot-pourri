@@ -51,10 +51,13 @@
         class="text-center"
       >
         <p class="body-1">
-          You don't have any devices configured yet.
+          {{ this.$props.noDevicesInfo }}
         </p>
-        <p class="body-2">
-          Tap the + button to create one!
+        <p
+          v-if="noDevicesHint"
+          class="body-2"
+        >
+          {{ this.$props.noDevicesHint }}
         </p>
       </v-col>
     </v-row>
@@ -78,6 +81,16 @@ export default {
     },
     actionUnlinkDevice: {
       type: Function,
+      required: false,
+      default: undefined
+    },
+    noDevicesInfo: {
+      type: String,
+      required: false,
+      default: 'No devices in list.'
+    },
+    noDevicesHint: {
+      type: String,
       required: false,
       default: undefined
     }

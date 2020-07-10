@@ -66,20 +66,41 @@
             </ProfilePicture>
           </v-col>
         </v-row>
+
         <v-row>
           <v-col>
-            <h2>
-              Linked Devices
-              <LinkDeviceDialog
-                :plant-id="plant.id"
-                class="float-right"
-                @saveLinkedDevicesDone="reloadView()"
-              />
-            </h2>
-            <DevicesList
-              :devices="devices"
-              :action-unlink-device="actionUnlinkDevice"
-            />
+            <v-tabs>
+              <v-tab>Health</v-tab>
+              <v-tab>Linked Devices</v-tab>
+
+              <v-tab-item>
+                <v-row>
+                  <v-col>
+                    // to do
+                  </v-col>
+                </v-row>
+              </v-tab-item>
+              <v-tab-item>
+                <v-row>
+                  <v-col>
+                    <DevicesList
+                      :devices="devices"
+                      :action-unlink-device="actionUnlinkDevice"
+                      :no-devices-info="'You haven\'t linked any devices to this plant yet.'"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <LinkDeviceDialog
+                      class="mx-auto"
+                      :plant-id="plant.id"
+                      @saveLinkedDevicesDone="reloadView()"
+                    />
+                  </v-col>
+                </v-row>
+              </v-tab-item>
+            </v-tabs>
           </v-col>
         </v-row>
       </div>

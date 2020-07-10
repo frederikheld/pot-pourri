@@ -15,6 +15,8 @@
       <DevicesList
         v-if="!fetchingDevices"
         :devices="devices"
+        :no-devices-info="'You don\'t have any devices configured yet.'"
+        :no-devices-hint="'Tap the + button to create one!'"
       />
 
       <LoadingIndicator
