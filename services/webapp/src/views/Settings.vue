@@ -22,11 +22,11 @@
               <v-row
                 align="baseline"
               >
-                <v-col
-                  cols="2"
-                >
+                <v-col>
                   <span class="text-subtitle-2">MQTT:</span>
                 </v-col>
+              </v-row>
+              <v-row>
                 <v-col cols="3">
                   <v-select
                     v-model="form.network.mqtt.protocol"
@@ -34,9 +34,7 @@
                     :items="['https', 'http']"
                   />
                 </v-col>
-                <v-col
-                  cols="5"
-                >
+                <v-col cols="7">
                   <v-text-field
                     v-model="form.network.mqtt.address"
                     label="hostname or ip"
@@ -54,11 +52,11 @@
               <v-row
                 align="baseline"
               >
-                <v-col
-                  cols="2"
-                >
+                <v-col>
                   <span class="text-subtitle-2">Metastore:</span>
                 </v-col>
+              </v-row>
+              <v-row>
                 <v-col cols="3">
                   <v-select
                     v-model="form.network.metastore.protocol"
@@ -66,9 +64,7 @@
                     :items="['https', 'http']"
                   />
                 </v-col>
-                <v-col
-                  cols="5"
-                >
+                <v-col cols="7">
                   <v-text-field
                     v-model="form.network.metastore.address"
                     label="hostname or ip"
@@ -77,6 +73,40 @@
                 <v-col cols="2">
                   <v-text-field
                     v-model="form.network.metastore.port"
+                    label="port"
+                  />
+                </v-col>
+              </v-row>
+              <!-- option end -->
+              <!-- option start -->
+              <v-row
+                align="baseline"
+              >
+                <v-col>
+                  <p class="text-subtitle-2">
+                    InfluxDB:
+                  </p>
+                </v-col>
+              </v-row>
+              <v-row
+                align="baseline"
+              >
+                <v-col cols="3">
+                  <v-select
+                    v-model="form.network.influxdb.protocol"
+                    label="protocol"
+                    :items="['https', 'http']"
+                  />
+                </v-col>
+                <v-col cols="7">
+                  <v-text-field
+                    v-model="form.network.influxdb.address"
+                    label="hostname or ip"
+                  />
+                </v-col>
+                <v-col cols="2">
+                  <v-text-field
+                    v-model="form.network.influxdb.port"
                     label="port"
                   />
                 </v-col>
@@ -133,6 +163,11 @@ export default {
             protocol: 'https',
             address: '',
             port: 3003
+          },
+          influxdb: {
+            protocol: 'https',
+            address: '',
+            port: 8086
           }
         }
       },

@@ -16,13 +16,18 @@ export default new Vuex.Store({
       network: {
         mqtt: {
           protocol: 'https',
-          address: 'foo',
+          address: 'localhost',
           port: 1883
         },
         metastore: {
           protocol: 'https',
-          address: 'bar',
+          address: 'localhost',
           port: 3003
+        },
+        influxdb: {
+          protocol: 'https',
+          address: 'localhost',
+          port: 8086
         }
       }
     },
