@@ -68,10 +68,17 @@
         </v-row>
         <v-row>
           <v-col>
-            <h2>Linked Devices</h2>
+            <h2>
+              Linked Devices
+              <LinkDeviceDialog
+                :plant-id="plant.id"
+                class="float-right"
+                @saveLinkedDevicesDone="reloadView()"
+              />
+            </h2>
             <DevicesList
-              v-if="!fetchingDevices"
               :devices="devices"
+              :action-unlink-device="actionUnlinkDevice"
             />
           </v-col>
         </v-row>
@@ -91,6 +98,7 @@
 import AppBar from '@/components/AppBar.vue'
 import ContextMenuPlant from '@/components/ContextMenuPlant.vue'
 import DevicesList from '@/components/DevicesList.vue'
+import LinkDeviceDialog from '@/components/LinkDeviceDialog.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import ProfilePicture from '@/components/ProfilePicture.vue'
 
@@ -100,7 +108,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Plant',
-  components: { AppBar, ContextMenuPlant, DevicesList, LoadingIndicator, ProfilePicture },
+  components: { AppBar, ContextMenuPlant, DevicesList, LinkDeviceDialog, LoadingIndicator, ProfilePicture },
   data () {
     return {
       fetchingPlant: false,
@@ -120,6 +128,34 @@ export default {
     await this.fetchPlantProfile()
   },
   methods: {
+    reloadView () {
+      this.$router.go()
+    },
+    async actionUnlinkDevice (deviceId) {
+      this.fetchingPlant = true
+
+      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/linked-devices'
+
+      const options = {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify([deviceId])
+      }
+
+      try {
+        await fetch(url, options)
+
+        this.$router.replace('/plants/' + this.$route.params.id)
+      } catch (err) {
+        console.error(err)
+      }
+
+      this.reloadView()
+
+      this.fetchingPlant = false
+    },
     actionEditPlant () {
       this.$router.push('/plants/' + this.$route.params.id + '/edit')
     },
@@ -187,11 +223,13 @@ export default {
       }
 
       // fetch linked devices:
-      this.devices = await this.fetchLinkedDevices(this.plant.attachedDevices)
+      this.devices = await this.fetchLinkedDevices(this.plant.linkedDevices)
 
       this.fetchingPlant = false
     },
     async fetchLinkedDevices (list) {
+      // this.fetchingDevices = true
+
       const baseUrl = this.metastoreServerAddress + '/api/devices/'
 
       const options = {
@@ -204,12 +242,13 @@ export default {
       for (let i = 0; i < list.length; i++) {
         try {
           const res = await fetch(baseUrl + list[i], options)
-          this.fetchingDevices = false
           devices.push(await res.json())
         } catch (err) {
           console.error(err)
         }
       }
+
+      // this.fetchingDevices = false
 
       return devices
     }
