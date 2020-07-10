@@ -14,7 +14,7 @@
         </v-btn>
       </template>
 
-      <v-card>
+      <v-card v-if="!fetchingAvailableDevices">
         <v-card-title
           primary-title
         >
@@ -24,7 +24,7 @@
         <v-card-text>
           <v-select
             v-model="selectedDevice"
-            :items="devices"
+            :items="availableDevices"
             item-text="name"
             item-value="id"
             hint="select device from list"
@@ -52,15 +52,22 @@
           </v-btn>
         </v-card-actions>
       </v-card>
+      <LoadingIndicator
+        v-if="fetchingAvailableDevices"
+        type="page"
+      />
     </v-dialog>
   </div>
 </template>
 
 <script>
+import LoadingIndicator from '@/components/LoadingIndicator.vue'
+
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'LinkDeviceDialog',
+  components: { LoadingIndicator },
   props: {
     plantId: {
       type: String,
@@ -69,10 +76,11 @@ export default {
   },
   data () {
     return {
-      devices: undefined,
+      availableDevices: undefined,
       dialogIsOpen: false,
       selectedDevice: undefined,
-      fetchingDevices: false,
+      linkedDevicesIds: undefined,
+      fetchingAvailableDevices: false,
       savingLinkedDevices: false
     }
   },
@@ -83,7 +91,7 @@ export default {
   },
   watch: {
     dialogIsOpen: function (value) {
-      this.fetchDevices()
+      this.fetchAvailableDevices()
     }
   },
   methods: {
@@ -109,21 +117,30 @@ export default {
         console.error(err)
       }
     },
-    async fetchDevices  () {
-      this.fetchingDevices = true
+    async fetchAvailableDevices  () {
+      this.fetchingAvailableDevices = true
 
-      const url = this.metastoreServerAddress + '/api/devices'
+      const uri = this.metastoreServerAddress + '/api/devices'
 
       const options = {
         method: 'GET',
         accept: 'application/json'
       }
 
+      // fetch all devices:
       try {
-        const res = await fetch(url, options)
-        const devices = await res.json()
-        this.fetchingDevices = false
-        this.devices = devices
+        const res = await fetch(uri, options)
+        const allDevices = await res.json()
+
+        // filter result:
+        const availableDevices = allDevices.filter((item) => {
+          if (!item.linkedPlant) {
+            return item
+          }
+        })
+
+        this.availableDevices = availableDevices
+        this.fetchingAvailableDevices = false
       } catch (err) {
         console.error(err)
       }

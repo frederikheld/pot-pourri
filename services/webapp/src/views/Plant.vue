@@ -71,12 +71,20 @@
           <v-col>
             <v-tabs>
               <v-tab>Health</v-tab>
+              <v-tab>History</v-tab>
               <v-tab>Linked Devices</v-tab>
 
               <v-tab-item>
                 <v-row>
                   <v-col>
-                    // to do
+                    <p>// todo: display current health of this plant</p>
+                  </v-col>
+                </v-row>
+              </v-tab-item>
+              <v-tab-item>
+                <v-row>
+                  <v-col>
+                    <p>// todo: display historic diagrams</p>
                   </v-col>
                 </v-row>
               </v-tab-item>
@@ -88,10 +96,6 @@
                       :action-unlink-device="actionUnlinkDevice"
                       :no-devices-info="'You haven\'t linked any devices to this plant yet.'"
                     />
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col>
                     <LinkDeviceDialog
                       class="mx-auto"
                       :plant-id="plant.id"
