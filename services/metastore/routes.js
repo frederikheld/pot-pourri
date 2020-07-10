@@ -73,13 +73,19 @@ router.get('/plants/:id', actions.plants.id.get)
 router.put('/plants/:id', actions.plants.id.put)
 router.delete('/plants/:id', actions.plants.id.delete)
 
-router.get('/plants/:id/profile-picture', actions.plants.id.profilePicture.get)
-
+router.get(
+  '/plants/:id/profile-picture',
+  actions.plants.id.profilePicture.get
+)
 router.put(
   '/plants/:id/profile-picture',
   upload.single('profilePicture'),
   actions.plants.id.profilePicture.put
 )
+
+router.get('/plants/:id/linked-devices', actions.plants.id.linkedDevices.get)
+router.post('/plants/:id/linked-devices', actions.plants.id.linkedDevices.post)
+router.delete('/plants/:id/linked-devices', actions.plants.id.linkedDevices.delete)
 
 // -- EXPORTS
 

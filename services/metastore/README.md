@@ -27,6 +27,35 @@ $ docker-compose build
 $ docker-compose up -d
 ```
 
+## API Design
+All entities served by _metastore_ have an first-level endpoint. The plural noun will return the set of entities:
+
+```sh
+/plants
+/devices
+```
+
+<!--
+If no query given, the full set will be returned. Queries can be used to request a specific subset. The query string has to be escaped following the rules of [`querystring.stringify()`](https://nodejs.org/api/querystring.html#querystring_querystring_stringify_obj_sep_eq_options).
+
+```sh
+/devices/?id=1&id=5
+```
+//-->
+The plural noun followed by an id will return the specific entity:
+
+```sh
+/plant/:id
+/devices/:id
+```
+
+Linked ressources are marked with _linked-_ before the noun. `POST` on such paths will not create a new sub-ressource, but link an existing first-level ressource. The request body is the _id_ of the ressource to be linked. It is possible to pass a list of _ids_.
+
+```sh
+/plant/:id/linked-devices
+```
+
+
 ## Dev Tools
 
 This package comes with a couple of _npm_ scripts. Most of them come in different variations. The general pattern is, that the appendix `:dev` means, that this script is optimized to streamline your local development experience. In most cases this means, that it has a watcher that auto-runs the script when files have been updated. The non-appended variation is optimized for single-runs like in your _CI_ environment.
@@ -48,3 +77,16 @@ This package comes with _eslint_ support. This includes the eslint dev dependenc
 It also comes with an `.vscode` config to integrate eslint into _VSCode_. In order to use this, you need to install [Dirk Baeumer's _vscode-eslint_ extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint). 
 
 **Note:** _VSCode_ ignores `.vscode` configs in sub-directories. So make sure that you open `services/metastore` directory in _VSCode_ to make it the project root.
+
+### Useful links
+
+#### Best Practice in API Design
+
+* [https://restfulapi.net/http-methods/](https://restfulapi.net/http-methods/)
+* [https://restfulapi.net/resource-naming/](https://restfulapi.net/resource-naming/)
+* [https://www.restapitutorial.com/httpstatuscodes.html](https://www.restapitutorial.com/httpstatuscodes.html)
+* [RESTful API Design: 13 Best Practices to Make Your Users Happy](https://florimond.dev/blog/articles/2018/08/restful-api-design-13-best-practices-to-make-your-users-happy/)
+
+#### API Queries
+
+* [Node.js querystring](https://nodejs.org/api/querystring.html) (this is the [_query parser_ used by _express_](https://expressjs.com/en/api.html#app.settings.table))

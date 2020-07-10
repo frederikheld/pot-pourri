@@ -15,6 +15,8 @@
       <DevicesList
         v-if="!fetchingDevices"
         :devices="devices"
+        :no-devices-info="'You don\'t have any devices configured yet.'"
+        :no-devices-hint="'Tap the + button to create one!'"
       />
 
       <LoadingIndicator
@@ -46,12 +48,13 @@ export default {
       'metastoreServerAddress'
     ])
   },
-  beforeMount () {
-    this.fetchingDevices = true
-    this.fetchDevices()
+  async beforeMount () {
+    await this.fetchDevices()
   },
   methods: {
     async fetchDevices  () {
+      this.fetchingDevices = true
+
       const url = this.metastoreServerAddress + '/api/devices'
 
       const options = {

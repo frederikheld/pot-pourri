@@ -26,7 +26,8 @@ server.initDB({
       ],
       settings: {
         measuringInterval: 300 // 5 minutes
-      }
+      },
+      linkedPlant: '0'
     },
     {
       id: '1',
@@ -37,23 +38,31 @@ server.initDB({
       ],
       settings: {
         measuringInterval: 3600 // 1 hour
-      }
+      },
+      linkedPlant: '1'
     },
     {
       id: '2',
-      name: 'baz'
+      name: 'baz',
+      linkedPlant: '1'
+    },
+    {
+      id: '3',
+      name: 'free'
     }
   ],
   plants: [
     {
       id: '0',
       name: 'Erika',
-      profilePicture: 'plants-0-profilePicture.jpg'
+      profilePicture: 'plants-0-profilePicture.jpg',
+      linkedDevices: ['0']
     },
     {
       id: '1',
       name: 'Peter',
-      profilePicture: 'plants-1-profilePicture.jpg'
+      profilePicture: 'plants-1-profilePicture.jpg',
+      linkedDevices: ['1', '2']
     },
     {
       id: 'someplant',

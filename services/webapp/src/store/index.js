@@ -26,6 +26,16 @@ export default new Vuex.Store({
         }
       }
     },
+    maps: {
+      icons: {
+        default: 'mdi-gauge',
+        humidity: 'mdi-water',
+        light: 'mdi-weather-sunny',
+        rain: 'mdi-weather-pouring',
+        'ph-value': 'mdi-image-filter-hdr',
+        temperature: 'mdi-thermometer'
+      }
+    },
     mqtt: {
       client: undefined,
       lastMessage: undefined
@@ -38,6 +48,9 @@ export default new Vuex.Store({
   getters: {
     appSettings: function (state) {
       return state.appSettings
+    },
+    iconMap: function (state) {
+      return state.maps.icons
     },
     mqttServerAddress: function (state) {
       return state.appSettings.network.mqtt.protocol + '://' + state.appSettings.network.mqtt.address + ':' + state.appSettings.network.mqtt.port

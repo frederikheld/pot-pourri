@@ -19,6 +19,25 @@
             <v-list-item-title>{{ device.name }}</v-list-item-title>
             <v-list-item-subtitle>{{ device.id }}</v-list-item-subtitle>
           </v-list-item-content>
+
+          <v-list-item-icon>
+            <v-icon
+              v-for="sensor in device.sensors"
+              :key="sensor.id"
+            >
+              {{ iconMap[sensor.type] }}
+            </v-icon>
+            <v-btn
+              v-if="actionUnlinkDevice !== undefined"
+              icon
+              class="ml-4"
+              @click.prevent="$props.actionUnlinkDevice(device.id)"
+            >
+              <v-icon>
+                mdi-close
+              </v-icon>
+            </v-btn>
+          </v-list-item-icon>
         </v-list-item>
       </v-list>
     </v-list-item-group>
@@ -32,10 +51,13 @@
         class="text-center"
       >
         <p class="body-1">
-          You don't have any devices configured yet.
+          {{ this.$props.noDevicesInfo }}
         </p>
-        <p class="body-2">
-          Tap the + button to create one!
+        <p
+          v-if="noDevicesHint"
+          class="body-2"
+        >
+          {{ this.$props.noDevicesHint }}
         </p>
       </v-col>
     </v-row>
@@ -47,6 +69,8 @@
 </style>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'DevicesList',
   props: {
@@ -54,7 +78,27 @@ export default {
       type: Array,
       required: false,
       default: () => { return [] }
+    },
+    actionUnlinkDevice: {
+      type: Function,
+      required: false,
+      default: undefined
+    },
+    noDevicesInfo: {
+      type: String,
+      required: false,
+      default: 'No devices in list.'
+    },
+    noDevicesHint: {
+      type: String,
+      required: false,
+      default: undefined
     }
+  },
+  computed: {
+    ...mapGetters([
+      'iconMap'
+    ])
   }
 }
 </script>
