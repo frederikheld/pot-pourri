@@ -323,7 +323,7 @@ describe('/plants/:id/picture', () => {
   })
 })
 
-describe('/plants/:id/attached-devices', () => {
+describe('/plants/:id/linked-devices', () => {
   beforeEach(() => {
     mockFs({
       store: {
@@ -331,12 +331,12 @@ describe('/plants/:id/attached-devices', () => {
           {
             id: '0',
             name: 'item one',
-            attachedDevices: ['0', '1', '2']
+            linkedDevices: ['0', '1', '2']
           },
           {
             id: '1',
             name: 'item',
-            attachedDevices: []
+            linkedDevices: []
           },
           { id: 'green' },
           { id: 'red' }
@@ -365,7 +365,7 @@ describe('/plants/:id/attached-devices', () => {
   describe('GET', () => {
     it('should return an array that contains all id\'s of attached devices with status 200', async () => {
       const res = await chai.request(server)
-        .get(apiBasePath + '/plants/0/attached-devices')
+        .get(apiBasePath + '/plants/0/linked-devices')
 
       res.should.have.status(200)
       res.body.should.be.an('array')
@@ -376,7 +376,7 @@ describe('/plants/:id/attached-devices', () => {
     it('should return an empty array with status 200 if no devices are attached', async () => {
       // empty list:
       const res1 = await chai.request(server)
-        .get(apiBasePath + '/plants/1/attached-devices')
+        .get(apiBasePath + '/plants/1/linked-devices')
 
       res1.should.have.status(200)
       res1.body.should.be.an('array')
@@ -385,7 +385,7 @@ describe('/plants/:id/attached-devices', () => {
 
       // key "devices" undefined:
       const res2 = await chai.request(server)
-        .get(apiBasePath + '/plants/green/attached-devices')
+        .get(apiBasePath + '/plants/green/linked-devices')
 
       res2.should.have.status(200)
       res2.body.should.be.an('array')
@@ -395,7 +395,7 @@ describe('/plants/:id/attached-devices', () => {
 
     it('should return status 404 with error message "plant does not exist" if plant doesn\'t exist', async () => {
       const res = await chai.request(server)
-        .get(apiBasePath + '/plants/2/attached-devices')
+        .get(apiBasePath + '/plants/2/linked-devices')
 
       res.should.have.status(404)
       res.body.error.should.equal('plant does not exist')
@@ -406,7 +406,7 @@ describe('/plants/:id/attached-devices', () => {
     it('should return status 200 if the device was successfully linked', async () => {
       // add to existing list of attached devices:
       const res1 = await chai.request(server)
-        .post(apiBasePath + '/plants/0/attached-devices')
+        .post(apiBasePath + '/plants/0/linked-devices')
         .type('json')
         .send(['3'])
 
@@ -414,7 +414,7 @@ describe('/plants/:id/attached-devices', () => {
 
       // attach to empty list of attached devices:
       const res2 = await chai.request(server)
-        .post(apiBasePath + '/plants/1/attached-devices')
+        .post(apiBasePath + '/plants/1/linked-devices')
         .type('json')
         .send(['4'])
 
@@ -422,7 +422,7 @@ describe('/plants/:id/attached-devices', () => {
 
       // attach if key doesn't exist:
       const res3 = await chai.request(server)
-        .post(apiBasePath + '/plants/green/attached-devices')
+        .post(apiBasePath + '/plants/green/linked-devices')
         .type('json')
         .send(['5'])
 
@@ -430,7 +430,7 @@ describe('/plants/:id/attached-devices', () => {
 
       // attach multiple devices:
       const res4 = await chai.request(server)
-        .post(apiBasePath + '/plants/red/attached-devices')
+        .post(apiBasePath + '/plants/red/linked-devices')
         .type('json')
         .send(['6', '7', '8'])
 
@@ -442,20 +442,20 @@ describe('/plants/:id/attached-devices', () => {
         {
           id: '0',
           name: 'item one',
-          attachedDevices: ['0', '1', '2', '3']
+          linkedDevices: ['0', '1', '2', '3']
         },
         {
           id: '1',
           name: 'item',
-          attachedDevices: ['4']
+          linkedDevices: ['4']
         },
         {
           id: 'green',
-          attachedDevices: ['5']
+          linkedDevices: ['5']
         },
         {
           id: 'red',
-          attachedDevices: ['6', '7', '8']
+          linkedDevices: ['6', '7', '8']
         }
       ])
     })
@@ -464,7 +464,7 @@ describe('/plants/:id/attached-devices', () => {
   describe('DELETE array of deviceID\'s', () => {
     it('should remove link between plant with the given :ids and the devices with the ids passed in the request body and return status 204', async () => {
       const res = await chai.request(server)
-        .delete(apiBasePath + '/plants/0/attached-devices')
+        .delete(apiBasePath + '/plants/0/linked-devices')
         .type('json')
         .send(['0', '1'])
 
@@ -475,12 +475,12 @@ describe('/plants/:id/attached-devices', () => {
         {
           id: '0',
           name: 'item one',
-          attachedDevices: ['2']
+          linkedDevices: ['2']
         },
         {
           id: '1',
           name: 'item',
-          attachedDevices: []
+          linkedDevices: []
         },
         { id: 'green' },
         { id: 'red' }

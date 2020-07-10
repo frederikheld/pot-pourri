@@ -86,13 +86,13 @@ actions.plants.id.profilePicture = {
   }
 }
 
-actions.plants.id.attachedDevices = {
+actions.plants.id.linkedDevices = {
   get: (req, res) => {
     const plant = db.getPlantById(req.params.id)
 
     if (plant) {
-      if (plant.attachedDevices) {
-        res.status(200).send(plant.attachedDevices)
+      if (plant.linkedDevices) {
+        res.status(200).send(plant.linkedDevices)
       } else {
         res.status(200).send([])
       }
@@ -103,12 +103,12 @@ actions.plants.id.attachedDevices = {
   post: (req, res) => {
     const plant = db.getPlantById(req.params.id)
 
-    if (!plant.attachedDevices) {
-      plant.attachedDevices = []
+    if (!plant.linkedDevices) {
+      plant.linkedDevices = []
     }
 
     req.body.forEach((deviceId) => {
-      plant.attachedDevices.push(deviceId)
+      plant.linkedDevices.push(deviceId)
     })
 
     db.updatePlantById(req.params.id, plant)
@@ -185,11 +185,11 @@ db.deletePlantById = function (plantId) {
 db.unlinkDeviceFromPlant = function (plantId, deviceIdsArray) {
   const plant = db.getPlantById(plantId)
 
-  const linkedDevicesNew = plant.attachedDevices.filter((element) => {
+  const linkedDevicesNew = plant.linkedDevices.filter((element) => {
     return !deviceIdsArray.includes(element)
   })
 
-  plant.attachedDevices = linkedDevicesNew
+  plant.linkedDevices = linkedDevicesNew
 
   db.updatePlantById(plantId, plant)
 

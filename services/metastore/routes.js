@@ -83,9 +83,9 @@ router.put(
   actions.plants.id.profilePicture.put
 )
 
-router.get('/plants/:id/attached-devices', actions.plants.id.attachedDevices.get)
-router.post('/plants/:id/attached-devices', actions.plants.id.attachedDevices.post)
-router.delete('/plants/:id/attached-devices', actions.plants.id.attachedDevices.delete)
+router.get('/plants/:id/linked-devices', actions.plants.id.linkedDevices.get)
+router.post('/plants/:id/linked-devices', actions.plants.id.linkedDevices.post)
+router.delete('/plants/:id/linked-devices', actions.plants.id.linkedDevices.delete)
 
 // -- EXPORTS
 

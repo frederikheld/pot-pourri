@@ -49,13 +49,13 @@ server.initDB({
       id: '0',
       name: 'Erika',
       profilePicture: 'plants-0-profilePicture.jpg',
-      attachedDevices: ['0']
+      linkedDevices: ['0']
     },
     {
       id: '1',
       name: 'Peter',
       profilePicture: 'plants-1-profilePicture.jpg',
-      attachedDevices: ['1', '2']
+      linkedDevices: ['1', '2']
     },
     {
       id: 'someplant',
