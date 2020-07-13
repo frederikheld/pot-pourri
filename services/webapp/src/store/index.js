@@ -48,7 +48,8 @@ export default new Vuex.Store({
     lab: {
       count: 0,
       countDirect: 0
-    }
+    },
+    labSettings: undefined
   },
   getters: {
     appSettings: function (state) {
@@ -65,6 +66,9 @@ export default new Vuex.Store({
     },
     count (state) {
       return state.lab.count
+    },
+    labSettings (state) {
+      return state.labSettings
     }
   },
   mutations: {
@@ -76,6 +80,9 @@ export default new Vuex.Store({
     },
     DECREMENT_COUNTER (state) {
       state.lab.count--
+    },
+    SAVE_LAB_SETTINGS (state, newLabSettingsObject) {
+      state.labSettings = newLabSettingsObject
     }
   },
   actions: {
