@@ -59,9 +59,9 @@ const routes = [
     component: () => import('../views/System.vue')
   },
   {
-    path: '/lab-settings',
+    path: '/lab/lab-settings',
     name: 'Settings Lab',
-    component: () => import('../views/LabSettings.vue')
+    component: () => import('../views/lab/LabSettings.vue')
   },
   {
     path: '/settings',

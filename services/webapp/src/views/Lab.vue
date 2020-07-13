@@ -5,6 +5,9 @@
     />
 
     <v-container>
+      <v-btn to="lab/lab-settings">
+        Settings Lab
+      </v-btn>
       <h1>Chart Test</h1>
       <ChartTest
         id="chart"
