@@ -49,7 +49,11 @@ export default new Vuex.Store({
       count: 0,
       countDirect: 0
     },
-    labSettings: undefined
+    labSettings: {
+      foo: {
+        bar: { }
+      }
+    }
   },
   getters: {
     appSettings: function (state) {

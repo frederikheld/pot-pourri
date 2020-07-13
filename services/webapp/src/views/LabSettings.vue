@@ -4,16 +4,16 @@
       <v-row>
         <v-col>
           <v-text-field
-            v-model="form.foo"
-            label="Foo"
+            v-model="form.foo.bar"
+            label="Foobar"
           />
         </v-col>
       </v-row>
       <v-row>
         <v-col>
           <v-text-field
-            v-model="form.bar"
-            label="Bar"
+            v-model="form.baz"
+            label="Baz"
           />
         </v-col>
       </v-row>
@@ -49,7 +49,9 @@ export default {
   name: 'LabSettings',
   data () {
     return {
-      form: { }
+      form: {
+        foo: { }
+      }
     }
   },
   computed: {
@@ -64,11 +66,11 @@ export default {
     }
   },
   mounted () {
-    this.form = Object.assign({}, this.labSettings)
+    this.form = JSON.parse(JSON.stringify(this.labSettings))
   },
   methods: {
     saveSettings () {
-      this.$store.commit('SAVE_LAB_SETTINGS', Object.assign({}, this.form))
+      this.$store.commit('SAVE_LAB_SETTINGS', JSON.parse(JSON.stringify(this.form)))
     }
   }
 }
