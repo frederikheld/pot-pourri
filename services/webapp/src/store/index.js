@@ -27,7 +27,9 @@ export default new Vuex.Store({
         influxdb: {
           protocol: 'https',
           address: 'localhost',
-          port: 8086
+          port: 8086,
+          username: undefined,
+          password: undefined
         }
       }
     },
@@ -56,7 +58,7 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    appSettings: function (state) {
+    appSettings (state) {
       return state.appSettings
     },
     iconMap: function (state) {

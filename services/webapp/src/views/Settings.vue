@@ -18,12 +18,15 @@
                   </span>
                 </v-col>
               </v-row>
+              <v-row class="my-2" />
               <!-- option start -->
               <v-row
                 align="baseline"
               >
                 <v-col>
-                  <span class="text-subtitle-2">MQTT:</span>
+                  <p class="text-subtitle-2">
+                    MQTT:
+                  </p>
                 </v-col>
               </v-row>
               <v-row>
@@ -48,12 +51,15 @@
                 </v-col>
               </v-row>
               <!-- option end -->
+              <v-row class="my-2" />
               <!-- option start -->
               <v-row
                 align="baseline"
               >
                 <v-col>
-                  <span class="text-subtitle-2">Metastore:</span>
+                  <p class="text-subtitle-2">
+                    Metastore:
+                  </p>
                 </v-col>
               </v-row>
               <v-row>
@@ -78,6 +84,7 @@
                 </v-col>
               </v-row>
               <!-- option end -->
+              <v-row class="my-2" />
               <!-- option start -->
               <v-row
                 align="baseline"
@@ -111,6 +118,21 @@
                   />
                 </v-col>
               </v-row>
+              <v-row>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="form.network.influxdb.username"
+                    label="username"
+                  />
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    v-model="form.network.influxdb.password"
+                    label="password"
+                    type="password"
+                  />
+                </v-col>
+              </v-row>
               <!-- option end -->
             </v-container>
           </v-col>
@@ -121,77 +143,57 @@
             <v-btn
               right
               color="primary"
-              :loading="savingSettings"
-              :disabled="!formIsValid"
-              @click="actionSaveSettings()"
+              :disabled="!hasPendingEdits"
+              @click="actionSaveSettings"
             >
               Save
             </v-btn>
           </v-col>
         </v-row>
+        <!-- <v-row>
+          <v-col>
+            <p>form: {{ form }}</p>
+            <p>store: {{ appSettings }}</p>
+          </v-col>
+        </v-row> -->
       </v-form>
     </v-container>
   </div>
 </template>
 
-<style lang="scss" scoped>
-.form-section .col {
-    padding-top: 0;
-    padding-bottom: 0;
-}
-</style>
-
 <script>
+/**
+ * TODO: password isn't hashed/salted before being stored yet!
+ */
 import AppBar from '@/components/AppBar.vue'
-// import LoadingIndicator from '@/components/LoadingIndicator.vue'
+
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'Device',
+  name: 'Settings',
   components: { AppBar },
-  //   components: { AppBar, LoadingIndicator },
   data () {
     return {
-      form: {
-        network: {
-          mqtt: {
-            protocol: 'https',
-            address: '',
-            port: 1883
-          },
-          metastore: {
-            protocol: 'https',
-            address: '',
-            port: 3003
-          },
-          influxdb: {
-            protocol: 'https',
-            address: '',
-            port: 8086
-          }
-        }
-      },
-      formIsValid: true,
-      savingSettings: false
+      form: undefined
     }
   },
   computed: {
     ...mapGetters([
       'appSettings'
-    ])
+    ]),
+    hasPendingEdits () {
+      const inForm = JSON.stringify(this.form)
+      const inStore = JSON.stringify(this.appSettings)
+
+      return inForm !== inStore
+    }
   },
-  mounted () {
-    this.loadSettingsFromStore()
+  beforeMount () {
+    this.form = JSON.parse(JSON.stringify(this.appSettings))
   },
   methods: {
-    loadSettingsFromStore () {
-      this.form = this.appSettings
-    },
     actionSaveSettings () {
-      this.savingSettings = true
-      this.$store.commit('SAVE_APP_SETTINGS', this.form)
-      this.loadSettingsFromStore()
-      this.savingSettings = false
+      this.$store.commit('SAVE_APP_SETTINGS', JSON.parse(JSON.stringify(this.form)))
     }
   }
 }

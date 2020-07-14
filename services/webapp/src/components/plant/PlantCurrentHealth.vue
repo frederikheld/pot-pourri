@@ -65,7 +65,7 @@ export default {
   computed: {
     ...mapGetters([
       'iconMap',
-      'influxdb'
+      'appSettings'
     ])
   },
   async mounted () {
@@ -76,10 +76,10 @@ export default {
       this.fetchingCurrentSensorData = true
 
       const influx = new Influx.InfluxDB({
-        host: this.influxdb.address,
-        port: this.influxdb.port,
-        username: 'admin',
-        password: 'admin',
+        host: this.appSettings.network.influxdb.address,
+        port: this.appSettings.network.influxdb.port,
+        username: this.appSettings.network.influxdb.username,
+        password: this.appSettings.network.influxdb.password,
         database: 'telegraf'
       })
 
