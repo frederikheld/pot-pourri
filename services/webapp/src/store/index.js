@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 
 const vuexLocal = new VuexPersistence({
-  key: 'freds-songbook',
+  key: 'pot-pourri',
   storage: window.localStorage
 })
 
