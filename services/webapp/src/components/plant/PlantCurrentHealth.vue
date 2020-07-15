@@ -87,8 +87,6 @@ export default {
 
       const result = await influx.query(query)
 
-      // console.log('current humidity', result[0].last)
-
       if (result && result[0]) {
         this.currentSensorData.humidity = result[0].last
       } else {

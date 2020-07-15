@@ -1,7 +1,6 @@
 <template>
   <div>
     <canvas ref="chart" />
-    <!-- <div>chartData: {{ chartData }}</div> -->
   </div>
 </template>
 
@@ -27,6 +26,7 @@ export default {
     chartData: function (newChartData, oldChartData) {
       this.formattedData = this.formatChartData(newChartData)
       this.chart.data.datasets = this.formattedData
+
       // re-render chart:
       this.chart.update()
     }
@@ -43,7 +43,10 @@ export default {
           datasets: [{
             label: 'Humidity',
             data: this.formattedData,
-            borderColor: '#6666ff',
+            borderColor: 'rgba(100, 100, 255, 1.0)',
+            pointBackgroundColor: 'rgba(100, 100, 255, 0.0)',
+            pointBorderColor: 'rgba(100, 100, 255, 0.0)',
+            pointHoverBorderColor: 'rgba(100, 100, 255, 1.0)',
             fill: false
           }]
         },

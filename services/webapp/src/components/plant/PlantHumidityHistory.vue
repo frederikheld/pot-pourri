@@ -82,7 +82,7 @@ export default {
         database: 'telegraf'
       })
 
-      const query = 'SELECT (1024 - "value") / 1024 * 100 FROM "autogen"."mqtt_consumer" WHERE ("topic" = \'potpourri/devices/' + this.$props.plantId + '/sensors/humidity\') AND time > now() - 6h ORDER BY time DESC'
+      const query = 'SELECT (1024 - "value") / 1024 * 100 FROM "autogen"."mqtt_consumer" WHERE ("topic" = \'potpourri/devices/' + this.$props.plantId + '/sensors/humidity\') AND time > now() - 12h ORDER BY time DESC'
 
       const result = await influx.query(query)
 
@@ -98,7 +98,6 @@ export default {
 
       if (this.sensorData && this.sensorData.length > 0) {
         this.sensorData.forEach((item, i) => {
-        // dataPoints.push(item.value)
           dataPoints.push({
             x: item.time,
             y: item.value
