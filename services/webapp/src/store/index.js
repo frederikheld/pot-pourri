@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 
 const vuexLocal = new VuexPersistence({
-  key: 'freds-songbook',
+  key: 'pot-pourri',
   storage: window.localStorage
 })
 
@@ -16,13 +16,20 @@ export default new Vuex.Store({
       network: {
         mqtt: {
           protocol: 'https',
-          address: 'foo',
+          address: 'localhost',
           port: 1883
         },
         metastore: {
           protocol: 'https',
-          address: 'bar',
+          address: 'localhost',
           port: 3003
+        },
+        influxdb: {
+          protocol: 'https',
+          address: 'localhost',
+          port: 8086,
+          username: undefined,
+          password: undefined
         }
       }
     },
@@ -43,10 +50,15 @@ export default new Vuex.Store({
     lab: {
       count: 0,
       countDirect: 0
+    },
+    labSettings: {
+      foo: {
+        bar: { }
+      }
     }
   },
   getters: {
-    appSettings: function (state) {
+    appSettings (state) {
       return state.appSettings
     },
     iconMap: function (state) {
@@ -60,6 +72,9 @@ export default new Vuex.Store({
     },
     count (state) {
       return state.lab.count
+    },
+    labSettings (state) {
+      return state.labSettings
     }
   },
   mutations: {
@@ -71,6 +86,9 @@ export default new Vuex.Store({
     },
     DECREMENT_COUNTER (state) {
       state.lab.count--
+    },
+    SAVE_LAB_SETTINGS (state, newLabSettingsObject) {
+      state.labSettings = newLabSettingsObject
     }
   },
   actions: {

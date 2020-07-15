@@ -77,14 +77,16 @@
               <v-tab-item>
                 <v-row>
                   <v-col>
-                    <p>// todo: display current health of this plant</p>
+                    <PlantCurrentHealth
+                      :plant-id="plant.id"
+                    />
                   </v-col>
                 </v-row>
               </v-tab-item>
               <v-tab-item>
                 <v-row>
                   <v-col>
-                    <p>// todo: display historic diagrams</p>
+                    <PlantHumidityHistory :plant-id="plant.id" />
                   </v-col>
                 </v-row>
               </v-tab-item>
@@ -125,6 +127,8 @@ import ContextMenuPlant from '@/components/ContextMenuPlant.vue'
 import DevicesList from '@/components/DevicesList.vue'
 import LinkDeviceDialog from '@/components/LinkDeviceDialog.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
+import PlantCurrentHealth from '@/components/plant/PlantCurrentHealth.vue'
+import PlantHumidityHistory from '@/components/plant/PlantHumidityHistory.vue'
 import ProfilePicture from '@/components/ProfilePicture.vue'
 
 import { mapGetters } from 'vuex'
@@ -133,7 +137,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Plant',
-  components: { AppBar, ContextMenuPlant, DevicesList, LinkDeviceDialog, LoadingIndicator, ProfilePicture },
+  components: { AppBar, ContextMenuPlant, DevicesList, LinkDeviceDialog, LoadingIndicator, PlantCurrentHealth, PlantHumidityHistory, ProfilePicture },
   data () {
     return {
       fetchingPlant: false,
@@ -248,7 +252,11 @@ export default {
       }
 
       // fetch linked devices:
-      this.devices = await this.fetchLinkedDevices(this.plant.linkedDevices)
+      if (this.plant.linkedDevices) {
+        this.devices = await this.fetchLinkedDevices(this.plant.linkedDevices)
+      } else {
+        this.devices = []
+      }
 
       this.fetchingPlant = false
     },
