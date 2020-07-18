@@ -9,15 +9,15 @@ chai.use(chaiHttp)
 
 const mongoose = require('mongoose')
 
-const mongoMemHandler = require('./MongoMemoryServerHandler')
+const mongoMemoryServerHandler = require('./MongoMemoryServerHandler')
 
 describe('/plants', () => {
   beforeEach(async () => {
-    await mongoMemHandler.start()
+    await mongoMemoryServerHandler.start()
   })
 
   afterEach(async () => {
-    await mongoMemHandler.stop()
+    await mongoMemoryServerHandler.stop()
   })
 
   it('should work', () => {
@@ -40,7 +40,9 @@ describe('/plants', () => {
       size: Number
     }))
 
-    const Foo = mongoose.model('Foo', new mongoose.Schema({ foo: String }))
+    const Foo = mongoose.model('Foo', new mongoose.Schema({
+      foo: String
+    }))
 
     const countUser = await User.countDocuments()
     const countFoo = await Foo.countDocuments()
@@ -50,7 +52,9 @@ describe('/plants', () => {
   })
 
   it('should work like the others', async () => {
-    const Foo = mongoose.model('Foo', new mongoose.Schema({ foo: String }))
+    const Foo = mongoose.model('Foo', new mongoose.Schema({
+      foo: String
+    }))
     const countFoo = await Foo.countDocuments()
 
     countFoo.should.equal(0)
