@@ -8,6 +8,8 @@ const router = express.Router()
 // This is how express does it: https://expressjs.com/en/guide/routing.html
 // Can't fix that :-(
 
+// info: multer handles file uploads (multipart/form-data)
+// see: https://github.com/expressjs/multer
 const multer = require('multer')
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -39,7 +41,8 @@ const upload = multer({
 
 const actions = {
   ...require('./actions_devices'),
-  ...require('./actions_plants')
+  ...require('./actions_plants'),
+  ...require('./actions_debug')
 }
 
 // -- ROUTES
@@ -51,6 +54,10 @@ router.route('/').get((req, res) => {
     message: 'Hello World! :-)'
   })
 })
+
+// -- debug:
+
+router.get('/debug/mongodb', actions.debug.mongodb.get)
 
 // -- devices
 

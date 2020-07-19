@@ -8,12 +8,18 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 
+// const mongoClient = require('mongodb').MongoClient
+
+const mongoose = require('mongoose')
+
 const routes = require('./routes')
 
 const app = express()
-app.use(function (req, res, next) { setTimeout(next, server.options.responseDelay) })
+
+app.use(function (req, res, next) { setTimeout(next, server.options.responseDelay) }) // timeout to simulate slow connections
 app.use(bodyParser.json())
 app.use(cors()) // TODO: How can I test if CORS is working correctly?
+
 app.use('/api', routes)
 
 const fs = require('fs')
@@ -26,18 +32,11 @@ const server = app.listen(3003, () => {
 
 // -- database
 
-server.initDB = function (contents = {}) {
-  if (!fs.existsSync('./store')) {
-    fs.mkdirSync('./store')
-  }
-
-  if (!fs.existsSync('./store/devices.json')) {
-    fs.writeFileSync('./store/devices.json', JSON.stringify(contents.devices ? contents.devices : []))
-  }
-
-  if (!fs.existsSync('./store/plants.json')) {
-    fs.writeFileSync('./store/plants.json', JSON.stringify(contents.plants ? contents.plants : []))
-  }
+server.initDB = function (uri, contents = {}) {
+  mongoose.connect(uri, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true
+  })
 }
 
 server.initBlobStorage = function (inputDirectory = null) {
@@ -57,10 +56,6 @@ server.initBlobStorage = function (inputDirectory = null) {
       )
     })
   }
-
-  // if (!fs.existsSync(path.join(__dirname, 'store', 'blob', 'temp'))) {
-  //   fs.mkdirSync(path.join(__dirname, 'store', 'blob', 'temp'))
-  // }
 }
 
 // -- options

@@ -1,6 +1,7 @@
 'use strict'
 
 const fs = require('fs')
+require('dotenv').config()
 
 /**
  * This script starts the server in a configuration that
@@ -15,7 +16,7 @@ fs.rmdirSync('store', { recursive: true })
 // uncomment the above line if you want to keep
 // the database from the last debug run.
 
-server.initDB({
+server.initDB('mongodb://localhost:' + process.env.MONGODB_PORT + '/pot-pourri-debug', {
   devices: [
     {
       id: '0',
@@ -60,7 +61,7 @@ server.initDB({
     },
     {
       id: '1',
-      name: 'Peter',
+      name: 'Franzi',
       profilePicture: 'plants-1-profilePicture.jpg',
       linkedDevices: ['1', '2']
     },

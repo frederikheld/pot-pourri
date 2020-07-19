@@ -9,7 +9,7 @@ services:
         volumes:
             - mongodb:/data/db
         ports:
-            - ${mongodb_port}:27017
+            - ${MONGODB_PORT}:27017
         restart: always
 
     metastore:
@@ -21,7 +21,7 @@ services:
         volumes:
             - store:/usr/src/app/store
         ports:
-            - ${metastore_port}:3003
+            - ${METASTORE_PORT}:3003
         depends_on:
             - mongodb
         restart: always

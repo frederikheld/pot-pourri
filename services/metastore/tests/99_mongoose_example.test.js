@@ -8,7 +8,6 @@ const expect = chai.expect
 chai.use(chaiHttp)
 
 const mongoose = require('mongoose')
-
 const mongoMemoryServerHandler = require('./MongoMemoryServerHandler')
 
 describe('/plants', () => {

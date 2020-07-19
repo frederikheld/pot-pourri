@@ -5,19 +5,28 @@
 const fs = require('fs')
 const path = require('path')
 
+const plantService = require('./services/plant')
+
 // -- actions
 
 const actions = { }
 
 actions.plants = {
-  get: (req, res) => {
-    res.status(200).send(db.getAllPlants())
+  get: async (req, res) => {
+    const result = await plantService.read()
+    res.status(200).send(result)
   },
-  post: (req, res) => {
-    if (db.createPlant(req.body)) {
-      res.status(201).send()
+  post: async (req, res) => {
+    const result = await plantService.create(req.body)
+
+    if (!result.error) {
+      res.status(201).send(result)
     } else {
-      res.status(409).send({ error: 'Plant with same "id" exists already.' })
+      if (result.error.code === 11000) {
+        res.status(409).send({ error: 'Plant with same "name" exists already.' })
+      } else {
+        res.status(500).send({ error: 'Something went wrong' })
+      }
     }
   }
 }

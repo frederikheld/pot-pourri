@@ -13,21 +13,72 @@ const MongoMemoryServerHandler = { }
 MongoMemoryServerHandler.start = async () => {
   this.mongod = new MongoMemoryServer()
 
-  const uri = await this.mongod.getConnectionString()
+  this.connectionString = await this.mongod.getConnectionString()
+  this.uri = await this.mongod.getUri()
+  this.dbName = await this.mongod.getDbName()
+  this.dbPath = await this.mongod.getDbPath()
+  this.instanceinfo = await this.mongod.getInstanceInfo()
 
   const mongooseOpts = {
     useUnifiedTopology: true,
     useNewUrlParser: true
   }
 
-  await mongoose.connect(uri, mongooseOpts)
+  await mongoose.connect(this.connectionString, mongooseOpts)
+}
+
+MongoMemoryServerHandler.getConnectionString = () => {
+  return this.connectionString
+}
+
+MongoMemoryServerHandler.getUri = () => {
+  return this.uri
+}
+
+MongoMemoryServerHandler.getDbName = () => {
+  return this.dbName
+}
+
+MongoMemoryServerHandler.getDbPath = () => {
+  return this.dbPath
+}
+
+MongoMemoryServerHandler.getInstanceInfo = () => {
+  return this.instanceInfo
+}
+
+MongoMemoryServerHandler.getDbInstance = () => {
+  return this.mongod.runningInstance
 }
 
 /**
- * Initailizes the database with the passed data.
+ * Initailizes the database with the passed nested object of arrays.
+ *
+ * The object key defines the collection, the array entries are
+ * objects that need to fit the specified database scheme.
  */
 MongoMemoryServerHandler.init = async (initObject) => {
-  // TODO
+  // const objectModelMapping = {
+  //   plants: 'plant',
+  //   devices: 'device'
+  // }
+  Object.keys(initObject).forEach((key) => {
+    if (key === 'plants') {
+      const PlantModel = require('../models/plant')
+
+      initObject[key].forEach(async (entry) => {
+        const plantModel = new PlantModel(entry)
+        await plantModel.save()
+      })
+    } else if (key === 'devices') {
+      const DeviceModel = require('../models/device')
+
+      initObject[key].forEach(async (entry) => {
+        const deviceModel = new DeviceModel(entry)
+        await deviceModel.save()
+      })
+    }
+  })
 }
 
 /**
