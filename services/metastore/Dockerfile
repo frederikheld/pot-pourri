@@ -8,7 +8,7 @@ RUN npm install --only=production
 
 COPY . .
 
-RUN mkdir store
+RUN mkdir -p store
 
 EXPOSE 3003
 
