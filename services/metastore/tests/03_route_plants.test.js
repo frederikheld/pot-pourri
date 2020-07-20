@@ -27,7 +27,7 @@ describe('/plants', () => {
   let mongoDbInstance
 
   beforeEach(async () => {
-    // start and initialize in memory db server:
+    // start and initialize in-memory db server:
     await MongoMemServ.start()
     await MongoMemServ.init({
       plants: [
@@ -38,7 +38,6 @@ describe('/plants', () => {
     })
 
     // start instance of db client:
-
     mongoClient = new MongoClient(
       MongoMemServ.getUri(),
       {
@@ -56,7 +55,7 @@ describe('/plants', () => {
     // stop client:
     await mongoClient.close()
 
-    // stop server:
+    // stop in-memory server:
     await MongoMemServ.stop()
   })
 
@@ -92,6 +91,24 @@ describe('/plants', () => {
         { name: 'Franzi' },
         { name: 'Basilikum' },
         { name: 'Paula' }
+      ])
+    })
+
+    it('should return 409 with an error message if a plant with the given "name" exists already', async () => {
+      const res = await chai.request(server)
+        .post(apiBasePath + '/plants')
+        .type('json')
+        .send({ name: 'Franzi' })
+
+      res.should.have.status(409)
+      res.body.error.should.equal('Plant with same "name" exists already.')
+
+      const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
+
+      allPlants.should.be.like([
+        { name: 'Gerhard' },
+        { name: 'Franzi' },
+        { name: 'Basilikum' }
       ])
     })
   })

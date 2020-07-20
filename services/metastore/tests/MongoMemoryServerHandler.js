@@ -1,7 +1,18 @@
 'use strict'
 
+// make sure this is exactly the same version
+// as in ../docker-compose.yml! Otherwies the
+// tests might yield different results than
+// your production environment.
+//
+// NOTE: first test run might take a while as
+//       mongodb-memory-server will download
+//       the binaries.
+process.env.MONGOMS_DOWNLOAD_URL = 'https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.2.8.tgz'
+process.env.MONGOMS_VERSION = '4.2.8'
+
 const mongoose = require('mongoose')
-mongoose.promise = Promise
+// mongoose.promise = Promise
 
 const { MongoMemoryServer } = require('mongodb-memory-server')
 
@@ -62,7 +73,7 @@ MongoMemoryServerHandler.init = async (initObject) => {
   //   plants: 'plant',
   //   devices: 'device'
   // }
-  Object.keys(initObject).forEach((key) => {
+  Object.keys(initObject).forEach(async (key) => {
     if (key === 'plants') {
       const PlantModel = require('../models/plant')
 
@@ -70,6 +81,8 @@ MongoMemoryServerHandler.init = async (initObject) => {
         const plantModel = new PlantModel(entry)
         await plantModel.save()
       })
+
+      await PlantModel.ensureIndexes() // [1]
     } else if (key === 'devices') {
       const DeviceModel = require('../models/device')
 
@@ -77,8 +90,13 @@ MongoMemoryServerHandler.init = async (initObject) => {
         const deviceModel = new DeviceModel(entry)
         await deviceModel.save()
       })
+
+      await DeviceModel.ensureIndexes() // [1]
     }
   })
+
+  // [1]: This is a workaround to make unique indices working
+  //      Source: https://github.com/nodkz/mongodb-memory-server/issues/102
 }
 
 /**
@@ -92,6 +110,7 @@ MongoMemoryServerHandler.init = async (initObject) => {
  */
 MongoMemoryServerHandler.clear = async () => {
   await mongoose.connection.dropDatabase()
+  // await Promise.all(['plants', 'devices'].map((c) => mongoose.connection.collection(c).deleteMany({})))
 }
 
 /**
