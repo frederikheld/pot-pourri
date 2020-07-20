@@ -31,8 +31,9 @@ MongoMemoryServerHandler.start = async () => {
   this.instanceinfo = await this.mongod.getInstanceInfo()
 
   const mongooseOpts = {
-    useUnifiedTopology: true,
-    useNewUrlParser: true
+    useCreateIndex: true,
+    useNewUrlParser: true,
+    useUnifiedTopology: true
   }
 
   await mongoose.connect(this.connectionString, mongooseOpts)
@@ -67,36 +68,52 @@ MongoMemoryServerHandler.getDbInstance = () => {
  *
  * The object key defines the collection, the array entries are
  * objects that need to fit the specified database scheme.
+ *
+ * Returns an array of all entries including the meta data
+ * created by the database engine. This can be used as
+ * mock data for testing.
  */
 MongoMemoryServerHandler.init = async (initObject) => {
   // const objectModelMapping = {
   //   plants: 'plant',
   //   devices: 'device'
   // }
-  Object.keys(initObject).forEach(async (key) => {
-    if (key === 'plants') {
+  const dbObjects = {}
+  const keys = Object.keys(initObject)
+  for (let i = 0; i < keys.length; i++) {
+    if (keys[i] === 'plants') {
+      dbObjects.plants = []
       const PlantModel = require('../models/plant')
 
-      initObject[key].forEach(async (entry) => {
-        const plantModel = new PlantModel(entry)
-        await plantModel.save()
-      })
+      for (let j = 0; j < initObject[keys[i]].length; j++) {
+        const plantModel = new PlantModel(initObject[keys[i]][j])
+        const result = await plantModel.save()
+        dbObjects.plants.push(JSON.parse(JSON.stringify(result)))
+      }
 
-      await PlantModel.ensureIndexes() // [1]
-    } else if (key === 'devices') {
+      await PlantModel.createIndexes() // [1]
+    } else
+    if (keys[i] === 'devices') {
+      dbObjects.devices = []
       const DeviceModel = require('../models/device')
 
-      initObject[key].forEach(async (entry) => {
-        const deviceModel = new DeviceModel(entry)
-        await deviceModel.save()
-      })
+      for (let j = 0; j < initObject[keys[i]].length; j++) {
+        const deviceModel = new DeviceModel(initObject[keys[i]][j])
+        const result = await deviceModel.save()
+        dbObjects.devices.push(JSON.parse(JSON.stringify(result)))
+      }
 
-      await DeviceModel.ensureIndexes() // [1]
+      await DeviceModel.createIndexes() // [1]
     }
-  })
+  }
 
   // [1]: This is a workaround to make unique indices working
   //      Source: https://github.com/nodkz/mongodb-memory-server/issues/102
+
+  // Using for instead of forEach is another workaround as
+  // async/await doesn't work inside forEach loops.
+
+  return dbObjects
 }
 
 /**

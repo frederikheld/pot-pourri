@@ -13,7 +13,7 @@ const actions = { }
 
 actions.plants = {
   get: async (req, res) => {
-    const result = await plantService.read()
+    const result = await plantService.readAll()
     res.status(200).send(result)
   },
   post: async (req, res) => {
@@ -32,10 +32,10 @@ actions.plants = {
 }
 
 actions.plants.id = {
-  get: (req, res) => {
-    const plant = db.getPlantById(req.params.id)
-    if (plant) {
-      res.status(200).send(plant)
+  get: async (req, res) => {
+    const result = await plantService.readOne(req.params.id)
+    if (result && !result.error) {
+      res.status(200).send(result)
     } else {
       res.status(404).send({ error: 'Device with given "id" does not exist.' })
     }

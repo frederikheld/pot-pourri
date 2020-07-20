@@ -1,21 +1,15 @@
 'use strict'
 
 const chai = require('chai')
-const chaiHttp = require('chai-http')
-const chaiFs = require('chai-fs')
-const chaiLike = require('chai-like')
 chai.should()
-// const expect = chai.expect
 
+const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
-chai.use(chaiFs)
+
+const chaiLike = require('chai-like')
 chai.use(chaiLike)
 
-// const chaiObjects = require('./chai-objects.js')
-// chai.use(chaiObjects)
-
 const server = require('../server')
-// const { plants } = require('../actions_plants')
 
 const MongoClient = require('mongodb').MongoClient
 const MongoMemServ = require('./MongoMemoryServerHandler')
