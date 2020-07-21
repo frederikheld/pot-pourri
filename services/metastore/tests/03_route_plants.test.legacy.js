@@ -41,52 +41,7 @@ describe('/plants', () => {
     mockFs.restore()
   })
 
-  describe('GET', () => {
-    it('should return an array that contains all the plants', async () => {
-      const res = await chai.request(server)
-        .get(apiBasePath + '/plants')
 
-      res.should.have.status(200)
-      res.body.should.be.an('array')
-      res.body.length.should.eql(3)
-      res.body.should.eql([
-        { id: '0' },
-        { id: '1' },
-        { id: 'green' }
-      ])
-    })
-  })
-
-  describe('POST', () => {
-    it('should write the given object into the database and return 201', async () => {
-      const res = await chai.request(server)
-        .post(apiBasePath + '/plants')
-        .type('json')
-        .send({ id: '42' })
-
-      res.should.have.status(201)
-
-      const plants = JSON.parse(fs.readFileSync('store/plants.json'))
-
-      plants.should.eql([
-        { id: '0' },
-        { id: '1' },
-        { id: 'green' },
-        { id: '42' }
-      ])
-    })
-
-    it('should return 409 with an error message if a plant with the given "id" exists already', async () => {
-      const res = await chai.request(server)
-        .post(apiBasePath + '/plants')
-        .type('json')
-        .send({ id: '0' })
-
-      res.should.have.status(409)
-      res.body.error.should.equal('Plant with same "id" exists already.')
-    })
-  })
-})
 
 describe('/plants/:id', () => {
   beforeEach(() => {
@@ -107,68 +62,7 @@ describe('/plants/:id', () => {
     mockFs.restore()
   })
 
-  describe('GET', () => {
-    it('should return the json object of the plant with the given :id', async () => {
-      const res1 = await chai.request(server)
-        .get(apiBasePath + '/plants/1')
 
-      res1.should.have.status(200)
-      res1.body.should.be.an('object')
-      res1.body.id.should.eql('1')
-
-      const res2 = await chai.request(server)
-        .get(apiBasePath + '/plants/green')
-
-      res2.should.have.status(200)
-      res2.body.should.be.an('object')
-      res2.body.id.should.eql('green')
-    })
-
-    it('should return 404 with an error message if the plant with the given :id doesn\'t exist', async () => {
-      const res = await chai.request(server)
-        .get(apiBasePath + '/plants/bielefeld')
-
-      res.should.have.status(404)
-      res.body.error.should.eql('Device with given "id" does not exist.')
-    })
-  })
-
-  describe('PUT', () => {
-    it('should append the object to the database if no object with the given :id exists', async () => {
-      const res = await chai.request(server)
-        .put(apiBasePath + '/plants/15')
-        .type('json')
-        .send({ id: '42', name: 'something else' })
-
-      res.should.have.status(200)
-
-      const plants = JSON.parse(fs.readFileSync('store/plants.json'))
-
-      plants.should.eql([
-        { id: '0', name: 'item one' },
-        { id: '1', name: 'item' },
-        { id: 'green' },
-        { id: '42', name: 'something else' }
-      ])
-    })
-
-    it('should replace object in the database with the object passed in the body an return 200, if an object with the given :id exists', async () => {
-      const res = await chai.request(server)
-        .put(apiBasePath + '/plants/1')
-        .type('json')
-        .send({ id: '42', name: 'something else' })
-
-      res.should.have.status(200)
-
-      const plants = JSON.parse(fs.readFileSync('store/plants.json'))
-
-      plants.should.eql([
-        { id: '0', name: 'item one' },
-        { id: '42', name: 'something else' },
-        { id: 'green' }
-      ])
-    })
-  })
 
   describe('DELETE', () => {
     it('should remove the plant with the given "id" from the database and return 204', async () => {

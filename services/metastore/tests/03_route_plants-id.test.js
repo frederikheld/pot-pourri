@@ -12,13 +12,14 @@ chai.use(chaiLike)
 const server = require('../server')
 
 const MongoClient = require('mongodb').MongoClient
+const ObjectID = require('mongodb').ObjectID
 const MongoMemServ = require('./MongoMemoryServerHandler')
 
 const apiBasePath = '/api'
 
 describe('/plants/:id', () => {
   let mongoClient
-  // let mongoDbInstance
+  let mongoDbInstance
   let mockObjects
 
   beforeEach(async () => {
@@ -43,7 +44,7 @@ describe('/plants/:id', () => {
 
     await mongoClient.connect()
 
-    // mongoDbInstance = await mongoClient.db(MongoMemServ.getDbName())
+    mongoDbInstance = await mongoClient.db(MongoMemServ.getDbName())
   })
 
   afterEach(async () => {
@@ -62,11 +63,11 @@ describe('/plants/:id', () => {
 
         res.should.have.status(200)
         res.body.should.be.an('object')
-        res.body.should.be.eql(entry)
+        JSON.stringify(res.body).should.be.eql(JSON.stringify(entry))
       }
     })
 
-    it('should return 404 with an error message if the plant with the given :id doesn\'t exist', async () => {
+    it('should return 404 with an error message, if the plant with the given :id doesn\'t exist', async () => {
       // for proper MongoDB id's:
       const nonExistentIdWith24HexChars = '5f14f66a5f7120000000000'
       const res1 = await chai.request(server)
@@ -86,6 +87,49 @@ describe('/plants/:id', () => {
        * the clients' obligation to understand the internals
        * of this REST API!
        */
+    })
+  })
+
+  describe('PUT', () => {
+    it('should replace the object with the given :id in the database with the object passed in req.body and return 200', async () => {
+      const originalPlant = await mongoDbInstance.collection('plants').findOne({ _id: new ObjectID(mockObjects.plants[0]._id) })
+
+      originalPlant.name.should.equal('Gerhard')
+
+      const res = await chai.request(server)
+        .put(apiBasePath + '/plants/' + mockObjects.plants[0]._id)
+        .type('json')
+        .send({
+          name: 'Foo'
+        })
+
+      res.should.have.status(200)
+
+      // const updatedPlant = await mongoDbInstance.collection('plants').findOne({ _id: new ObjectID(mockObjects.plants[0]._id) })
+      // updatedPlant.name.should.equal('Foo')
+
+      const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
+      mockObjects.plants[0].name = 'Foo'
+
+      JSON.stringify(allPlants).should.equal(JSON.stringify(mockObjects.plants))
+    })
+
+    it('should return 403 with an error message, if an object with the given :id does not exist in the database. It should not create a new entry in the database as :id\'s are the unique keys from the database and can\'t be defined by the user', async () => {
+      const nonExistentIdWith24HexChars = '5f1637a2e99ac7d7b8e9379b'
+
+      const res = await chai.request(server)
+        .put(apiBasePath + '/plants/' + nonExistentIdWith24HexChars)
+        .type('json')
+        .send({
+          name: 'Foo'
+        })
+
+      res.should.have.status(403)
+      res.body.error.should.equal('Plant with given :id does not exist. Creation of new entities via put is not permitted!')
+
+      const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
+
+      JSON.stringify(allPlants).should.equal(JSON.stringify(mockObjects.plants))
     })
   })
 

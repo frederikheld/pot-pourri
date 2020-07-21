@@ -1,4 +1,5 @@
 const PlantModel = require('../models/plant')
+const { ObjectID } = require('mongodb')
 
 const plantService = { }
 
@@ -19,15 +20,33 @@ plantService.readAll = async () => {
 
 plantService.readOne = async (id) => {
   try {
-    const plant = await PlantModel.findById(id).exec()
-    return plant
+    return await PlantModel.findById(id).exec()
   } catch (error) {
     return { error: error }
   }
 }
 
-plantService.update = async () => {
+plantService.update = async (id, newPlant) => {
+  try {
+    const plantDocument = await PlantModel.findById(id).exec()
 
+    if (!plantDocument) {
+      return {
+        error: {
+          message: 'Plant with given :id does not exist. Creation of new entities via put is not permitted!',
+          code: 403
+        }
+      }
+    }
+
+    Object.keys(newPlant).forEach((key) => {
+      plantDocument[key] = newPlant[key]
+    })
+    plantDocument.save()
+  } catch (error) {
+    console.log('error', error)
+    return { error: error }
+  }
 }
 
 plantService.delete = async () => {

@@ -40,9 +40,14 @@ actions.plants.id = {
       res.status(404).send({ error: 'Device with given "id" does not exist.' })
     }
   },
-  put: (req, res) => {
-    db.updatePlantById(req.params.id, req.body)
-    res.status(200).send()
+  put: async (req, res) => {
+    const result = await plantService.update(req.params.id, req.body)
+
+    if (!result) {
+      res.status(200).send()
+    } else {
+      res.status(result.error.code).send({ error: result.error.message })
+    }
   },
   delete: (req, res) => {
     if (db.deletePlantById(req.params.id)) {
