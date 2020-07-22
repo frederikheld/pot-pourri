@@ -23,9 +23,9 @@ actions.plants = {
       res.status(201).send(result)
     } else {
       if (result.error.code === 11000) {
-        res.status(409).send({ error: 'Plant with same "name" exists already.' })
+        res.status(409).send({ error: true, message: 'Plant with same "name" exists already' })
       } else {
-        res.status(500).send({ error: 'Something went wrong' })
+        res.status(500).send({ error: true, message: 'Something went wrong' })
       }
     }
   }
@@ -37,7 +37,7 @@ actions.plants.id = {
     if (result && !result.error) {
       res.status(200).send(result)
     } else {
-      res.status(404).send({ error: 'Device with given "id" does not exist.' })
+      res.status(404).send({ error: true, message: 'Plant with given :id does not exist' })
     }
   },
   put: async (req, res) => {
@@ -46,14 +46,16 @@ actions.plants.id = {
     if (!result) {
       res.status(200).send()
     } else {
-      res.status(result.error.code).send({ error: result.error.message })
+      res.status(result.error.code).send({ error: true, message: result.error.message })
     }
   },
-  delete: (req, res) => {
-    if (db.deletePlantById(req.params.id)) {
+  delete: async (req, res) => {
+    const result = await plantService.delete(req.params.id)
+
+    if (result.success) {
       res.status(204).end()
     } else {
-      // tbd
+      res.status(404).send(result)
     }
   }
 }

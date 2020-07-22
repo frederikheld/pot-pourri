@@ -44,13 +44,24 @@ plantService.update = async (id, newPlant) => {
     })
     plantDocument.save()
   } catch (error) {
-    console.log('error', error)
     return { error: error }
   }
 }
 
-plantService.delete = async () => {
+plantService.delete = async (id) => {
+  try {
+    const result = await PlantModel.deleteOne({ _id: id })
 
+    if (result.ok === 1) {
+      if (result.deletedCount === 1) {
+        return { success: true }
+      } else if (result.deletedCount === 0) {
+        return { error: true, message: 'Plant with given :id does not exist' }
+      }
+    }
+  } catch (error) {
+    return { error: true, message: error }
+  }
 }
 
 module.exports = plantService

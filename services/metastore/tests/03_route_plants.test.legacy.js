@@ -64,23 +64,6 @@ describe('/plants/:id', () => {
 
 
 
-  describe('DELETE', () => {
-    it('should remove the plant with the given "id" from the database and return 204', async () => {
-      const res = await chai.request(server)
-        .delete(apiBasePath + '/plants/1')
-
-      res.should.have.status(204)
-
-      const plants = JSON.parse(fs.readFileSync('store/plants.json'))
-
-      plants.should.eql([
-        { id: '0', name: 'item one' },
-        { id: 'green' }
-      ])
-    })
-  })
-})
-
 describe('/plants/:id/picture', () => {
   beforeEach(() => {
     mockFs({

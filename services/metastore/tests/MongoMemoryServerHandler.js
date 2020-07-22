@@ -15,6 +15,7 @@ const mongoose = require('mongoose')
 // mongoose.promise = Promise
 
 const { MongoMemoryServer } = require('mongodb-memory-server')
+const { ObjectID } = require('mongodb')
 
 const MongoMemoryServerHandler = { }
 
@@ -88,7 +89,10 @@ MongoMemoryServerHandler.init = async (initObject) => {
       for (let j = 0; j < initObject[keys[i]].length; j++) {
         const plantModel = new PlantModel(initObject[keys[i]][j])
         const result = await plantModel.save()
-        dbObjects.plants.push(JSON.parse(JSON.stringify(result)))
+
+        const newObject = JSON.parse(JSON.stringify(result))
+        newObject._id = new ObjectID(newObject._id) // restore original ObjectID
+        dbObjects.plants.push(newObject)
       }
 
       await PlantModel.createIndexes() // [1]

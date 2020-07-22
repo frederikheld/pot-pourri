@@ -95,7 +95,8 @@ describe('/plants', () => {
         .send({ name: 'Franzi' })
 
       res.should.have.status(409)
-      res.body.error.should.equal('Plant with same "name" exists already.')
+      res.body.error.should.be.true
+      res.body.message.should.equal('Plant with same "name" exists already')
 
       const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
 
