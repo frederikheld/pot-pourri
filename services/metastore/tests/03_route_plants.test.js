@@ -2,6 +2,7 @@
 
 const chai = require('chai')
 chai.should()
+const expect = chai.expect
 
 const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
@@ -59,8 +60,14 @@ describe('/plants', () => {
         .get(apiBasePath + '/plants')
 
       res.should.have.status(200)
+      res.should.have.header('content-type', 'application/json; charset=utf-8')
       res.body.should.be.an('array')
       res.body.length.should.equal(3)
+
+      for (let i = 0; i < res.body.length; i++) {
+        expect(res.body[i].id).to.exist
+      }
+
       res.body.should.be.like([
         { name: 'Gerhard' },
         { name: 'Franzi' },
@@ -77,6 +84,7 @@ describe('/plants', () => {
         .send({ name: 'Paula' })
 
       res.should.have.status(201)
+      res.should.have.header('content-type', 'application/json; charset=utf-8')
 
       const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
 
@@ -95,6 +103,7 @@ describe('/plants', () => {
         .send({ name: 'Franzi' })
 
       res.should.have.status(409)
+      res.should.have.header('content-type', 'application/json; charset=utf-8')
       res.body.error.should.be.true
       res.body.message.should.equal('Plant with same "name" exists already')
 

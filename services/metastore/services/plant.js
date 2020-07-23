@@ -1,5 +1,4 @@
 const PlantModel = require('../models/plant')
-const { ObjectID } = require('mongodb')
 
 const plantService = { }
 
@@ -14,13 +13,26 @@ plantService.create = async (plant) => {
 }
 
 plantService.readAll = async () => {
-  const plants = await PlantModel.find().exec()
-  return plants
+  try {
+    const plants = await PlantModel.find().exec()
+
+    const result = []
+    plants.forEach((plant) => {
+      const plantJson = plant.toJSON()
+      plantJson.id = plantJson._id
+      result.push(plantJson)
+    })
+    return result
+  } catch (error) {
+    return { error: error }
+  }
 }
 
 plantService.readOne = async (id) => {
   try {
-    return await PlantModel.findById(id).exec()
+    const resultJson = (await PlantModel.findById(id).exec()).toJSON()
+    resultJson.id = resultJson._id
+    return resultJson
   } catch (error) {
     return { error: error }
   }

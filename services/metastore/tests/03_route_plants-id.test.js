@@ -2,6 +2,7 @@
 
 const chai = require('chai')
 chai.should()
+const expect = chai.expect
 
 const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
@@ -65,7 +66,13 @@ describe('/plants/:id', () => {
           .get(apiBasePath + '/plants/' + entry._id)
 
         res.should.have.status(200)
+        res.should.have.header('content-type', 'application/json; charset=utf-8')
         res.body.should.be.an('object')
+
+        expect(res.body.id).to.exist
+        res.body.id.should.equal(res.body._id)
+
+        entry.id = entry._id // field id should contain DB id
         JSON.stringify(res.body).should.be.eql(JSON.stringify(entry))
       }
     })
@@ -76,6 +83,7 @@ describe('/plants/:id', () => {
         .get(apiBasePath + '/plants/' + nonExistentIdWith24HexChars)
 
       res1.should.have.status(404)
+      res1.should.have.header('content-type', 'application/json; charset=utf-8')
       res1.body.error.should.be.true
       res1.body.message.should.equal('Plant with given :id does not exist')
 
@@ -84,6 +92,7 @@ describe('/plants/:id', () => {
         .get(apiBasePath + '/plants/' + malformedId)
 
       res2.should.have.status(404)
+      res2.should.have.header('content-type', 'application/json; charset=utf-8')
     })
   })
 
@@ -121,6 +130,7 @@ describe('/plants/:id', () => {
         })
 
       res.should.have.status(403)
+      res.should.have.header('content-type', 'application/json; charset=utf-8')
       res.body.error.should.be.true
       res.body.message.should.equal('Plant with given :id does not exist. Creation of new entities via put is not permitted!')
 
@@ -149,46 +159,9 @@ describe('/plants/:id', () => {
         .delete(apiBasePath + '/plants/' + nonExistentIdWith24HexChars)
 
       res.should.have.status(404)
+      res.should.have.header('content-type', 'application/json; charset=utf-8')
       res.body.error.should.be.true
       res.body.message.should.equal('Plant with given :id does not exist')
     })
   })
-
-  // describe('POST', () => {
-  //   it('should write the given object into the database and return 201', async () => {
-  //     const res = await chai.request(server)
-  //       .post(apiBasePath + '/plants')
-  //       .type('json')
-  //       .send({ name: 'Paula' })
-
-  //     res.should.have.status(201)
-
-  //     const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
-
-  //     allPlants.should.be.like([
-  //       { name: 'Gerhard' },
-  //       { name: 'Franzi' },
-  //       { name: 'Basilikum' },
-  //       { name: 'Paula' }
-  //     ])
-  //   })
-
-  //   it('should return 409 with an error message if a plant with the given "name" exists already', async () => {
-  //     const res = await chai.request(server)
-  //       .post(apiBasePath + '/plants')
-  //       .type('json')
-  //       .send({ name: 'Franzi' })
-
-  //     res.should.have.status(409)
-  //     res.body.error.should.equal('Plant with same "name" exists already.')
-
-  //     const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
-
-  //     allPlants.should.be.like([
-  //       { name: 'Gerhard' },
-  //       { name: 'Franzi' },
-  //       { name: 'Basilikum' }
-  //     ])
-  //   })
-  // })
 })
