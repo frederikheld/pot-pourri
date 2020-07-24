@@ -5,7 +5,7 @@ const plantService = { }
 plantService.create = async (plant) => {
   const plantModel = new PlantModel(plant)
   try {
-    const result = await plantModel.save()
+    const result = await (await plantModel.save()).toJSON()
     return result
   } catch (error) {
     return { error: error }

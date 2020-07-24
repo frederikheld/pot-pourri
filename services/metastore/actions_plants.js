@@ -14,18 +14,21 @@ const actions = { }
 actions.plants = {
   get: async (req, res) => {
     const result = await plantService.readAll()
-    res.status(200).send(result)
+
+    res.status(200).json(result)
   },
   post: async (req, res) => {
     const result = await plantService.create(req.body)
 
+    result.id = '' + result._id
+
     if (!result.error) {
-      res.status(201).send(result)
+      res.status(201).json(result)
     } else {
       if (result.error.code === 11000) {
-        res.status(409).send({ error: true, message: 'Plant with same "name" exists already' })
+        res.status(409).json({ error: true, message: 'Plant with same "name" exists already' })
       } else {
-        res.status(500).send({ error: true, message: 'Something went wrong' })
+        res.status(500).json({ error: true, message: 'Something went wrong' })
       }
     }
   }

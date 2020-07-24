@@ -77,7 +77,7 @@ describe('/plants', () => {
   })
 
   describe('POST', () => {
-    it('should write the given object into the database and return 201', async () => {
+    it('should write the given object into the database and return 201 and the "id" of the newly created plant as payload', async () => {
       const res = await chai.request(server)
         .post(apiBasePath + '/plants')
         .type('json')
@@ -94,6 +94,8 @@ describe('/plants', () => {
         { name: 'Basilikum' },
         { name: 'Paula' }
       ])
+
+      res.body.id.should.equal(allPlants[3]._id.toString())
     })
 
     it('should return 409 with an error message if a plant with the given "name" exists already', async () => {
