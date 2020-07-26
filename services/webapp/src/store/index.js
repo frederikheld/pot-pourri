@@ -29,7 +29,8 @@ export default new Vuex.Store({
           address: 'localhost',
           port: 8086,
           username: undefined,
-          password: undefined
+          password: undefined,
+          database: 'telegraf'
         }
       }
     },
