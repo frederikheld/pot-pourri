@@ -17,57 +17,48 @@ fs.rmdirSync('store', { recursive: true })
 // the database from the last debug run.
 
 server.initDB('mongodb://localhost:' + process.env.MONGODB_PORT + '/pot-pourri-debug', {
-  devices: [
-    {
-      id: '0',
-      name: 'foo',
-      sensors: [
-        { id: '0', type: 'humidity' },
-        { id: '1', type: 'light' }
-      ],
-      settings: {
-        measuringInterval: 300 // 5 minutes
-      },
-      linkedPlant: '0'
-    },
-    {
-      id: '1',
-      name: 'bar',
-      sensors: [
-        { id: '0', type: 'humidity' },
-        { id: '1', type: 'temperature' }
-      ],
-      settings: {
-        measuringInterval: 3600 // 1 hour
-      },
-      linkedPlant: '1'
-    },
-    {
-      id: '2',
-      name: 'baz',
-      linkedPlant: '1'
-    },
-    {
-      id: '3',
-      name: 'free'
-    }
-  ],
+  // devices: [
+  //   {
+  //     name: 'foo',
+  //     sensors: [
+  //       { id: '0', type: 'humidity' },
+  //       { id: '1', type: 'light' }
+  //     ],
+  //     settings: {
+  //       measuringInterval: 300 // 5 minutes
+  //     }
+  //   },
+  //   {
+  //     name: 'bar',
+  //     sensors: [
+  //       { id: '0', type: 'humidity' },
+  //       { id: '1', type: 'temperature' }
+  //     ],
+  //     settings: {
+  //       measuringInterval: 3600 // 1 hour
+  //     }
+  //   },
+  //   {
+  //     name: 'baz'
+  //   },
+  //   {
+  //     name: 'free'
+  //   }
+  // ],
   plants: [
     {
-      id: '0',
       name: 'Erika',
       profilePicture: 'plants-0-profilePicture.jpg',
-      linkedDevices: ['0']
+      deviceCode: '0'
     },
     {
-      id: '1',
       name: 'Franzi',
       profilePicture: 'plants-1-profilePicture.jpg',
-      linkedDevices: ['1', '2']
+      deviceCode: '1'
     },
     {
-      id: 'someplant',
-      name: 'Basilikum'
+      name: 'Basilikum',
+      deviceCode: 'green'
     }
   ]
 })

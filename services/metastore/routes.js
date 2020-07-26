@@ -80,10 +80,10 @@ router.get('/plants/:id', actions.plants.id.get)
 router.put('/plants/:id', actions.plants.id.put)
 router.delete('/plants/:id', actions.plants.id.delete)
 
-// router.get(
-//   '/plants/:id/profile-picture',
-//   actions.plants.id.profilePicture.get
-// )
+router.get(
+  '/plants/:id/profile-picture',
+  actions.plants.id.profilePicture.get
+)
 // router.put(
 //   '/plants/:id/profile-picture',
 //   upload.single('profilePicture'),

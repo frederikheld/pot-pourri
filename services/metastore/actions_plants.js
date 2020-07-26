@@ -37,19 +37,20 @@ actions.plants = {
 actions.plants.id = {
   get: async (req, res) => {
     const result = await plantService.readOne(req.params.id)
+    // result.id = result._id // add field "id" as unique key to be used by api consumers
     if (result && !result.error) {
-      res.status(200).send(result)
+      res.status(200).json(result)
     } else {
-      res.status(404).send({ error: true, message: 'Plant with given :id does not exist' })
+      res.status(404).json({ error: true, message: 'Plant with given :id does not exist' })
     }
   },
   put: async (req, res) => {
     const result = await plantService.update(req.params.id, req.body)
 
     if (!result) {
-      res.status(200).send()
+      res.status(200).end()
     } else {
-      res.status(result.error.code).send({ error: true, message: result.error.message })
+      res.status(result.error.code).json({ error: true, message: result.error.message })
     }
   },
   delete: async (req, res) => {
@@ -58,102 +59,129 @@ actions.plants.id = {
     if (result.success) {
       res.status(204).end()
     } else {
-      res.status(404).send(result)
+      res.status(404).json(result)
     }
   }
 }
 
 actions.plants.id.profilePicture = {
-  get: (req, res) => {
-    const plant = db.getPlantById(req.params.id)
+  get: async (req, res) => {
+    const plant = await plantService.readOne(req.params.id)
 
-    if (!plant) {
+    if (plant.error) {
       res.status(404).send({
-        error: 'plant does not exist'
+        error: true,
+        message: 'Plant with given :id does not exist'
       })
     } else {
-      if (plant.profilePicture && fs.existsSync(path.join(__dirname, 'store', 'blob', plant.profilePicture))) {
-        res.sendFile(path.join(__dirname, 'store', 'blob', plant.profilePicture))
+      if (
+        plant.profilePicture
+      ) {
+        const profilePicturePath = path.join(__dirname, 'store', 'blob', plant.profilePicture)
+        if (fs.existsSync(profilePicturePath)) {
+          res.header('content-type', 'image/jpeg')
+          res.status(200).sendFile(profilePicturePath)
+        } else {
+          res.status(500).send({
+            error: true,
+            message: 'Inconsistent data on server. Please store a new profile picture!'
+          })
+        }
       } else {
         res.status(404).send({
-          error: 'plant has no profile picture'
+          error: true,
+          message: 'Plant has no profile picture'
         })
       }
     }
-  },
-  put: (req, res) => {
-    // console.log('req.file', req.file) // HIER!
 
-    const filename = 'plants-' + req.params.id + '-profilePicture.' + req.file.mimetype.split('/')[1]
-    // security: is this a possible security issue? Can this be exploited by passing mime types that somehow allow to execute code? Better solution would be to use a mapping between mime type and file type extension and use a generic/none extension for all that are not part of the list. Using fileFilter in Multer should do the job as well.
-
-    // store file in blob storage following naming scheme:
-    try {
-      fs.writeFileSync(path.join('store', 'blob', filename), req.file.buffer)
-    } catch (err) {
-      res.status(500).send({ error: 'Could not save profile picture.' })
-      return -1
-    }
-
-    // link filename in plant object:
-    const plant = db.getPlantById(req.params.id)
-    plant.profilePicture = filename
-    db.updatePlantById(req.params.id, plant)
-
-    // return status:
-    res.status(200).end()
+    // if (!plant) {
+    //   res.status(404).send({
+    //     error: 'plant does not exist'
+    //   })
+    // } else {
+    //   if (plant.profilePicture && fs.existsSync(path.join(__dirname, 'store', 'blob', plant.profilePicture))) {
+    //     res.sendFile(path.join(__dirname, 'store', 'blob', plant.profilePicture))
+    //   } else {
+    //     res.status(404).send({
+    //       error: 'plant has no profile picture'
+    //     })
+    //   }
+    // }
   }
+  // put: (req, res) => {
+  //   // console.log('req.file', req.file) // HIER!
+
+  //   const filename = 'plants-' + req.params.id + '-profilePicture.' + req.file.mimetype.split('/')[1]
+  //   // security: is this a possible security issue? Can this be exploited by passing mime types that somehow allow to execute code? Better solution would be to use a mapping between mime type and file type extension and use a generic/none extension for all that are not part of the list. Using fileFilter in Multer should do the job as well.
+
+  //   // store file in blob storage following naming scheme:
+  //   try {
+  //     fs.writeFileSync(path.join('store', 'blob', filename), req.file.buffer)
+  //   } catch (err) {
+  //     res.status(500).send({ error: 'Could not save profile picture.' })
+  //     return -1
+  //   }
+
+  //   // link filename in plant object:
+  //   const plant = db.getPlantById(req.params.id)
+  //   plant.profilePicture = filename
+  //   db.updatePlantById(req.params.id, plant)
+
+  //   // return status:
+  //   res.status(200).end()
+  // }
 }
 
-actions.plants.id.linkedDevices = {
-  get: (req, res) => {
-    const plant = db.getPlantById(req.params.id)
+// actions.plants.id.linkedDevices = {
+//   get: (req, res) => {
+//     const plant = db.getPlantById(req.params.id)
 
-    if (plant) {
-      if (plant.linkedDevices) {
-        res.status(200).send(plant.linkedDevices)
-      } else {
-        res.status(200).send([])
-      }
-    } else {
-      res.status(404).send({ error: 'plant does not exist' })
-    }
-  },
-  post: (req, res) => {
-    // save link in plant object:
-    const plant = db.getPlantById(req.params.id)
+//     if (plant) {
+//       if (plant.linkedDevices) {
+//         res.status(200).send(plant.linkedDevices)
+//       } else {
+//         res.status(200).send([])
+//       }
+//     } else {
+//       res.status(404).send({ error: 'plant does not exist' })
+//     }
+//   },
+//   post: (req, res) => {
+//     // save link in plant object:
+//     const plant = db.getPlantById(req.params.id)
 
-    if (!plant.linkedDevices) {
-      plant.linkedDevices = []
-    }
+//     if (!plant.linkedDevices) {
+//       plant.linkedDevices = []
+//     }
 
-    req.body.forEach((deviceId) => {
-      plant.linkedDevices.push(deviceId)
-    })
+//     req.body.forEach((deviceId) => {
+//       plant.linkedDevices.push(deviceId)
+//     })
 
-    db.updatePlantById(req.params.id, plant)
+//     db.updatePlantById(req.params.id, plant)
 
-    // save link in device objects:
-    req.body.forEach((deviceId) => {
-      const device = db.getDeviceById(deviceId)
-      device.linkedPlant = req.params.id
+//     // save link in device objects:
+//     req.body.forEach((deviceId) => {
+//       const device = db.getDeviceById(deviceId)
+//       device.linkedPlant = req.params.id
 
-      db.updateDeviceById(deviceId, device)
-    })
+//       db.updateDeviceById(deviceId, device)
+//     })
 
-    // send status:
-    res.status(200).send()
-  },
-  delete: (req, res) => {
-    db.unlinkDevicesFromPlant(req.params.id, req.body)
+//     // send status:
+//     res.status(200).send()
+//   },
+//   delete: (req, res) => {
+//     db.unlinkDevicesFromPlant(req.params.id, req.body)
 
-    req.body.forEach((deviceId) => {
-      db.unlinkPlantFromDevice(deviceId)
-    })
+//     req.body.forEach((deviceId) => {
+//       db.unlinkPlantFromDevice(deviceId)
+//     })
 
-    res.status(204).end()
-  }
-}
+//     res.status(204).end()
+//   }
+// }
 
 // -- database functions
 /**

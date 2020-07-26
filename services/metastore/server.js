@@ -11,6 +11,7 @@ const cors = require('cors')
 // const mongoClient = require('mongodb').MongoClient
 
 const mongoose = require('mongoose')
+const Plant = require('./models/plant')
 
 const routes = require('./routes')
 
@@ -32,11 +33,20 @@ const server = app.listen(3003, () => {
 
 // -- database
 
-server.initDB = function (uri, contents = {}) {
-  mongoose.connect(uri, {
+server.initDB = async function (uri, contents = {}) {
+  await mongoose.connect(uri, {
     useUnifiedTopology: true,
     useNewUrlParser: true
   })
+
+  await mongoose.connection.db.dropDatabase()
+
+  if (contents.plants) {
+    contents.plants.forEach(async (plant) => {
+      const plantModel = new Plant(plant)
+      await plantModel.save()
+    })
+  }
 }
 
 server.initBlobStorage = function (inputDirectory = null) {
