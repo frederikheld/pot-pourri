@@ -7,6 +7,10 @@ const plantSchema = new mongoose.Schema({
     unique: true,
     dropDups: true
   },
+  deviceCode: {
+    type: String,
+    required: false
+  },
   profilePicture: {
     type: String,
     required: false
