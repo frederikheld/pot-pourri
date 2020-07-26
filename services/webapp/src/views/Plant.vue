@@ -78,7 +78,7 @@
                 <v-row>
                   <v-col>
                     <PlantCurrentHealth
-                      :plant-id="plant.deviceCode"
+                      :plant-id="plant.id"
                     />
                   </v-col>
                 </v-row>
@@ -86,7 +86,7 @@
               <v-tab-item>
                 <v-row>
                   <v-col>
-                    <PlantHumidityHistory :plant-id="plant.deviceCode" />
+                    <PlantHumidityHistory :plant-id="plant.id" />
                   </v-col>
                 </v-row>
               </v-tab-item>
@@ -227,7 +227,6 @@ export default {
       try {
         const res = await fetch(url, options)
         const plant = await res.json()
-        console.log('plant', plant)
         this.plant = plant
       } catch (err) {
         console.error(err)
