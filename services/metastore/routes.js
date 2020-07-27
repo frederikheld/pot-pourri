@@ -11,7 +11,7 @@ const router = express.Router()
 // info: multer handles file uploads (multipart/form-data)
 // see: https://github.com/expressjs/multer
 const multer = require('multer')
-const upload = multer({
+const multerUpload = multer({
   storage: multer.memoryStorage(),
   // storage: multer.diskStorage({
   //   destination: function (req, file, cb) {
@@ -84,11 +84,11 @@ router.get(
   '/plants/:id/profile-picture',
   actions.plants.id.profilePicture.get
 )
-// router.put(
-//   '/plants/:id/profile-picture',
-//   upload.single('profilePicture'),
-//   actions.plants.id.profilePicture.put
-// )
+router.put(
+  '/plants/:id/profile-picture',
+  multerUpload.single('profilePicture'),
+  actions.plants.id.profilePicture.put
+)
 
 // router.get('/plants/:id/linked-devices', actions.plants.id.linkedDevices.get)
 // router.post('/plants/:id/linked-devices', actions.plants.id.linkedDevices.post)
