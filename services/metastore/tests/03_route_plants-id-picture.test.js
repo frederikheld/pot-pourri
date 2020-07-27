@@ -131,7 +131,7 @@ describe('/plants/:id/profile-picture', () => {
   })
 
   describe('PUT', () => {
-    it('should store the attached profile picture in the blob storage, link the filename as "profilePicture" in the plant profile and return 200', async () => {
+    it('should store the attached profile picture in the blob storage, link the filename as "profilePicture" in the plant profile and return 200, if the plant has no profile picture yet', async () => {
       const res = await chai.request(server)
         .put(apiBasePath + '/plants/' + mockObjects.plants[1]._id + '/profile-picture')
         .set('Content-Type', 'multipart/form-data')
@@ -154,6 +154,32 @@ describe('/plants/:id/profile-picture', () => {
       const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
 
       mockObjects.plants[1].profilePicture = filename
+
+      JSON.stringify(allPlants).should.equal(JSON.stringify(mockObjects.plants))
+    })
+    it('should store the attached profile picture in the blob storage, link the filename as "profilePicture" in the plant profile and return 200, if the plant already has a profile picture', async () => {
+      const res = await chai.request(server)
+        .put(apiBasePath + '/plants/' + mockObjects.plants[0]._id + '/profile-picture')
+        .set('Content-Type', 'multipart/form-data')
+        .attach('profilePicture', Buffer.from([0, 255, 255]), 'someFileName.png')
+
+      res.should.have.status(200)
+
+      // check if file was written to blob storage
+      // following naming scheme:
+      const filename = 'plants-' + mockObjects.plants[0]._id + '-profilePicture.png'
+      expect('store/blob/' + filename).to.be.a.file()
+
+      // check if the contents matcH:
+      const fileContents = fs.readFileSync('store/blob/' + filename)
+      Buffer.compare(fileContents, (Buffer.from([0, 255, 255]))).should.equal(0)
+      // note: this is done with fs and Buffer.compare, as chai-fs
+      // can only compare file contents that are String :-(
+
+      // check if filename was linked in plant object:
+      const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
+
+      mockObjects.plants[0].profilePicture = filename
 
       JSON.stringify(allPlants).should.equal(JSON.stringify(mockObjects.plants))
     })
