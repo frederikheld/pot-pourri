@@ -32,7 +32,7 @@
                   prepend-icon="mdi-camera"
                   hide-input
                   light
-                  class="center-box-button"
+                  class="edit-plant-profile-picture-upload-button"
                   @change="previewPicture"
                 />
               </ProfilePicture>
@@ -80,23 +80,33 @@
   </div>
 </template>
 
-<style lang="scss" scoped>
-.center-box-button {
+<style lang="scss">
+/** NOTE: I'm not using `scoped` here as this will make
+ *  styling the html elements inside Vuetify components
+ *  impossible (has something to do with the way Vuetify
+ *  augments the class names for scoping).
+ *  If you continue here, make sure, that the class names
+ *  you're addressing with styles are globally unique!
+ */
+.edit-plant-profile-picture-upload-button {
   display: block;
   position: relative;
   margin: 0;
   padding: 0;
-  width: 2rem;
-  height: 2rem;
   left: calc(50% - 1rem);
   top: calc(50% - 1rem);
-  border-radius: 50%;
   transition: transform .2s;
-  background-color: rgba(255, 255, 255, 0.8);
-  background-position: center center;
 }
 
-.center-box-button:hover {
+.edit-plant-profile-picture-upload-button button {
+  // background-color: rgba(150, 150, 150, 0.8);
+  background-color: rgba(255, 255, 255, 0.8);
+  background-position: center center;
+  padding: 0.4rem;
+  border-radius: 50%;
+}
+
+.edit-plant-profile-picture-upload-button button:hover {
   transform: scale(1.4);
 }
 </style>
@@ -118,6 +128,7 @@ export default {
       fetchingPlant: false,
       savingPlant: false,
       plant: undefined,
+      plantPicture: '',
       form: {
         name: undefined,
         plantId: undefined
@@ -134,10 +145,6 @@ export default {
     hasPendingEdits () {
       const inForm = JSON.stringify(this.form)
       const inStore = JSON.stringify(this.plant)
-
-      console.log('inForm', inForm)
-      console.log('inStore', inStore)
-      console.log(inForm !== inStore)
 
       return inForm !== inStore
     }
