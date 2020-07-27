@@ -28,12 +28,11 @@
                 </v-btn> -->
                 <v-file-input
                   v-model="form.picture"
-                  prepend-icon="mdi-camera"
                   accept="image/png, image/jpeg, image/jpg"
+                  prepend-icon="mdi-camera"
                   hide-input
                   light
-                  class="center-box"
-                  style="color: #fff;"
+                  class="center-box-button"
                   @change="previewPicture"
                 />
               </ProfilePicture>
@@ -42,15 +41,20 @@
           <v-col>
             <v-row>
               <v-text-field
-                v-model="form.id"
-                label="Unique ID of the plant"
+                ref="name"
+                v-model="form.name"
+                label="Plant's name"
+                :rules="[name => !!name] || 'Plant\'s name is required!'"
+                :error-messages="errorMessages.name"
                 autofocus
+                @focus="errorMessages.name = []"
               />
             </v-row>
             <v-row>
               <v-text-field
-                v-model="form.name"
-                label="The name you use to refer to this plant"
+                ref="deviceCode"
+                v-model="form.deviceCode"
+                label="Device Code"
               />
             </v-row>
             <v-row>
@@ -58,6 +62,7 @@
               <v-btn
                 color="primary"
                 type="submit"
+                :disabled="!hasPendingEdits"
                 :loading="savingPlant"
                 @click="onSubmit"
               >
@@ -76,19 +81,22 @@
 </template>
 
 <style lang="scss" scoped>
-.center-box {
+.center-box-button {
   display: block;
   position: relative;
   margin: 0;
   padding: 0;
-  width: 24px;
-  height: 24px;
-  left: calc(50% - 12px);
-  top: calc(50% - 12px);
+  width: 2rem;
+  height: 2rem;
+  left: calc(50% - 1rem);
+  top: calc(50% - 1rem);
+  border-radius: 50%;
   transition: transform .2s;
+  background-color: rgba(255, 255, 255, 0.8);
+  background-position: center center;
 }
 
-.center-box:hover {
+.center-box-button:hover {
   transform: scale(1.4);
 }
 </style>
@@ -109,19 +117,30 @@ export default {
     return {
       fetchingPlant: false,
       savingPlant: false,
-      plant: {},
-      plantPicture: '',
+      plant: undefined,
       form: {
-        picture: undefined,
-        id: undefined,
-        name: undefined
+        name: undefined,
+        plantId: undefined
+      },
+      errorMessages: {
+        name: []
       }
     }
   },
   computed: {
     ...mapGetters([
       'metastoreServerAddress'
-    ])
+    ]),
+    hasPendingEdits () {
+      const inForm = JSON.stringify(this.form)
+      const inStore = JSON.stringify(this.plant)
+
+      console.log('inForm', inForm)
+      console.log('inStore', inStore)
+      console.log(inForm !== inStore)
+
+      return inForm !== inStore
+    }
   },
   async beforeMount () {
     await this.fetchPlantProfile()
@@ -130,8 +149,7 @@ export default {
   },
   methods: {
     initializeForm () {
-      this.form.id = this.plant.id
-      this.form.name = this.plant.name
+      this.form = JSON.parse(JSON.stringify(this.plant)) // this is needed to copy the content, not the pointer!
     },
     async fetchPlantProfile () {
       this.fetchingPlant = true
@@ -189,7 +207,7 @@ export default {
       await this.updatePlant(this.plant)
       await this.updateProfilePicture(this.plant, this.form.picture)
       this.savingPlant = false
-      this.$router.replace('/plants/' + this.form.id) // forwards to new id, in case id was changed
+      this.$router.replace('/plants/' + this.$route.params.id)
     },
     onCancel () {
       this.$router.replace('/plants/' + this.$route.params.id)
@@ -203,8 +221,8 @@ export default {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          id: this.form.id,
-          name: this.form.name
+          name: this.form.name,
+          deviceCode: this.form.deviceCode
         })
       }
 
