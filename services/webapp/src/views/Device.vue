@@ -229,7 +229,7 @@ export default {
       this.savingSettings = false
     },
     actionEditDevice () {
-      console.log('Edit device')
+      // console.log('Edit device')
     },
     actionRemoveDevice () {
       this.removeDialogIsOpen = true
