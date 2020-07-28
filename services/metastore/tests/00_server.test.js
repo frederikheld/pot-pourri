@@ -19,6 +19,9 @@ const expect = chai.expect
 chai.use(chaiHttp)
 chai.use(chaiFs)
 
+const mongoose = require('mongoose')
+const mongoMemoryServerHandler = require('./MongoMemoryServerHandler')
+
 const server = require('../server.js')
 
 const apiBasePath = '/api'
@@ -67,104 +70,116 @@ describe('server.initOptions(options)', function () {
   })
 })
 
-describe('server.initDB(contents)', () => {
-  describe('database directory', () => {
-    it('should create directory "store" if it doesn\'t exist', () => {
-      mockFs({ })
-
-      expect(() => { fs.mkdirSync('store/somedir') }).to.throw()
-      // chai-fs seems to have no way to test if a directory
-      // does not exist. This is the workaround to test that
-      // 'store' doesn't exist.
-
-      server.initDB()
-
-      expect('store').to.be.a.directory()
-
-      mockFs.restore()
-    })
+describe('server.initDB(uri, contents)', () => {
+  beforeEach(async () => {
+    await mongoMemoryServerHandler.start()
   })
 
-  describe('devices database', () => {
-    it('should create "store/devices.json" if it doesn\'t exist', () => {
-      mockFs({ })
-
-      expect(() => { fs.readFileSync('store/devices.json') }).to.throw('ENOENT: no such file or directory, open \'store/devices.json\'')
-
-      server.initDB()
-
-      expect(() => { fs.readFileSync('store/devices.json') }).to.not.throw()
-
-      mockFs.restore()
-    })
-
-    it('should init "store/devices.json" with the data that is passed with "contents.devices"', () => {
-      mockFs({})
-
-      const dbContents = {
-        devices: [
-          { id: 0, name: 'foo' },
-          { id: 1, name: 'bar' },
-          { id: 2, name: 'baz' }
-        ]
-      }
-
-      server.initDB(dbContents)
-
-      expect('store/devices.json').to.be.a.file().with.contents(JSON.stringify(dbContents.devices))
-    })
-
-    it('should init "store/devices.json" with an empty array if "contents.devices" isn\'t passed', () => {
-      mockFs({})
-
-      server.initDB()
-
-      expect('store/devices.json').to.be.a.file().with.contents('[]')
-
-      mockFs.restore()
-    })
+  afterEach(async () => {
+    await mongoMemoryServerHandler.stop()
   })
 
-  describe('plants database', () => {
-    it('should create "store/plants.json" if it doesn\'t exist', () => {
-      mockFs({ })
-
-      expect(() => { fs.readFileSync('store/plants.json') }).to.throw('ENOENT: no such file or directory, open \'store/plants.json\'')
-
-      server.initDB()
-
-      expect(() => { fs.readFileSync('store/plants.json') }).to.not.throw()
-
-      mockFs.restore()
-    })
-
-    it('should init "store/plants.json" with the data that is passed with "contents.plants"', () => {
-      mockFs({})
-
-      const dbContents = {
-        plants: [
-          { id: 0, name: 'foo' },
-          { id: 1, name: 'bar' },
-          { id: 2, name: 'baz' }
-        ]
-      }
-
-      server.initDB(dbContents)
-
-      expect('store/plants.json').to.be.a.file().with.contents(JSON.stringify(dbContents.plants))
-    })
-
-    it('should init "store/plants.json" with an empty array if "contents.plants" is not set', () => {
-      mockFs({})
-
-      server.initDB()
-
-      expect('store/plants.json').to.be.a.file().with.contents('[]')
-
-      mockFs.restore()
-    })
-  })
+  it('todo', () => {})
 })
+
+// describe('server.initDB(contents)', () => {
+//   describe('database directory', () => {
+//     it('should create directory "store" if it doesn\'t exist', () => {
+//       mockFs({ })
+
+//       expect(() => { fs.mkdirSync('store/somedir') }).to.throw()
+//       // chai-fs seems to have no way to test if a directory
+//       // does not exist. This is the workaround to test that
+//       // 'store' doesn't exist.
+
+//       server.initDB()
+
+//       expect('store').to.be.a.directory()
+
+//       mockFs.restore()
+//     })
+//   })
+
+//   describe('devices database', () => {
+//     it('should create "store/devices.json" if it doesn\'t exist', () => {
+//       mockFs({ })
+
+//       expect(() => { fs.readFileSync('store/devices.json') }).to.throw('ENOENT: no such file or directory, open \'store/devices.json\'')
+
+//       server.initDB()
+
+//       expect(() => { fs.readFileSync('store/devices.json') }).to.not.throw()
+
+//       mockFs.restore()
+//     })
+
+//     it('should init "store/devices.json" with the data that is passed with "contents.devices"', () => {
+//       mockFs({})
+
+//       const dbContents = {
+//         devices: [
+//           { id: 0, name: 'foo' },
+//           { id: 1, name: 'bar' },
+//           { id: 2, name: 'baz' }
+//         ]
+//       }
+
+//       server.initDB(dbContents)
+
+//       expect('store/devices.json').to.be.a.file().with.contents(JSON.stringify(dbContents.devices))
+//     })
+
+//     it('should init "store/devices.json" with an empty array if "contents.devices" isn\'t passed', () => {
+//       mockFs({})
+
+//       server.initDB()
+
+//       expect('store/devices.json').to.be.a.file().with.contents('[]')
+
+//       mockFs.restore()
+//     })
+//   })
+
+//   describe('plants database', () => {
+//     it('should create "store/plants.json" if it doesn\'t exist', () => {
+//       mockFs({ })
+
+//       expect(() => { fs.readFileSync('store/plants.json') }).to.throw('ENOENT: no such file or directory, open \'store/plants.json\'')
+
+//       server.initDB()
+
+//       expect(() => { fs.readFileSync('store/plants.json') }).to.not.throw()
+
+//       mockFs.restore()
+//     })
+
+//     it('should init "store/plants.json" with the data that is passed with "contents.plants"', () => {
+//       mockFs({})
+
+//       const dbContents = {
+//         plants: [
+//           { id: 0, name: 'foo' },
+//           { id: 1, name: 'bar' },
+//           { id: 2, name: 'baz' }
+//         ]
+//       }
+
+//       server.initDB(dbContents)
+
+//       expect('store/plants.json').to.be.a.file().with.contents(JSON.stringify(dbContents.plants))
+//     })
+
+//     it('should init "store/plants.json" with an empty array if "contents.plants" is not set', () => {
+//       mockFs({})
+
+//       server.initDB()
+
+//       expect('store/plants.json').to.be.a.file().with.contents('[]')
+
+//       mockFs.restore()
+//     })
+//   })
+// })
 
 describe('server.initBlobStorage(inputDirectory)', () => {
   it('should create an empty folder "store/blob", which will hold binary objects like file uploads', () => {

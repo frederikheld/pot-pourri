@@ -119,17 +119,24 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="6">
+                <v-col cols="4">
                   <v-text-field
                     v-model="form.network.influxdb.username"
                     label="username"
                   />
                 </v-col>
-                <v-col cols="6">
+                <v-col cols="4">
                   <v-text-field
                     v-model="form.network.influxdb.password"
                     label="password"
                     type="password"
+                  />
+                </v-col>
+                <v-col cols="4">
+                  <v-text-field
+                    v-model="form.network.influxdb.database"
+                    label="database"
+                    type="telegraf"
                   />
                 </v-col>
               </v-row>

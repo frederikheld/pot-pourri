@@ -1,6 +1,17 @@
 version: "3"
 
-services:    
+services:
+    mongodb:
+        env_file:
+            - .env
+        image: mongo:4.2-bionic
+        container_name: potpourri-metastore-mongodb
+        volumes:
+            - mongodb:/data/db
+        ports:
+            - ${MONGODB_PORT}:27017
+        restart: always
+
     metastore:
         env_file:
             - .env
@@ -10,8 +21,11 @@ services:
         volumes:
             - store:/usr/src/app/store
         ports:
-            - ${metastore_port}:3003
+            - ${METASTORE_PORT}:3003
+        depends_on:
+            - mongodb
         restart: always
 
 volumes:
     store:
+    mongodb:

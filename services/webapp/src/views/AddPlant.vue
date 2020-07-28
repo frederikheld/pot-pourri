@@ -12,19 +12,20 @@
         <v-col>
           <v-row>
             <v-text-field
-              ref="id"
-              v-model="id"
-              label="Unique ID of the plant"
-              :error-messages="form.errorMessages.id"
+              ref="name"
+              v-model="name"
+              label="Plant's name"
+              :rules="[name => !!name] || 'Plant\'s name is required!'"
+              :error-messages="form.errorMessages.name"
               autofocus
-              :rules="[value => !!value || 'ID is required']"
-              @focus="form.errorMessages.id=[]"
+              @focus="form.errorMessages.name = []"
             />
           </v-row>
           <v-row>
             <v-text-field
-              v-model="name"
-              label="The name you use to refer to this plant"
+              ref="deviceCode"
+              v-model="deviceCode"
+              label="Device Code"
             />
           </v-row>
           <v-row>
@@ -63,11 +64,11 @@ export default {
   data () {
     return {
       savingPlant: false,
-      id: undefined,
+      deviceCode: undefined,
       name: undefined,
       form: {
         errorMessages: {
-          id: []
+          name: []
         }
       }
     }
@@ -94,17 +95,21 @@ export default {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          id: this.id,
-          name: this.name
+          name: this.name,
+          deviceCode: this.deviceCode
         })
       }
 
       try {
         const res = await fetch(url, options)
+
         if (res.status === 409) {
-          this.form.errorMessages.id.push('Plant with same ID exist already!')
+          this.form.errorMessages.name.push('Plant with same name exists already. Please choose a different one!')
+        } else if (res.status === 201) {
+          const plant = await res.json()
+          this.$router.replace('/plants/' + plant.id)
         } else {
-          this.$router.replace('/plants/' + this.id)
+          console.error('Something unexpected went wrong.')
         }
         this.savingPlant = false
       } catch (err) {

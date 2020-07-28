@@ -80,7 +80,7 @@ export default {
         port: this.appSettings.network.influxdb.port,
         username: this.appSettings.network.influxdb.username,
         password: this.appSettings.network.influxdb.password,
-        database: 'telegraf'
+        database: this.appSettings.network.influxdb.database
       })
 
       const query = 'SELECT ((1024 - last("value")) / 1024) * 100 FROM "autogen"."mqtt_consumer" WHERE ("topic" = \'potpourri/devices/' + this.$props.plantId + '/sensors/humidity\')'

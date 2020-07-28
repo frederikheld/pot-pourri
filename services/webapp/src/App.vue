@@ -22,10 +22,10 @@
         <v-icon>mdi-home-analytics</v-icon>
       </v-btn>
 
-      <v-btn to="/devices">
+      <!-- <v-btn to="/devices">
         <span>Devices</span>
         <v-icon>mdi-router-wireless</v-icon>
-      </v-btn>
+      </v-btn> -->
     </v-bottom-navigation>
 
     <v-main class="fill-height">
