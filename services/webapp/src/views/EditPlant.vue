@@ -128,7 +128,7 @@ export default {
       fetchingPlant: false,
       savingPlant: false,
       plant: undefined,
-      plantPicture: '',
+      plantPicture: undefined,
       form: {
         name: undefined,
         plantId: undefined
@@ -211,8 +211,15 @@ export default {
     },
     async onSubmit () {
       this.savingPlant = true
+
       await this.updatePlant(this.plant)
-      await this.updateProfilePicture(this.plant, this.form.picture)
+
+      // only update picture if this.form.picture is set,
+      // otherwise the profile picture will be deleted
+      if (this.form.picture) {
+        await this.updateProfilePicture(this.plant, this.form.picture)
+      }
+
       this.savingPlant = false
       this.$router.replace('/plants/' + this.$route.params.id)
     },

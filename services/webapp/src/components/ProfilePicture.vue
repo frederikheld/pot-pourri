@@ -26,6 +26,13 @@
 </style>
 
 <script>
+/**
+ * This component provides a replacement for v-img
+ * to be used for profile pictures that provides
+ * additional features like:
+ *   - standardized max-height and aspect-ratio
+ *   - striped background to indicate if no picture is available
+ */
 export default {
   name: 'ProfilePicture',
   props: {
