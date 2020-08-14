@@ -19,7 +19,7 @@ services:
             context: .
         container_name: potpourri-metastore
         volumes:
-            - store:/usr/src/app/store
+            - metastore:/usr/src/app/store
         ports:
             - ${METASTORE_PORT}:3003
         depends_on:
@@ -27,5 +27,5 @@ services:
         restart: always
 
 volumes:
-    store:
+    metastore:
     mongodb:
