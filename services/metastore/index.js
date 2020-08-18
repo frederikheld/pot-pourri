@@ -7,8 +7,8 @@
 const server = require('./server')
 
 try {
-    // Docker-internal hostname and port here!
-    server.initDB('mongodb://mongodb:27017/pot-pourri')
+  // Docker-internal hostname and port here!
+  server.initDB('mongodb://mongodb:27017/pot-pourri')
 } catch (error) {
-    console.error('ERROR: ' + error)
+  console.error('ERROR: ' + error)
 }
