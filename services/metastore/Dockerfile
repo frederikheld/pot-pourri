@@ -8,8 +8,6 @@ RUN npm install --only=production
 
 COPY . .
 
-RUN mkdir -p store
-
 EXPOSE 3003
 
-CMD ["node", "server.js"]
+CMD ["npm", "start"]

@@ -4,8 +4,11 @@
  * This script starts the server for production.
  */
 
-require('dotenv').config()
-
 const server = require('./server')
 
-server.initDB('mongodb://localhost:' + process.env.MONGODB_PORT + '/pot-pourri')
+try {
+  // Docker-internal hostname and port here!
+  server.initDB('mongodb://mongodb:27017/pot-pourri')
+} catch (error) {
+  console.error('ERROR: ' + error)
+}
