@@ -19,7 +19,6 @@ const expect = chai.expect
 chai.use(chaiHttp)
 chai.use(chaiFs)
 
-const mongoose = require('mongoose')
 const mongoMemoryServerHandler = require('./MongoMemoryServerHandler')
 
 const server = require('../server.js')
