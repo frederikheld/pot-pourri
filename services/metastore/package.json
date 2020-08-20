@@ -8,6 +8,7 @@
     "start:dev": "nodemon index.js",
     "start:debug": "node index_debug.js",
     "test": "mocha tests/*.test.js",
+    "test:first": "mocha --timeout 60000 tests/*.test.js",
     "test:dev": "mocha --reporter=min --watch \"tests/*.test.js\"",
     "test:coverage": "nyc mocha tests/*.test.js --verbose",
     "test:coverage-ci": "nyc --check-coverage --lines 100 mocha tests/*.test.js --verbose",
