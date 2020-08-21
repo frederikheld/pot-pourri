@@ -1,3 +1,8 @@
+# Two-staged Dockerfile intended for productive use.
+# In the first step it builds the app in a NodeJS
+# environment, in the second stage it serves the
+# app with nginx.
+
 # build stage
 FROM node:lts-alpine as build-stage
 

@@ -1,3 +1,9 @@
+
+# Simple solution for development that builds
+# the app in a NodeJS environment and then
+# serves it in the same environment with a
+# simple NodeJS http-server.
+
 FROM node:lts-alpine
 
 # install simple http server for serving static content
