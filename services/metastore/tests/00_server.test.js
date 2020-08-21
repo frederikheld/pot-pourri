@@ -28,7 +28,6 @@ const apiBasePath = '/api'
 
 describe('server.initOptions(options)', function () {
   this.slow(2000)
-  // this.timeout(10000)
   it('should slow down responses by the time in ms that is passed in "options.responseDelay"', async () => {
     mockFs({})
 

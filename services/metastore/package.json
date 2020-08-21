@@ -40,5 +40,13 @@
     "nodemon": "^2.0.4",
     "nyc": "^15.1.0",
     "standard": "^14.3.4"
+  },
+  "config": {
+    "mongodbMemoryServer": {
+      "platform": "linux",
+      "arch": "x64",
+      "version": "4.2.8",
+      "md5Check": "1"
+    }
   }
 }

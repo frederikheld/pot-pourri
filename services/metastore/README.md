@@ -70,6 +70,8 @@ While developing, you need to re-start the server if you make changes. This happ
 
 This package uses _Mocha_ with _Chai_ as testing framework and _Istanbul (nyc)_ to measure coverage. It comes with a couple of _npm_ scripts to run tests and generate coverage reports.
 
+To test interaction with MongoDB, this package uses _mongodb-memory-server_. There's an configuration option in `package.json` that tells _mongodb-memory-server_ which binary to use. Make sure that it is the same version as you use for MongoDB in production. The version for production is configured in `docker-compose.yml`.
+
 ### Linting
 
 This package comes with _eslint_ support. This includes the eslint dev dependencies, eslint config and _npm_ scripts to run the linter.

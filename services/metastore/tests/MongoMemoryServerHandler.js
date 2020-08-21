@@ -1,16 +1,5 @@
 'use strict'
 
-// make sure this is exactly the same version
-// as in ../docker-compose.yml! Otherwies the
-// tests might yield different results than
-// your production environment.
-//
-// NOTE: first test run might take a while as
-//       mongodb-memory-server will download
-//       the binaries.
-process.env.MONGOMS_DOWNLOAD_URL = 'https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.2.8.tgz'
-process.env.MONGOMS_VERSION = '4.2.8'
-
 const mongoose = require('mongoose')
 // mongoose.promise = Promise
 
