@@ -70,9 +70,9 @@
         <v-row>
           <v-col>
             <v-tabs>
-              <v-tab>Health</v-tab>
+              <v-tab>Now</v-tab>
               <v-tab>History</v-tab>
-              <v-tab>Linked Devices</v-tab>
+              <!-- <v-tab>Linked Devices</v-tab> -->
 
               <v-tab-item>
                 <v-row>
@@ -90,7 +90,7 @@
                   </v-col>
                 </v-row>
               </v-tab-item>
-              <v-tab-item>
+              <!-- <v-tab-item>
                 <v-row>
                   <v-col>
                     <DevicesList
@@ -105,7 +105,7 @@
                     />
                   </v-col>
                 </v-row>
-              </v-tab-item>
+              </v-tab-item> -->
             </v-tabs>
           </v-col>
         </v-row>
@@ -124,8 +124,8 @@
 <script>
 import AppBar from '@/components/AppBar.vue'
 import ContextMenuPlant from '@/components/ContextMenuPlant.vue'
-import DevicesList from '@/components/DevicesList.vue'
-import LinkDeviceDialog from '@/components/LinkDeviceDialog.vue'
+// import DevicesList from '@/components/DevicesList.vue'
+// import LinkDeviceDialog from '@/components/LinkDeviceDialog.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import PlantCurrentHealth from '@/components/plant/PlantCurrentHealth.vue'
 import PlantHumidityHistory from '@/components/plant/PlantHumidityHistory.vue'
@@ -137,7 +137,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Plant',
-  components: { AppBar, ContextMenuPlant, DevicesList, LinkDeviceDialog, LoadingIndicator, PlantCurrentHealth, PlantHumidityHistory, ProfilePicture },
+  components: { AppBar, ContextMenuPlant, LoadingIndicator, PlantCurrentHealth, PlantHumidityHistory, ProfilePicture },
   data () {
     return {
       fetchingPlant: false,
@@ -160,31 +160,31 @@ export default {
     reloadView () {
       this.$router.go()
     },
-    async actionUnlinkDevice (deviceId) {
-      this.fetchingPlant = true
+    // async actionUnlinkDevice (deviceId) {
+    //   this.fetchingPlant = true
 
-      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/linked-devices'
+    //   const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/linked-devices'
 
-      const options = {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify([deviceId])
-      }
+    //   const options = {
+    //     method: 'DELETE',
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify([deviceId])
+    //   }
 
-      try {
-        await fetch(url, options)
+    //   try {
+    //     await fetch(url, options)
 
-        this.$router.replace('/plants/' + this.$route.params.id)
-      } catch (err) {
-        console.error(err)
-      }
+    //     this.$router.replace('/plants/' + this.$route.params.id)
+    //   } catch (err) {
+    //     console.error(err)
+    //   }
 
-      this.reloadView()
+    //   this.reloadView()
 
-      this.fetchingPlant = false
-    },
+    //   this.fetchingPlant = false
+    // },
     actionEditPlant () {
       this.$router.push('/plants/' + this.$route.params.id + '/edit')
     },
