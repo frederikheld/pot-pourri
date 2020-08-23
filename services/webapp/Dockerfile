@@ -17,7 +17,10 @@ COPY . .
 RUN npm run build
 
 # production stage
-FROM nginx:stable-alpine as production-stage
+FROM nginx:1.19-alpine as production-stage
+
+# COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
+VOLUME /etc/nginx
 
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 

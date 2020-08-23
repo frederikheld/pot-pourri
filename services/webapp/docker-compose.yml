@@ -10,5 +10,7 @@ services:
         container_name: potpourri-webapp
         ports:
             - ${webapp_port}:80
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
         restart: always
 
