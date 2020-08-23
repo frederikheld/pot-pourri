@@ -33,19 +33,23 @@ const server = app.listen(3003, () => {
 
 // -- database
 
-server.initDB = async function (uri, contents = {}) {
+server.initDB = async function (uri, contents = null, dropDatabase = false) {
   await mongoose.connect(uri, {
     useUnifiedTopology: true,
     useNewUrlParser: true
   })
 
-  await mongoose.connection.db.dropDatabase()
+  if (dropDatabase) {
+    await mongoose.connection.db.dropDatabase()
+  }
 
-  if (contents.plants) {
-    contents.plants.forEach(async (plant) => {
-      const plantModel = new Plant(plant)
-      await plantModel.save()
-    })
+  if (contents) {
+    if (contents.plants) {
+      contents.plants.forEach(async (plant) => {
+        const plantModel = new Plant(plant)
+        await plantModel.save()
+      })
+    }
   }
 }
 
