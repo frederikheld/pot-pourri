@@ -4,7 +4,9 @@
       title="House"
     />
     <v-container>
-      <h1>House</h1>
+      <div>
+        <p>Will show values from environmental sensors in the base station and in optional additional devices.</p>
+      </div>
     </v-container>
   </div>
 </template>

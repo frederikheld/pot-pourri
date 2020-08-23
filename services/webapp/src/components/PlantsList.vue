@@ -18,7 +18,16 @@
           <v-list-item-content>
             <v-list-item-title>{{ plant.name }}</v-list-item-title>
             <v-list-item-subtitle>{{ plant.id }}</v-list-item-subtitle>
+            <!-- <div>
+              {{ plant }}
+            </div> -->
           </v-list-item-content>
+
+          <v-list-item-avatar>
+            <PlantMoodIndicator
+              :device-code="plant.deviceCode"
+            />
+          </v-list-item-avatar>
         </v-list-item>
       </v-list>
     </v-list-item-group>
@@ -47,8 +56,11 @@
 </style>
 
 <script>
+import PlantMoodIndicator from '@/components/plant/PlantMoodIndicator.vue'
+
 export default {
   name: 'DevicesList',
+  components: { PlantMoodIndicator },
   props: {
     plants: {
       type: Array,
