@@ -8,7 +8,7 @@ require('dotenv').config()
  * can be useful if you want to debug an consumer of this API
  * (like the pot-pourri webapp).
  *
- * It is desigend to be started with `node index_debug.js`.
+ * It is desigend to be started with `npm run start:debug`.
  */
 
 const server = require('./server')
