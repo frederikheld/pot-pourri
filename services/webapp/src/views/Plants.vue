@@ -11,7 +11,9 @@
       </v-btn>
     </AppBar>
 
-    <v-container>
+    <v-container
+      class="pa-0"
+    >
       <PlantsList
         v-if="!fetchingPlants"
         :plants="plants"
