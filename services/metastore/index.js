@@ -10,9 +10,6 @@
 const server = require('./server')
 
 try {
-  // Docker-internal hostname and port here!
-  server.initDB('mongodb://mongodb:27017/pot-pourri')
-
   // Docker-internal relative path here!
   server.initBlobStorage('./store/blob')
 } catch (error) {

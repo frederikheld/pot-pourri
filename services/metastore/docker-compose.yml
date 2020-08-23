@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 
 services:
     mongodb:
@@ -19,7 +19,7 @@ services:
             context: .
         container_name: potpourri-metastore
         volumes:
-            - metastore:/usr/src/app/store
+            - metastore:/app/store
         ports:
             - ${METASTORE_PORT}:3003
         depends_on:
