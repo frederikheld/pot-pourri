@@ -7,6 +7,8 @@ require('dotenv').config()
  * This script starts the server in a configuration that
  * can be useful if you want to debug an consumer of this API
  * (like the pot-pourri webapp).
+ *
+ * It is desigend to be started with `npm run start:debug`.
  */
 
 const server = require('./server')
@@ -16,7 +18,7 @@ fs.rmdirSync('store', { recursive: true })
 // uncomment the above line if you want to keep
 // the database from the last debug run.
 
-server.initDB('mongodb://localhost:' + process.env.MONGODB_PORT + '/pot-pourri-debug', {
+const contents = {
   // devices: [
   //   {
   //     name: 'foo',
@@ -61,7 +63,9 @@ server.initDB('mongodb://localhost:' + process.env.MONGODB_PORT + '/pot-pourri-d
       deviceCode: 'green'
     }
   ]
-})
+}
+
+server.initDB('mongodb://localhost:' + process.env.MONGODB_PORT + '/pot-pourri-debug', contents, true)
 
 server.initBlobStorage('./debug/blob')
 
