@@ -32,7 +32,7 @@ export default {
   name: 'PlantHumidityHistory',
   components: { ChartHumidityHistory, LoadingIndicator },
   props: {
-    plantId: {
+    deviceCode: {
       type: String,
       required: true
     }
@@ -82,7 +82,7 @@ export default {
         database: 'telegraf'
       })
 
-      const query = 'SELECT (1024 - "value") / 1024 * 100 FROM "autogen"."mqtt_consumer" WHERE ("topic" = \'potpourri/devices/' + this.$props.plantId + '/sensors/humidity\') AND time > now() - 12h ORDER BY time DESC'
+      const query = 'SELECT (1024 - "value") / 1024 * 100 FROM "autogen"."mqtt_consumer" WHERE ("topic" = \'potpourri/devices/' + this.$props.deviceCode + '/sensors/humidity\') AND time > now() - 12h ORDER BY time DESC'
 
       const result = await influx.query(query)
 

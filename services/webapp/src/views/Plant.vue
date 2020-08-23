@@ -78,7 +78,7 @@
                 <v-row>
                   <v-col>
                     <PlantCurrentHealth
-                      :plant-id="plant.deviceCode"
+                      :device-code="plant.deviceCode"
                     />
                   </v-col>
                 </v-row>
@@ -86,7 +86,7 @@
               <v-tab-item>
                 <v-row>
                   <v-col>
-                    <PlantHumidityHistory :plant-id="plant.deviceCode" />
+                    <PlantHumidityHistory :device-code="plant.deviceCode" />
                   </v-col>
                 </v-row>
               </v-tab-item>
