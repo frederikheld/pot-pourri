@@ -3,7 +3,7 @@
     app
     dark
     src="../../public/img/backgrounds/bg-greens.jpg"
-    color="#690"
+    color="primary"
   >
     <v-app-bar-nav-icon
       v-if="$props.back != ''"
