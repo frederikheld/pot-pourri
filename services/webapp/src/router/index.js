@@ -6,12 +6,12 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    redirect: '/feed'
+    redirect: '/activities'
   },
   {
-    path: '/feed',
-    name: 'Feed',
-    component: () => import('../views/Feed.vue')
+    path: '/activities',
+    name: 'Activities',
+    component: () => import('../views/Activities.vue')
   },
   {
     path: '/plants',

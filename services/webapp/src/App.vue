@@ -14,9 +14,9 @@
     >
       <v-btn
         v-if="appFeatureToggles.activityFeed.enabled"
-        to="/feed"
+        to="/activities"
       >
-        <span>Feed</span>
+        <span>Activities</span>
         <v-icon>mdi-forum-outline</v-icon>
       </v-btn>
       <v-btn to="/plants">
