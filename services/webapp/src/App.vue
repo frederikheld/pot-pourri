@@ -12,6 +12,13 @@
       color="#fff"
       background-color="#690"
     >
+      <v-btn
+        v-if="appFeatureToggles.activityFeed.enabled"
+        to="/activities"
+      >
+        <span>Activities</span>
+        <v-icon>mdi-forum-outline</v-icon>
+      </v-btn>
       <v-btn to="/plants">
         <span>Plants</span>
         <v-icon>mdi-sprout</v-icon>
@@ -48,10 +55,16 @@
 import NavDrawer from '@/components/NavDrawer.vue'
 // import MQTTClient from '@/components/services/MQTTClient.vue'
 
+import { mapGetters } from 'vuex'
+
 export default {
   // components: { NavDrawer, MQTTClient },
   components: { NavDrawer },
-  data: () => ({ })
-
+  data: () => ({ }),
+  computed: {
+    ...mapGetters([
+      'appFeatureToggles'
+    ])
+  }
 }
 </script>

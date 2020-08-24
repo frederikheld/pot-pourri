@@ -34,6 +34,11 @@ export default new Vuex.Store({
         }
       }
     },
+    appFeatureToggles: {
+      activityFeed: {
+        enabled: false
+      }
+    },
     maps: {
       icons: {
         default: 'mdi-gauge',
@@ -62,6 +67,9 @@ export default new Vuex.Store({
     appSettings (state) {
       return state.appSettings
     },
+    appFeatureToggles (state) {
+      return state.appFeatureToggles
+    },
     iconMap: function (state) {
       return state.maps.icons
     },
@@ -81,6 +89,9 @@ export default new Vuex.Store({
   mutations: {
     SAVE_APP_SETTINGS (state, newAppSettingsObject) {
       state.appSettings = newAppSettingsObject
+    },
+    SAVE_APP_FEATURETOGGLES (state, newAppFeatureTogglesObject) {
+      state.appFeatureToggles = newAppFeatureTogglesObject
     },
     INCREMENT_COUNTER (state) {
       state.lab.count++

@@ -32,6 +32,18 @@
       <v-list>
         <v-list-item
           link
+          to="/feature-toggles"
+        >
+          <v-list-item-action>
+            <v-icon>mdi-toggle-switch</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Feature Toggles</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          link
           to="/settings"
         >
           <v-list-item-action>

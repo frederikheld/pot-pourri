@@ -6,7 +6,12 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    redirect: '/plants'
+    redirect: '/activities'
+  },
+  {
+    path: '/activities',
+    name: 'Activities',
+    component: () => import('../views/Activities.vue')
   },
   {
     path: '/plants',
@@ -62,6 +67,11 @@ const routes = [
     path: '/lab/lab-settings',
     name: 'Settings Lab',
     component: () => import('../views/lab/LabSettings.vue')
+  },
+  {
+    path: '/feature-toggles',
+    name: 'FeatureToggles',
+    component: () => import('../views/FeatureToggles.vue')
   },
   {
     path: '/settings',
