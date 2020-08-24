@@ -10,12 +10,13 @@
   >
     <v-icon
       v-if="currentSensorData.humidity > 30 && currentSensorData.humidity < 70"
+      color="primary"
     >
       mdi-emoticon-excited-outline
     </v-icon>
     <v-icon
       v-else
-      style="color: black;"
+      color="error"
     >
       mdi-emoticon-sad-outline
     </v-icon>

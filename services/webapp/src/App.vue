@@ -10,7 +10,7 @@
       dark
       fixed
       color="#fff"
-      background-color="#690"
+      background-color="primary"
     >
       <v-btn
         v-if="appFeatureToggles.activityFeed.enabled"
