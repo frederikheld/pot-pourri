@@ -69,6 +69,11 @@ const routes = [
     component: () => import('../views/lab/LabSettings.vue')
   },
   {
+    path: '/feature-toggles',
+    name: 'FeatureToggles',
+    component: () => import('../views/FeatureToggles.vue')
+  },
+  {
     path: '/settings',
     name: 'Settings',
     component: () => import('../views/Settings.vue')

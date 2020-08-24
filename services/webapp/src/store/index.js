@@ -56,6 +56,11 @@ export default new Vuex.Store({
       foo: {
         bar: { }
       }
+    },
+    appFeatureToggles: {
+      activityFeed: {
+        enabled: false
+      }
     }
   },
   getters: {
@@ -76,6 +81,9 @@ export default new Vuex.Store({
     },
     labSettings (state) {
       return state.labSettings
+    },
+    appFeatureToggles (state) {
+      return state.appFeatureToggles
     }
   },
   mutations: {
@@ -90,6 +98,9 @@ export default new Vuex.Store({
     },
     SAVE_LAB_SETTINGS (state, newLabSettingsObject) {
       state.labSettings = newLabSettingsObject
+    },
+    SAVE_APP_FEATURETOGGLES (state, newAppFeatureTogglesObject) {
+      state.appFeatureToggles = newAppFeatureTogglesObject
     }
   },
   actions: {

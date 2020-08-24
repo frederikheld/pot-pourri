@@ -12,7 +12,10 @@
       color="#fff"
       background-color="#690"
     >
-      <v-btn to="/feed">
+      <v-btn
+        v-if="appFeatureToggles.activityFeed.enabled"
+        to="/feed"
+      >
         <span>Feed</span>
         <v-icon>mdi-forum-outline</v-icon>
       </v-btn>
@@ -52,10 +55,16 @@
 import NavDrawer from '@/components/NavDrawer.vue'
 // import MQTTClient from '@/components/services/MQTTClient.vue'
 
+import { mapGetters } from 'vuex'
+
 export default {
   // components: { NavDrawer, MQTTClient },
   components: { NavDrawer },
-  data: () => ({ })
-
+  data: () => ({ }),
+  computed: {
+    ...mapGetters([
+      'appFeatureToggles'
+    ])
+  }
 }
 </script>
