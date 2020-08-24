@@ -36,7 +36,8 @@ export default new Vuex.Store({
     },
     appFeatureToggles: {
       activityFeed: {
-        enabled: false
+        enabled: false,
+        addFakeMessages: false
       }
     },
     maps: {
