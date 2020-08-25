@@ -36,10 +36,7 @@
       </v-btn> -->
     </v-bottom-navigation>
 
-    <v-main
-      id="viewport"
-      class="fill-height"
-    >
+    <v-main class="fill-height">
       <router-view />
     </v-main>
 
@@ -69,11 +66,6 @@ export default {
     ...mapGetters([
       'appFeatureToggles'
     ])
-  },
-  methods: {
-    onScroll (event) {
-      console.log('on scroll')
-    }
   }
 }
 </script>

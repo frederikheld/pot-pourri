@@ -137,18 +137,12 @@ export default {
     PullToRefresh.init({
       mainElement: '#container',
       onRefresh () {
-        console.log('ptr refresh')
+        // update feed
       }
     })
   },
   destroyed () {
     PullToRefresh.destroyAll()
-  },
-  methods: {
-    onScroll (event) {
-      this.scrollTop = event.path[0].scrollingElement.scrollTop
-      console.log('scrolling', event.path[0].scrollingElement.scrollTop)
-    }
   }
 }
 </script>

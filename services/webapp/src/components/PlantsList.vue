@@ -69,9 +69,6 @@ export default {
       default: () => { return [] }
     }
   },
-  mounted () {
-    console.log(this.$refs.moodIndicator)
-  },
   methods: {
     async updateMoods () {
       for (const moodIndicator of this.$refs.moodIndicator) {
