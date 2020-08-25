@@ -1,9 +1,12 @@
 <template>
   <div>
     <AppBar
-      title="Activities"
+      :title="scrollTop.toString()"
     />
-    <v-container>
+    <v-container
+      id="container"
+      v-scroll="onScroll"
+    >
       <v-row dense>
         <v-col>
           <AlertCard
@@ -113,15 +116,39 @@ import AlertCard from '@/components/feed/AlertCard.vue'
 import NewsCard from '@/components/feed/NewsCard.vue'
 import ProductCard from '@/components/feed/ProductCard.vue'
 
+import PullToRefresh from 'pulltorefreshjs'
+
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'Feed',
   components: { AlertCard, AppBar, NewsCard, ProductCard },
+  data () {
+    return {
+      scrollTop: 0
+    }
+  },
   computed: {
     ...mapGetters([
       'appFeatureToggles'
     ])
+  },
+  mounted () {
+    PullToRefresh.init({
+      mainElement: '#container',
+      onRefresh () {
+        console.log('ptr refresh')
+      }
+    })
+  },
+  destroyed () {
+    PullToRefresh.destroyAll()
+  },
+  methods: {
+    onScroll (event) {
+      this.scrollTop = event.path[0].scrollingElement.scrollTop
+      console.log('scrolling', event.path[0].scrollingElement.scrollTop)
+    }
   }
 }
 </script>

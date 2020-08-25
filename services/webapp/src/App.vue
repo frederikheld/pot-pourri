@@ -19,6 +19,7 @@
         <span>Activities</span>
         <v-icon>mdi-forum-outline</v-icon>
       </v-btn>
+
       <v-btn to="/plants">
         <span>Plants</span>
         <v-icon>mdi-sprout</v-icon>
@@ -35,7 +36,10 @@
       </v-btn> -->
     </v-bottom-navigation>
 
-    <v-main class="fill-height">
+    <v-main
+      id="viewport"
+      class="fill-height"
+    >
       <router-view />
     </v-main>
 
@@ -65,6 +69,11 @@ export default {
     ...mapGetters([
       'appFeatureToggles'
     ])
+  },
+  methods: {
+    onScroll (event) {
+      console.log('on scroll')
+    }
   }
 }
 </script>
