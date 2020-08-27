@@ -3,6 +3,17 @@
     <AppBar
       title="Plants"
     >
+      <LoadingIndicator
+        v-if="fetchingPlants"
+      />
+      <v-btn
+        v-else
+        icon
+        @click="fetchPlants()"
+      >
+        <v-icon>mdi-reload</v-icon>
+      </v-btn>
+
       <v-btn
         icon
         to="/plants/add"
@@ -30,6 +41,15 @@
 </template>
 
 <style lang="scss" scoped>
+.spinner {
+  animation:spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform:rotate(360deg);
+  }
+}
 </style>
 
 <script>
@@ -38,8 +58,6 @@ import PlantsList from '@/components/PlantsList.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 // import PlantCard from '@/components/PlantCard.vue'
 // import PlantStatusCompact from '@/components/PlantStatusCompact.vue'
-
-import PullToRefresh from 'pulltorefreshjs'
 
 import { mapGetters } from 'vuex'
 
@@ -57,18 +75,6 @@ export default {
     ...mapGetters([
       'metastoreServerAddress'
     ])
-  },
-  mounted () {
-    const self = this
-    PullToRefresh.init({
-      mainElement: '#container',
-      onRefresh () {
-        self.fetchPlants()
-      }
-    })
-  },
-  destroyed () {
-    PullToRefresh.destroyAll()
   },
   async beforeMount () {
     this.fetchingPlants = true

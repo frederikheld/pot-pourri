@@ -1,11 +1,10 @@
 <template>
   <div>
     <AppBar
-      :title="scrollTop.toString()"
+      title="Activities"
     />
     <v-container
       id="container"
-      v-scroll="onScroll"
     >
       <v-row dense>
         <v-col>
@@ -121,13 +120,8 @@ import PullToRefresh from 'pulltorefreshjs'
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'Feed',
+  name: 'Activities',
   components: { AlertCard, AppBar, NewsCard, ProductCard },
-  data () {
-    return {
-      scrollTop: 0
-    }
-  },
   computed: {
     ...mapGetters([
       'appFeatureToggles'
