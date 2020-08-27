@@ -25,6 +25,7 @@
 
           <v-list-item-avatar>
             <PlantMoodIndicator
+              ref="moodIndicator"
               :device-code="plant.deviceCode"
             />
           </v-list-item-avatar>
@@ -66,6 +67,13 @@ export default {
       type: Array,
       required: false,
       default: () => { return [] }
+    }
+  },
+  methods: {
+    async updateMoods () {
+      for (const moodIndicator of this.$refs.moodIndicator) {
+        await moodIndicator.fetchCurrentSensorData()
+      }
     }
   }
 }

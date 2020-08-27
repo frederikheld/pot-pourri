@@ -19,6 +19,7 @@
         <span>Activities</span>
         <v-icon>mdi-forum-outline</v-icon>
       </v-btn>
+
       <v-btn to="/plants">
         <span>Plants</span>
         <v-icon>mdi-sprout</v-icon>

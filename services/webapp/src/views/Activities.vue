@@ -3,7 +3,9 @@
     <AppBar
       title="Activities"
     />
-    <v-container>
+    <v-container
+      id="container"
+    >
       <v-row dense>
         <v-col>
           <AlertCard
@@ -113,15 +115,28 @@ import AlertCard from '@/components/feed/AlertCard.vue'
 import NewsCard from '@/components/feed/NewsCard.vue'
 import ProductCard from '@/components/feed/ProductCard.vue'
 
+import PullToRefresh from 'pulltorefreshjs'
+
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'Feed',
+  name: 'Activities',
   components: { AlertCard, AppBar, NewsCard, ProductCard },
   computed: {
     ...mapGetters([
       'appFeatureToggles'
     ])
+  },
+  mounted () {
+    PullToRefresh.init({
+      mainElement: '#container',
+      onRefresh () {
+        // update feed
+      }
+    })
+  },
+  destroyed () {
+    PullToRefresh.destroyAll()
   }
 }
 </script>
