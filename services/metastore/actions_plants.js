@@ -45,7 +45,16 @@ actions.plants.id = {
     }
   },
   put: async (req, res) => {
-    const result = await plantService.update(req.params.id, req.body)
+    const result = await plantService.replace(req.params.id, req.body)
+
+    if (!result) {
+      res.status(200).end()
+    } else {
+      res.status(result.error.code).json({ error: true, message: result.error.message })
+    }
+  },
+  patch: async (req, res) => {
+    const result = await plantService.patch(req.params.id, req.body)
 
     if (!result) {
       res.status(200).end()
@@ -122,7 +131,7 @@ actions.plants.id.profilePicture = {
     }
 
     // link filename in plant object:
-    plantService.update(req.params.id, { profilePicture: filename })
+    plantService.patch(req.params.id, { profilePicture: filename })
 
     // return status:
     res.status(200).end()

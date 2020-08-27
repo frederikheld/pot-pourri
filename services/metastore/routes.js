@@ -78,6 +78,7 @@ router.post('/plants', actions.plants.post)
 
 router.get('/plants/:id', actions.plants.id.get)
 router.put('/plants/:id', actions.plants.id.put)
+router.patch('/plants/:id', actions.plants.id.patch)
 router.delete('/plants/:id', actions.plants.id.delete)
 
 router.get(

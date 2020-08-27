@@ -38,7 +38,7 @@ plantService.readOne = async (id) => {
   }
 }
 
-plantService.update = async (id, newPlant) => {
+plantService.replace = async (id, newPlant) => {
   try {
     const plantDocument = await PlantModel.findById(id).exec()
 
@@ -51,10 +51,34 @@ plantService.update = async (id, newPlant) => {
       }
     }
 
-    Object.keys(newPlant).forEach((key) => {
-      plantDocument[key] = newPlant[key]
-    })
-    plantDocument.save()
+    plantDocument.overwrite(newPlant)
+
+    await plantDocument.save()
+  } catch (error) {
+    return { error: error }
+  }
+}
+
+plantService.patch = async (id, newPlant) => {
+  try {
+    const plantDocument = await PlantModel.findById(id).exec()
+
+    if (!plantDocument) {
+      return {
+        error: {
+          message: 'Plant with given :id does not exist. Creation of new entities via put is not permitted!',
+          code: 403
+        }
+      }
+    }
+
+    // Object.keys(newPlant).forEach((key) => {
+    //   plantDocument[key] = newPlant[key]
+    // })
+
+    plantDocument.set(newPlant)
+
+    await plantDocument.save()
   } catch (error) {
     return { error: error }
   }
