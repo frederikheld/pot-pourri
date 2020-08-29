@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="fetchingCurrentSensorData"
+    v-if="fetchingCurrentSensorData || fetchingPlantSettings"
     style="height: 4rem; width: 100%; position: absolute; "
   >
     <LoadingIndicator type="box" />
@@ -18,7 +18,7 @@
           <v-icon>{{ iconMap.humidity }}</v-icon>
         </td>
         <td>
-          <v-icon v-if="currentSensorData.humidity > 30 && currentSensorData.humidity < 70">
+          <v-icon v-if="currentSensorData.humidity > healthyHumidity[0] && currentSensorData.humidity < healthyHumidity[1]">
             mdi-thumb-up
           </v-icon>
           <v-icon v-else>
@@ -59,17 +59,23 @@ export default {
       currentSensorData: {
         humidity: undefined
       },
-      fetchingCurrentSensorData: false
+      healthyHumidity: [undefined, undefined],
+      fetchingCurrentSensorData: false,
+      fetchingPlantSettings: false
     }
   },
   computed: {
     ...mapGetters([
       'iconMap',
-      'influxdbConnectionData'
+      'influxdbConnectionData',
+      'metastoreServerAddress'
     ])
   },
   async mounted () {
-    await this.fetchCurrentSensorData()
+    await Promise.all([
+      this.fetchCurrentSensorData(),
+      this.fetchPlantSettings()
+    ])
   },
   methods: {
     async fetchCurrentSensorData () {
@@ -80,6 +86,30 @@ export default {
       this.currentSensorData.humidity = await influxConnector.fetchCurrentSensorValuePercent(this.$props.deviceCode, 'humidity')
 
       this.fetchingCurrentSensorData = false
+    },
+    async fetchPlantSettings () {
+      this.fetchingPlantSettings = true
+
+      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
+
+      const options = {
+        method: 'GET',
+        accept: 'application/json'
+      }
+
+      try {
+        const res = await fetch(url, options)
+        const plant = await res.json()
+
+        this.healthyHumidity = [
+          plant.measurands?.humidity?.healthyMin || 0,
+          plant.measurands?.humidity?.healthyMax || 100
+        ]
+      } catch (err) {
+        console.error(err)
+      }
+
+      this.fetchingPlantSettings = false
     }
   }
 }
