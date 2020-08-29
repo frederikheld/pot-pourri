@@ -101,7 +101,7 @@ export default {
 
         this.inStore.healthyHumidity = [
           plant.measurands?.humidity?.healthyMin || 0,
-          plant.measurands?.humidity?.healthyMax || 0
+          plant.measurands?.humidity?.healthyMax || 100
         ]
       } catch (err) {
         console.error(err)
