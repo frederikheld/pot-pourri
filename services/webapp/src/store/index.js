@@ -80,6 +80,17 @@ export default new Vuex.Store({
     metastoreServerAddress: function (state) {
       return state.appSettings.network.metastore.protocol + '://' + state.appSettings.network.metastore.address + ':' + state.appSettings.network.metastore.port
     },
+    influxdbConnectionData: function (state) {
+      const influxConnectionData = {
+        host: state.appSettings.network.influxdb.address,
+        port: state.appSettings.network.influxdb.port,
+        username: state.appSettings.network.influxdb.username,
+        password: state.appSettings.network.influxdb.password,
+        database: state.appSettings.network.influxdb.database
+      }
+
+      return influxConnectionData
+    },
     count (state) {
       return state.lab.count
     },

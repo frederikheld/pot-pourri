@@ -14,6 +14,18 @@ const plantSchema = new mongoose.Schema({
   profilePicture: {
     type: String,
     required: false
+  },
+  measurands: {
+    humidity: {
+      healthyMax: {
+        type: Number,
+        required: false
+      },
+      healthyMin: {
+        type: Number,
+        required: false
+      }
+    }
   }
 })
 

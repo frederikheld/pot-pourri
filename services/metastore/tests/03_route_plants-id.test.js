@@ -33,7 +33,10 @@ describe('/plants/:id', () => {
       plants: [
         { name: 'Gerhard' },
         { name: 'Franzi' },
-        { name: 'Basilikum' }
+        {
+          name: 'Basilikum',
+          deviceCode: 'bar'
+        }
       ]
     })
 
@@ -97,13 +100,14 @@ describe('/plants/:id', () => {
   })
 
   describe('PUT', () => {
-    it('should replace the object with the given :id in the database with the object passed in req.body and return 200', async () => {
-      const originalPlant = await mongoDbInstance.collection('plants').findOne({ _id: new ObjectID(mockObjects.plants[0]._id) })
+    it('should completely replace the object with the given :id in the database with the object passed in req.body and return 200', async () => {
+      const originalPlant = await mongoDbInstance.collection('plants').findOne({ _id: new ObjectID(mockObjects.plants[2]._id) })
 
-      originalPlant.name.should.equal('Gerhard')
+      originalPlant.name.should.equal('Basilikum')
+      originalPlant.deviceCode.should.equal('bar')
 
       const res = await chai.request(server)
-        .put(apiBasePath + '/plants/' + mockObjects.plants[0]._id)
+        .put(apiBasePath + '/plants/' + mockObjects.plants[2]._id)
         .type('json')
         .send({
           name: 'Foo'
@@ -112,11 +116,12 @@ describe('/plants/:id', () => {
       res.should.have.status(200)
 
       // if I just want to check if the single entry was updated
-      // const updatedPlant = await mongoDbInstance.collection('plants').findOne({ _id: new ObjectID(mockObjects.plants[0]._id) })
+      // const updatedPlant = await mongoDbInstance.collection('plants').findOne({ _id: new ObjectID(mockObjects.plants[2]._id) })
       // updatedPlant.name.should.equal('Foo')
 
       const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
-      mockObjects.plants[0].name = 'Foo'
+      mockObjects.plants[2].name = 'Foo'
+      mockObjects.plants[2].deviceCode = undefined
 
       JSON.stringify(allPlants).should.equal(JSON.stringify(mockObjects.plants))
     })
@@ -135,6 +140,76 @@ describe('/plants/:id', () => {
       res.body.message.should.equal('Plant with given :id does not exist. Creation of new entities via put is not permitted!')
 
       const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
+
+      JSON.stringify(allPlants).should.equal(JSON.stringify(mockObjects.plants))
+    })
+  })
+
+  describe('PATCH', () => {
+    it('should update the entries of the object with the given :id in the database with the respective entries from the object passed in req.body and return 200', async () => {
+      const originalPlant = await mongoDbInstance.collection('plants').findOne({ _id: new ObjectID(mockObjects.plants[2]._id) })
+
+      originalPlant.name.should.equal('Basilikum')
+      originalPlant.deviceCode.should.equal('bar')
+
+      const res = await chai.request(server)
+        .patch(apiBasePath + '/plants/' + mockObjects.plants[2]._id)
+        .type('json')
+        .send({
+          name: 'Foo',
+          deviceCode: 'baz'
+        })
+
+      res.should.have.status(200)
+
+      const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
+      mockObjects.plants[2].name = 'Foo'
+      mockObjects.plants[2].deviceCode = 'baz'
+
+      JSON.stringify(allPlants).should.equal(JSON.stringify(mockObjects.plants))
+    })
+
+    it('should not remove entries from the object in the database that are missing in the object passed in req.body', async () => {
+      const originalPlant = await mongoDbInstance.collection('plants').findOne({ _id: new ObjectID(mockObjects.plants[2]._id) })
+
+      originalPlant.name.should.equal('Basilikum')
+      originalPlant.deviceCode.should.equal('bar')
+
+      const res = await chai.request(server)
+        .patch(apiBasePath + '/plants/' + mockObjects.plants[2]._id)
+        .type('json')
+        .send({
+          deviceCode: 'baz'
+        })
+
+      res.should.have.status(200)
+
+      const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
+      mockObjects.plants[2].name = 'Basilikum' // not changed
+      mockObjects.plants[2].deviceCode = 'baz' // updated
+
+      JSON.stringify(allPlants).should.equal(JSON.stringify(mockObjects.plants))
+    })
+
+    it('should add additional entries from the object passed in req.body to the object in the database', async () => {
+      const originalPlant = await mongoDbInstance.collection('plants').findOne({ _id: new ObjectID(mockObjects.plants[0]._id) })
+
+      originalPlant.name.should.equal('Gerhard')
+      expect(originalPlant.deviceCode).to.be.undefined
+
+      const res = await chai.request(server)
+        .patch(apiBasePath + '/plants/' + mockObjects.plants[0]._id)
+        .type('json')
+        .send({
+          name: 'bar',
+          deviceCode: 'baz'
+        })
+
+      res.should.have.status(200)
+
+      const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
+      mockObjects.plants[0].name = 'bar' // changed
+      mockObjects.plants[0].deviceCode = 'baz' // added
 
       JSON.stringify(allPlants).should.equal(JSON.stringify(mockObjects.plants))
     })
