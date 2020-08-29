@@ -68,12 +68,18 @@ export default {
                 },
                 ticks: {
                   callback: function (value, index, values) {
+                    // returns only even hours to make the axis
+                    // alwas go through midnight.
                     const hour = value.match(new RegExp(/(\d\d):\d\d/))[1]
 
                     if (hour % 2 === 0) {
                       return value
                     }
                   }
+                },
+                scaleLabel: {
+                  display: true,
+                  labelString: 'time of day'
                 }
               },
               {
@@ -91,6 +97,10 @@ export default {
                   min: 0,
                   max: 100,
                   stepSize: 20
+                },
+                scaleLabel: {
+                  display: true,
+                  labelString: 'percent'
                 }
               }
             ]
@@ -112,7 +122,7 @@ export default {
                 mode: 'vertical',
                 scaleID: 'x-axis-time',
                 value: this.timestampLastMidnignt(),
-                borderWidth: 2,
+                borderWidth: 1,
                 borderColor: 'rgba(0,0,0,0.2)'
               },
               {
@@ -121,7 +131,7 @@ export default {
                 xScaleID: 'x-axis-percent',
                 yScaleID: 'y-axis-percent',
                 yMin: 70,
-                borderWidth: 2,
+                borderWidth: 0,
                 backgroundColor: 'rgba(255,150,0,0.2)'
               },
               {
@@ -130,7 +140,7 @@ export default {
                 mode: 'horizontal',
                 scaleID: 'y-axis-percent',
                 value: 70,
-                borderWidth: 2,
+                borderWidth: 1,
                 borderColor: 'rgba(255,150,0,0.6)'
               },
               {
@@ -139,7 +149,7 @@ export default {
                 xScaleID: 'x-axis-percent',
                 yScaleID: 'y-axis-percent',
                 yMax: 30,
-                borderWidth: 2,
+                borderWidth: 0,
                 backgroundColor: 'rgba(255,0,0,0.2)'
               },
               {
@@ -148,7 +158,7 @@ export default {
                 mode: 'horizontal',
                 scaleID: 'y-axis-percent',
                 value: 30,
-                borderWidth: 2,
+                borderWidth: 1,
                 borderColor: 'rgba(255,0,0,0.6)'
               }
             ]
