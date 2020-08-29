@@ -23,6 +23,7 @@ export default {
       formattedData: []
     }
   },
+  computed: { },
   watch: {
     chartData: function (newChartData, oldChartData) {
       this.formattedData = this.formatChartData(newChartData)
@@ -60,14 +61,27 @@ export default {
                 id: 'x-axis-time',
                 type: 'time',
                 time: {
-                  unit: 'hour'
+                  displayFormats: {
+                    hour: 'HH:mm'
+                  },
+                  stepSize: 1
+                },
+                ticks: {
+                  callback: function (value, index, values) {
+                    const hour = value.match(new RegExp(/(\d\d):\d\d/))[1]
+
+                    if (hour % 2 === 0) {
+                      return value
+                    }
+                  }
                 }
               },
               {
                 id: 'x-axis-percent',
                 type: 'linear',
                 min: 0,
-                max: 100
+                max: 100,
+                display: false
               }
             ],
             yAxes: [
@@ -84,14 +98,29 @@ export default {
           annotation: {
             annotations: [
               {
+                id: 'yesterday',
+                type: 'box',
+                xScaleID: 'x-axis-time',
+                yScaleID: 'y-axis-percent',
+                xMax: this.timestampLastMidnignt(),
+                borderWidth: 0,
+                backgroundColor: 'rgba(0,0,0,0.1)'
+              },
+              {
+                id: 'midnight',
+                type: 'line',
+                mode: 'vertical',
+                scaleID: 'x-axis-time',
+                value: this.timestampLastMidnignt(),
+                borderWidth: 2,
+                borderColor: 'rgba(0,0,0,0.2)'
+              },
+              {
                 id: 'healthy-max-fill',
                 type: 'box',
                 xScaleID: 'x-axis-percent',
                 yScaleID: 'y-axis-percent',
-                xMin: 0,
-                xMax: 100,
                 yMin: 70,
-                yMax: 100,
                 borderWidth: 2,
                 backgroundColor: 'rgba(255,150,0,0.2)'
               },
@@ -109,9 +138,6 @@ export default {
                 type: 'box',
                 xScaleID: 'x-axis-percent',
                 yScaleID: 'y-axis-percent',
-                xMin: 0,
-                xMax: 100,
-                yMin: 0,
                 yMax: 30,
                 borderWidth: 2,
                 backgroundColor: 'rgba(255,0,0,0.2)'
@@ -129,6 +155,20 @@ export default {
           }
         }
       })
+    },
+    timestampLastMidnignt: function (startTime, endTime) {
+      const now = new Date()
+
+      const lastMidnight = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        0,
+        0,
+        0
+      )
+
+      return lastMidnight
     },
     formatChartData (data) {
       const formattedData = []
