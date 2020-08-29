@@ -72,23 +72,27 @@
             <v-tabs>
               <v-tab>Now</v-tab>
               <v-tab>History</v-tab>
+              <v-tab>Settings</v-tab>
               <!-- <v-tab>Linked Devices</v-tab> -->
 
               <v-tab-item>
                 <v-row>
                   <v-col>
-                    <PlantCurrentHealth
-                      :device-code="plant.deviceCode"
-                    />
+                    <PlantCurrentHealth :device-code="plant.deviceCode" />
                   </v-col>
                 </v-row>
               </v-tab-item>
+
               <v-tab-item>
                 <v-row>
                   <v-col>
                     <PlantHumidityHistory :device-code="plant.deviceCode" />
                   </v-col>
                 </v-row>
+              </v-tab-item>
+
+              <v-tab-item>
+                <PlantSettings :device-code="plant.deviceCode" />
               </v-tab-item>
               <!-- <v-tab-item>
                 <v-row>
@@ -129,6 +133,7 @@ import ContextMenuPlant from '@/components/ContextMenuPlant.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import PlantCurrentHealth from '@/components/plant/PlantCurrentHealth.vue'
 import PlantHumidityHistory from '@/components/plant/PlantHumidityHistory.vue'
+import PlantSettings from '@/components/plant/PlantSettings.vue'
 import ProfilePicture from '@/components/ProfilePicture.vue'
 
 import { mapGetters } from 'vuex'
@@ -137,13 +142,13 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Plant',
-  components: { AppBar, ContextMenuPlant, LoadingIndicator, PlantCurrentHealth, PlantHumidityHistory, ProfilePicture },
+  components: { AppBar, ContextMenuPlant, LoadingIndicator, PlantCurrentHealth, PlantHumidityHistory, PlantSettings, ProfilePicture },
   data () {
     return {
       fetchingPlant: false,
       removeDialogIsOpen: false,
       removingPlant: false,
-      plant: {},
+      plant: { },
       plantPicture: ''
     }
   },

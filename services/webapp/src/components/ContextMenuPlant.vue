@@ -25,6 +25,12 @@
       >
         Remove Plant
       </v-list-item>
+      <v-divider />
+      <v-list-item
+        disable
+      >
+        Device Settings
+      </v-list-item>
     </v-list>
   </v-menu>
 </template>
