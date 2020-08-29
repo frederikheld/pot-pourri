@@ -26,7 +26,7 @@ import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
 import { mapGetters } from 'vuex'
 
-const Influx = require('influx')
+const InfluxConnector = require('../../methods/influxConnector')
 
 export default {
   name: 'PlantHumidityHistory',
@@ -63,7 +63,7 @@ export default {
   computed: {
     ...mapGetters([
       'iconMap',
-      'appSettings'
+      'influxdbConnectionData'
     ])
   },
   async mounted () {
@@ -74,23 +74,10 @@ export default {
     async fetchSensorData () {
       this.fetchingSensorData = true
 
-      const influx = new Influx.InfluxDB({
-        host: this.appSettings.network.influxdb.address,
-        port: this.appSettings.network.influxdb.port,
-        username: this.appSettings.network.influxdb.username,
-        password: this.appSettings.network.influxdb.password,
-        database: 'telegraf'
-      })
+      const influxConnector = new InfluxConnector(this.influxdbConnectionData)
 
-      const query = 'SELECT (1024 - "value") / 1024 * 100 FROM "autogen"."mqtt_consumer" WHERE ("topic" = \'potpourri/devices/' + this.$props.deviceCode + '/sensors/humidity\') AND time > now() - 12h ORDER BY time DESC'
+      this.sensorData = await influxConnector.fetchSensorHistoryPercent(this.$props.deviceCode, 'humidity', '24h')
 
-      const result = await influx.query(query)
-
-      if (result) {
-        this.sensorData = result
-      } else {
-        this.sensorData = undefined
-      }
       this.fetchingSensorData = false
     },
     generateChartData () {
