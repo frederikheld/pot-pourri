@@ -9,6 +9,8 @@ import Chart from 'chart.js'
 import 'chartjs-adapter-moment'
 import * as chartjsPluginAnnotation from 'chartjs-plugin-annotation'
 
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'ChartHumidityHistory',
   props: {
@@ -20,10 +22,17 @@ export default {
   data () {
     return {
       chart: {},
-      formattedData: []
+      formattedData: [],
+      healthyHumidity: [0, 100],
+      fetchingPlantSettings: false
     }
   },
-  computed: { },
+  computed: {
+    ...mapGetters([
+      'influxdbConnectionData',
+      'metastoreServerAddress'
+    ])
+  },
   watch: {
     chartData: function (newChartData, oldChartData) {
       this.formattedData = this.formatChartData(newChartData)
@@ -33,7 +42,8 @@ export default {
       this.chart.update()
     }
   },
-  mounted () {
+  async mounted () {
+    await this.fetchPlantSettings()
     this.formattedData = this.formatChartData(this.$props.chartData)
     this.createChart(this.$refs.chart)
   },
@@ -66,20 +76,23 @@ export default {
                   },
                   stepSize: 1
                 },
+                distribution: 'linear',
                 ticks: {
                   callback: function (value, index, values) {
                     // returns only even hours to make the axis
-                    // alwas go through midnight.
+                    // labels always go through midnight.
                     const hour = value.match(new RegExp(/(\d\d):\d\d/))[1]
 
                     if (hour % 2 === 0) {
                       return value
                     }
-                  }
+                  },
+                  autoSkip: false,
+                  source: 'date'
                 },
                 scaleLabel: {
-                  display: true,
-                  labelString: 'time of day'
+                  labelString: 'time of day',
+                  display: false
                 }
               },
               {
@@ -96,11 +109,10 @@ export default {
                 ticks: {
                   min: 0,
                   max: 100,
-                  stepSize: 20
-                },
-                scaleLabel: {
-                  display: true,
-                  labelString: 'percent'
+                  stepSize: 20,
+                  callback (value, index, values) {
+                    return value + ' %'
+                  }
                 }
               }
             ]
@@ -112,7 +124,7 @@ export default {
                 type: 'box',
                 xScaleID: 'x-axis-time',
                 yScaleID: 'y-axis-percent',
-                xMax: this.timestampLastMidnignt(),
+                xMax: this.getTimestampLastMidnignt(),
                 borderWidth: 0,
                 backgroundColor: 'rgba(0,0,0,0.1)'
               },
@@ -121,7 +133,7 @@ export default {
                 type: 'line',
                 mode: 'vertical',
                 scaleID: 'x-axis-time',
-                value: this.timestampLastMidnignt(),
+                value: this.getTimestampLastMidnignt(),
                 borderWidth: 1,
                 borderColor: 'rgba(0,0,0,0.2)'
               },
@@ -130,7 +142,7 @@ export default {
                 type: 'box',
                 xScaleID: 'x-axis-percent',
                 yScaleID: 'y-axis-percent',
-                yMin: 70,
+                yMin: this.healthyHumidity[1],
                 borderWidth: 0,
                 backgroundColor: 'rgba(255,150,0,0.2)'
               },
@@ -139,7 +151,7 @@ export default {
                 type: 'line',
                 mode: 'horizontal',
                 scaleID: 'y-axis-percent',
-                value: 70,
+                value: this.healthyHumidity[1],
                 borderWidth: 1,
                 borderColor: 'rgba(255,150,0,0.6)'
               },
@@ -148,7 +160,7 @@ export default {
                 type: 'box',
                 xScaleID: 'x-axis-percent',
                 yScaleID: 'y-axis-percent',
-                yMax: 30,
+                yMax: this.healthyHumidity[0],
                 borderWidth: 0,
                 backgroundColor: 'rgba(255,0,0,0.2)'
               },
@@ -157,7 +169,7 @@ export default {
                 type: 'line',
                 mode: 'horizontal',
                 scaleID: 'y-axis-percent',
-                value: 30,
+                value: this.healthyHumidity[0],
                 borderWidth: 1,
                 borderColor: 'rgba(255,0,0,0.6)'
               }
@@ -166,7 +178,7 @@ export default {
         }
       })
     },
-    timestampLastMidnignt: function (startTime, endTime) {
+    getTimestampLastMidnignt: function (startTime, endTime) {
       const now = new Date()
 
       const lastMidnight = new Date(
@@ -181,6 +193,8 @@ export default {
       return lastMidnight
     },
     formatChartData (data) {
+      // for now this is just a dummy function that
+      // can be used to format the chart if needed:
       const formattedData = []
 
       data.forEach((value) => {
@@ -188,6 +202,30 @@ export default {
       })
 
       return formattedData
+    },
+    async fetchPlantSettings () {
+      this.fetchingPlantSettings = true
+
+      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
+
+      const options = {
+        method: 'GET',
+        accept: 'application/json'
+      }
+
+      try {
+        const res = await fetch(url, options)
+        const plant = await res.json()
+
+        this.healthyHumidity = [
+          plant.measurands?.humidity?.healthyMin || 0,
+          plant.measurands?.humidity?.healthyMax || 100
+        ]
+      } catch (err) {
+        console.error(err)
+      }
+
+      this.fetchingPlantSettings = false
     }
   }
 }

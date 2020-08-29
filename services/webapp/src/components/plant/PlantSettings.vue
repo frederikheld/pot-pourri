@@ -161,7 +161,7 @@ export default {
       caret.style.height = '0'
       caret.style.borderLeft = '8px solid transparent'
       caret.style.borderRight = '8px solid transparent'
-      caret.style.borderTop = '8px solid #f00'
+      caret.style.borderTop = '8px solid #66f'
       caret.style.margin = '0'
       caret.style.padding = '0'
       caret.style.marginLeft = '-8px'
@@ -169,7 +169,7 @@ export default {
       const label = document.createElement('span')
       label.textContent = 'current'
       label.style.fontSize = '0.8rem'
-      label.style.color = '#f00'
+      label.style.color = '#66f'
       label.style.fontWeight = 'bold'
       label.style.marginLeft = '-22px'
 
