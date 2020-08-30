@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 
 import appSettings from './modules/app-settings'
-import appFeatureToggles from './modules/app-feature-toggles'
+import featureToggles from './modules/feature-toggles'
 import lab from './modules/lab'
 import theme from './modules/theme'
 
@@ -18,7 +18,7 @@ export default new Vuex.Store({
   plugins: [vuexLocal.plugin],
   modules: {
     appSettings,
-    appFeatureToggles,
+    featureToggles,
     lab,
     theme
   },

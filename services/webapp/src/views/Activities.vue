@@ -30,7 +30,7 @@
         </v-col>
       </v-row>
 
-      <div v-if="appFeatureToggles.activityFeed.addFakeMessages">
+      <div v-if="featureToggles.activityFeed.addFakeMessages">
         <v-row dense>
           <v-col>
             <v-divider
@@ -124,7 +124,7 @@ export default {
   components: { AlertCard, AppBar, NewsCard, ProductCard },
   computed: {
     ...mapGetters([
-      'appFeatureToggles'
+      'featureToggles'
     ])
   },
   mounted () {

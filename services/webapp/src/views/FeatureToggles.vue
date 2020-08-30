@@ -15,7 +15,7 @@
                   Activity Feed
                 </span>
                 <v-switch
-                  v-model="appFeatureToggles.activityFeed.enabled"
+                  v-model="featureToggles.activityFeed.enabled"
                   @change="saveFeatureToggles"
                 >
                   <template v-slot:label>
@@ -30,7 +30,7 @@
                   </template>
                 </v-switch>
                 <v-switch
-                  v-model="appFeatureToggles.activityFeed.addFakeMessages"
+                  v-model="featureToggles.activityFeed.addFakeMessages"
                   @change="saveFeatureToggles"
                 >
                   <template v-slot:label>
@@ -63,13 +63,13 @@ export default {
     return { }
   },
   computed: {
-    appFeatureToggles () {
-      return this.$store.state.appFeatureToggles
+    featureToggles () {
+      return this.$store.state.featureToggles
     }
   },
   methods: {
     saveFeatureToggles () {
-      this.$store.commit('SAVE_APP_FEATURETOGGLES', this.$store.state.appFeatureToggles)
+      this.$store.commit('SAVE_APP_FEATURETOGGLES', this.$store.state.featureToggles)
     }
   }
 }

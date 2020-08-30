@@ -13,7 +13,7 @@
       background-color="primary"
     >
       <v-btn
-        v-if="appFeatureToggles.activityFeed.enabled"
+        v-if="featureToggles.activityFeed.enabled"
         to="/activities"
       >
         <span>Activities</span>
@@ -64,7 +64,7 @@ export default {
   data: () => ({ }),
   computed: {
     ...mapGetters([
-      'appFeatureToggles'
+      'featureToggles'
     ])
   }
 }

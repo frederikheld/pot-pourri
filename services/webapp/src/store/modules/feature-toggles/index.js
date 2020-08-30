@@ -6,13 +6,13 @@ const featureToggles = {
     }
   },
   getters: {
-    appFeatureToggles (state) {
+    featureToggles (state) {
       return state
     }
   },
   mutations: {
-    SAVE_APP_FEATURETOGGLES (state, newAppFeatureTogglesObject) {
-      state = newAppFeatureTogglesObject
+    SAVE_APP_FEATURETOGGLES (state, newFeatureTogglesObject) {
+      state = newFeatureTogglesObject
     }
   }
 }
