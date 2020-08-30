@@ -22,16 +22,8 @@ export default new Vuex.Store({
     lab,
     theme
   },
-  state: {
-    mqtt: {
-      client: undefined,
-      lastMessage: undefined
-    }
-  },
-  getters: {
-  },
-  mutations: {
-  },
-  actions: {
-  }
+  state: { },
+  getters: { },
+  mutations: { },
+  actions: { }
 })
