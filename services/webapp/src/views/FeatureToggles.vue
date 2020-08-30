@@ -56,6 +56,8 @@
 <script>
 import AppBar from '@/components/AppBar.vue'
 
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Settings',
   components: { AppBar },
@@ -63,13 +65,13 @@ export default {
     return { }
   },
   computed: {
-    featureToggles () {
-      return this.$store.state.featureToggles
-    }
+    ...mapGetters([
+      'featureToggles'
+    ])
   },
   methods: {
     saveFeatureToggles () {
-      this.$store.commit('SAVE_APP_FEATURETOGGLES', this.$store.state.featureToggles)
+      this.$store.commit('SAVE_FEATURETOGGLES', this.featureToggles)
     }
   }
 }

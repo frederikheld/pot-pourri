@@ -11,7 +11,7 @@ const featureToggles = {
     }
   },
   mutations: {
-    SAVE_APP_FEATURETOGGLES (state, newFeatureTogglesObject) {
+    SAVE_FEATURETOGGLES (state, newFeatureTogglesObject) {
       state = newFeatureTogglesObject
     }
   }
