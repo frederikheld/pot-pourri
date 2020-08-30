@@ -2,6 +2,9 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 
+import appSettings from './modules/app-settings'
+import appFeatureToggles from './modules/app-feature-toggles'
+
 const vuexLocal = new VuexPersistence({
   key: 'pot-pourri',
   storage: window.localStorage
@@ -11,35 +14,11 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   plugins: [vuexLocal.plugin],
+  modules: {
+    appSettings,
+    appFeatureToggles
+  },
   state: {
-    appSettings: {
-      network: {
-        mqtt: {
-          protocol: 'https',
-          address: 'localhost',
-          port: 1883
-        },
-        metastore: {
-          protocol: 'https',
-          address: 'localhost',
-          port: 3003
-        },
-        influxdb: {
-          protocol: 'https',
-          address: 'localhost',
-          port: 8086,
-          username: undefined,
-          password: undefined,
-          database: 'telegraf'
-        }
-      }
-    },
-    appFeatureToggles: {
-      activityFeed: {
-        enabled: false,
-        addFakeMessages: false
-      }
-    },
     maps: {
       icons: {
         default: 'mdi-gauge',
@@ -65,31 +44,8 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    appSettings (state) {
-      return state.appSettings
-    },
-    appFeatureToggles (state) {
-      return state.appFeatureToggles
-    },
     iconMap: function (state) {
       return state.maps.icons
-    },
-    mqttServerAddress: function (state) {
-      return state.appSettings.network.mqtt.protocol + '://' + state.appSettings.network.mqtt.address + ':' + state.appSettings.network.mqtt.port
-    },
-    metastoreServerAddress: function (state) {
-      return state.appSettings.network.metastore.protocol + '://' + state.appSettings.network.metastore.address + ':' + state.appSettings.network.metastore.port
-    },
-    influxdbConnectionData: function (state) {
-      const influxConnectionData = {
-        host: state.appSettings.network.influxdb.address,
-        port: state.appSettings.network.influxdb.port,
-        username: state.appSettings.network.influxdb.username,
-        password: state.appSettings.network.influxdb.password,
-        database: state.appSettings.network.influxdb.database
-      }
-
-      return influxConnectionData
     },
     count (state) {
       return state.lab.count
@@ -99,12 +55,6 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    SAVE_APP_SETTINGS (state, newAppSettingsObject) {
-      state.appSettings = newAppSettingsObject
-    },
-    SAVE_APP_FEATURETOGGLES (state, newAppFeatureTogglesObject) {
-      state.appFeatureToggles = newAppFeatureTogglesObject
-    },
     INCREMENT_COUNTER (state) {
       state.lab.count++
     },
@@ -116,7 +66,5 @@ export default new Vuex.Store({
     }
   },
   actions: {
-  },
-  modules: {
   }
 })
