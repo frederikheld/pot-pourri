@@ -153,8 +153,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'iconMap',
+    ...mapGetters('featureToggles', [
+      'featureToggles'
+    ]),
+    ...mapGetters('theme', [
+      'iconMap'
+    ]),
+    ...mapGetters('appSettings', [
       'metastoreServerAddress'
     ])
   },

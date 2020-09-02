@@ -55,7 +55,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapGetters('lab', [
       'labSettings'
     ]),
     hasPendingEdits () {
@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     saveSettings () {
-      this.$store.commit('SAVE_LAB_SETTINGS', JSON.parse(JSON.stringify(this.form)))
+      this.$store.commit('lab/SAVE_LAB_SETTINGS', JSON.parse(JSON.stringify(this.form)))
     }
   }
 }

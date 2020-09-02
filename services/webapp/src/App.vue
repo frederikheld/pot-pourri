@@ -63,7 +63,7 @@ export default {
   components: { NavDrawer },
   data: () => ({ }),
   computed: {
-    ...mapGetters([
+    ...mapGetters('featureToggles', [
       'featureToggles'
     ])
   }

@@ -62,16 +62,24 @@ export default {
   name: 'Settings',
   components: { AppBar },
   data () {
-    return { }
+    return {
+      inForm: undefined
+    }
   },
   computed: {
-    ...mapGetters([
-      'featureToggles'
-    ])
+    ...mapGetters('featureToggles', {
+      featureTogglesInStore: 'featureToggles'
+    }),
+    featureToggles () {
+      return JSON.parse(JSON.stringify(this.featureTogglesInStore))
+    }
+  },
+  created () {
+    this.inForm = JSON.parse(JSON.stringify(this.featureToggles))
   },
   methods: {
     saveFeatureToggles () {
-      this.$store.commit('SAVE_FEATURETOGGLES', this.featureToggles)
+      this.$store.commit('featureToggles/SAVE_FEATURETOGGLES', this.featureToggles, { root: true })
     }
   }
 }

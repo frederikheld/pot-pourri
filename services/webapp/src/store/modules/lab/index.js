@@ -1,30 +1,33 @@
 const lab = {
+  namespaced: true,
   state: {
-    count: 0,
-    countDirect: 0,
-    labSettings: {
-      foo: {
-        bar: { }
+    lab: {
+      count: 0,
+      countDirect: 0,
+      labSettings: {
+        foo: {
+          bar: { }
+        }
       }
     }
   },
   getters: {
     count (state) {
-      return state.count
+      return state.lab.count
     },
     labSettings (state) {
-      return state.labSettings
+      return state.lab.labSettings
     }
   },
   mutations: {
     SAVE_LAB_SETTINGS (state, newLabSettingsObject) {
-      state.labSettings = newLabSettingsObject
+      state.lab.labSettings = newLabSettingsObject
     },
     INCREMENT_COUNTER (state) {
-      state.count++
+      state.lab.count++
     },
     DECREMENT_COUNTER (state) {
-      state.count--
+      state.lab.count--
     }
   }
 }

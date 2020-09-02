@@ -139,7 +139,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapGetters('appSettings', [
       'metastoreServerAddress'
     ]),
     hasPendingEdits () {

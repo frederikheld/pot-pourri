@@ -61,8 +61,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'iconMap',
+    ...mapGetters('theme', [
+      'iconMap'
+    ]),
+    ...mapGetters('appSettings', [
       'influxdbConnectionData'
     ])
   },

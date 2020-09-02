@@ -173,7 +173,6 @@
  * TODO: password isn't hashed/salted before being stored yet!
  */
 import AppBar from '@/components/AppBar.vue'
-
 import { mapGetters } from 'vuex'
 
 export default {
@@ -185,7 +184,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapGetters('appSettings', [
       'appSettings'
     ]),
     hasPendingEdits () {
@@ -200,7 +199,7 @@ export default {
   },
   methods: {
     actionSaveSettings () {
-      this.$store.commit('SAVE_APP_SETTINGS', JSON.parse(JSON.stringify(this.form)))
+      this.$store.commit('appSettings/SAVE_APP_SETTINGS', JSON.parse(JSON.stringify(this.form)))
     }
   }
 }

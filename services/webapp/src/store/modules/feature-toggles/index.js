@@ -1,18 +1,21 @@
 const featureToggles = {
+  namespaced: true,
   state: {
-    activityFeed: {
-      enabled: false,
-      addFakeMessages: false
+    featureToggles: {
+      activityFeed: {
+        enabled: false,
+        addFakeMessages: false
+      }
     }
   },
   getters: {
     featureToggles (state) {
-      return state
+      return state.featureToggles
     }
   },
   mutations: {
     SAVE_FEATURETOGGLES (state, newFeatureTogglesObject) {
-      state = newFeatureTogglesObject
+      state.featureToggles = newFeatureTogglesObject
     }
   }
 }

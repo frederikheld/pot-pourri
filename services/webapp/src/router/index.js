@@ -69,6 +69,11 @@ const routes = [
     component: () => import('../views/lab/LabSettings.vue')
   },
   {
+    path: '/lab/lab-store-rest-backend',
+    name: 'Store REST Backend Lab',
+    component: () => import('../views/lab/LabStoreRestBackend.vue')
+  },
+  {
     path: '/feature-toggles',
     name: 'FeatureToggles',
     component: () => import('../views/FeatureToggles.vue')

@@ -5,9 +5,11 @@ import VuexPersistence from 'vuex-persist'
 import appSettings from './modules/app-settings'
 import featureToggles from './modules/feature-toggles'
 import lab from './modules/lab'
+import metadata from './modules/metadata'
+import sensordata from './modules/sensordata'
 import theme from './modules/theme'
 
-const vuexLocal = new VuexPersistence({
+const vuexLocalPersistence = new VuexPersistence({
   key: 'pot-pourri',
   storage: window.localStorage
 })
@@ -15,15 +17,14 @@ const vuexLocal = new VuexPersistence({
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  plugins: [vuexLocal.plugin],
   modules: {
     appSettings,
     featureToggles,
     lab,
+    metadata,
+    sensordata,
     theme
   },
-  state: { },
-  getters: { },
-  mutations: { },
-  actions: { }
+  plugins: [vuexLocalPersistence.plugin],
+  strict: process.env.NODE_ENV !== 'production'
 })

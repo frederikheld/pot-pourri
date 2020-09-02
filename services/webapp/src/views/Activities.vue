@@ -123,7 +123,7 @@ export default {
   name: 'Activities',
   components: { AlertCard, AppBar, NewsCard, ProductCard },
   computed: {
-    ...mapGetters([
+    ...mapGetters('featureToggles', [
       'featureToggles'
     ])
   },
