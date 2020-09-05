@@ -230,7 +230,7 @@ export default {
       const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
 
       const options = {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
         },
