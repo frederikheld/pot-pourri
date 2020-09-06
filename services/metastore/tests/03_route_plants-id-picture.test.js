@@ -28,7 +28,7 @@ const mockFs = require('mock-fs')
 const apiBasePath = '/api'
 
 describe('/plants/:id/profile-picture', () => {
-  const nonExistentIdWith24HexChars = '5f1637a2e99ac7d700000000'
+  const correctlyFormedIdThatDoesntExist = '5f1637a2e99ac7d700000000'
   // const malformedId = 'nonExistentId'
 
   let mongoClient
@@ -67,7 +67,7 @@ describe('/plants/:id/profile-picture', () => {
     // fileUpload = multer({ storage })
 
     // init mock-fs:
-    mockFs({
+    await mockFs({
       store: {
         blob: {
           'gerhard.jpg': Buffer.from([0, 255, 0])
@@ -103,7 +103,7 @@ describe('/plants/:id/profile-picture', () => {
 
     it('should return status 404 and an error message, if the plant with the given :id doesn\'t exist', async () => {
       const res = await chai.request(server)
-        .get(apiBasePath + '/plants/' + nonExistentIdWith24HexChars + '/profile-picture')
+        .get(apiBasePath + '/plants/' + correctlyFormedIdThatDoesntExist + '/profile-picture')
 
       res.should.have.status(404)
       res.body.error.should.be.true
