@@ -86,7 +86,12 @@
               <v-tab-item>
                 <v-row>
                   <v-col>
-                    <PlantHumidityHistory :device-code="plant.deviceCode" />
+                    <LoadingIndicator v-if="fetchingSensorData" />
+                    <PlantHumidityHistory
+                      v-else
+                      :sensor-data="sensorData"
+                      :plant="plant"
+                    />
                   </v-col>
                 </v-row>
               </v-tab-item>
@@ -94,22 +99,6 @@
               <v-tab-item>
                 <PlantSettings :device-code="plant.deviceCode" />
               </v-tab-item>
-              <!-- <v-tab-item>
-                <v-row>
-                  <v-col>
-                    <DevicesList
-                      :devices="devices"
-                      :action-unlink-device="actionUnlinkDevice"
-                      :no-devices-info="'You haven\'t linked any devices to this plant yet.'"
-                    />
-                    <LinkDeviceDialog
-                      class="mx-auto"
-                      :plant-id="plant.id"
-                      @saveLinkedDevicesDone="reloadView()"
-                    />
-                  </v-col>
-                </v-row>
-              </v-tab-item> -->
             </v-tabs>
           </v-col>
         </v-row>
@@ -128,8 +117,6 @@
 <script>
 import AppBar from '@/components/AppBar.vue'
 import ContextMenuPlant from '@/components/ContextMenuPlant.vue'
-// import DevicesList from '@/components/DevicesList.vue'
-// import LinkDeviceDialog from '@/components/LinkDeviceDialog.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import PlantCurrentHealth from '@/components/plant/PlantCurrentHealth.vue'
 import PlantHumidityHistory from '@/components/plant/PlantHumidityHistory.vue'
@@ -138,18 +125,27 @@ import ProfilePicture from '@/components/ProfilePicture.vue'
 
 import { mapGetters } from 'vuex'
 
-// const querystring = require('querystring')
+const InfluxConnector = require('../methods/influxConnector')
 
 export default {
   name: 'Plant',
-  components: { AppBar, ContextMenuPlant, LoadingIndicator, PlantCurrentHealth, PlantHumidityHistory, PlantSettings, ProfilePicture },
+  components: {
+    AppBar,
+    ContextMenuPlant,
+    LoadingIndicator,
+    PlantCurrentHealth,
+    PlantHumidityHistory,
+    PlantSettings,
+    ProfilePicture
+  },
   data () {
     return {
       fetchingPlant: false,
-      removeDialogIsOpen: false,
+      plantPicture: '',
       removingPlant: false,
-      plant: { },
-      plantPicture: ''
+      removeDialogIsOpen: false,
+      fetchingSensorData: false,
+      sensorData: []
     }
   },
   computed: {
@@ -160,40 +156,19 @@ export default {
       'iconMap'
     ]),
     ...mapGetters('appSettings', [
+      'influxdbConnectionData',
       'metastoreServerAddress'
-    ])
+    ]),
+    plant () {
+      return this.$store.getters['metadata/plantById'](this.$route.params.id)
+    }
   },
   async beforeMount () {
-    await this.fetchPlantProfile()
+    await this.fetchSensorData()
   },
   methods: {
-    reloadView () {
-      this.$router.go()
-    },
-    // async actionUnlinkDevice (deviceId) {
-    //   this.fetchingPlant = true
-
-    //   const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/linked-devices'
-
-    //   const options = {
-    //     method: 'DELETE',
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify([deviceId])
-    //   }
-
-    //   try {
-    //     await fetch(url, options)
-
-    //     this.$router.replace('/plants/' + this.$route.params.id)
-    //   } catch (err) {
-    //     console.error(err)
-    //   }
-
-    //   this.reloadView()
-
-    //   this.fetchingPlant = false
+    // reloadView () {
+    //   this.$router.go()
     // },
     actionEditPlant () {
       this.$router.push('/plants/' + this.$route.params.id + '/edit')
@@ -223,77 +198,14 @@ export default {
 
       this.removingPlant = false
     },
-    async fetchPlantProfile () {
-      this.fetchingPlant = true
+    async fetchSensorData () {
+      this.fetchingSensorData = true
 
-      // fetch plant meta:
-      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
+      const influxConnector = new InfluxConnector(this.influxdbConnectionData)
 
-      const options = {
-        method: 'GET',
-        accept: 'application/json'
-      }
+      this.sensorData = await influxConnector.fetchSensorHistoryPercent(this.plant.deviceCode, 'humidity', '24h')
 
-      try {
-        const res = await fetch(url, options)
-        const plant = await res.json()
-        this.plant = plant
-      } catch (err) {
-        console.error(err)
-      }
-
-      // fetch profile picture:
-      const url2 = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/profile-picture'
-
-      const options2 = {
-        method: 'GET',
-        headers: {
-          Accept: 'image/png, image/jpg, image/jpeg'
-        }
-      }
-
-      try {
-        const res2 = await fetch(url2, options2)
-        const plantPictureRaw = await res2.blob()
-        this.plantPictureRaw = plantPictureRaw
-        this.plantPicture = URL.createObjectURL(plantPictureRaw)
-      } catch (err) {
-        console.error(err)
-      }
-
-      // fetch linked devices:
-      if (this.plant.linkedDevices) {
-        this.devices = await this.fetchLinkedDevices(this.plant.linkedDevices)
-      } else {
-        this.devices = []
-      }
-
-      this.fetchingPlant = false
-    },
-    async fetchLinkedDevices (list) {
-      // this.fetchingDevices = true
-
-      const baseUrl = this.metastoreServerAddress + '/api/devices/'
-
-      const options = {
-        method: 'GET',
-        accept: 'application/json'
-      }
-
-      const devices = []
-
-      for (let i = 0; i < list.length; i++) {
-        try {
-          const res = await fetch(baseUrl + list[i], options)
-          devices.push(await res.json())
-        } catch (err) {
-          console.error(err)
-        }
-      }
-
-      // this.fetchingDevices = false
-
-      return devices
+      this.fetchingSensorData = false
     }
   }
 }

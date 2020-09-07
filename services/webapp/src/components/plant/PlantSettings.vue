@@ -115,14 +115,16 @@ export default {
       await this.updatePlantSettings(this.inForm)
 
       // update buffered store:
-
-      // mode dependable, but slower option:
+      // a) more dependable, but slower option:
       // fetch settings from store to check
       // if they were saved correctly:
       // await this.fetchPlantSettings()
 
-      // less dependable, but faster option:
+      // b) less dependable, but faster option:
       this.inStore = JSON.parse(JSON.stringify(this.inForm))
+
+      // re-fetch plant meta to have current changes in store:
+      await this.$store.dispatch('metadata/fetchPlantById', this.$route.params.id)
 
       this.savingPlantSettings = false
     },

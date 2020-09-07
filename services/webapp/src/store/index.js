@@ -21,7 +21,7 @@ export default new Vuex.Store({
     appSettings,
     featureToggles,
     lab,
-    metadata,
+    metadata: metadata,
     sensordata,
     theme
   },
