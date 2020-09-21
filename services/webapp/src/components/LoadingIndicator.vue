@@ -71,10 +71,11 @@
 
 <script>
 /**
- * inline:    with elements/text in line
- * box:       centers within parent element
- * page:      centered overlay relative to page content
- * viewport:  centered overlay relative to viewport
+ * type:
+ *   inline:    with elements/text in line (default)
+ *   box:       centers within parent element
+ *   page:      centered overlay relative to page content
+ *   viewport:  centered overlay relative to viewport
  */
 export default {
   name: 'LoadingIndicator',

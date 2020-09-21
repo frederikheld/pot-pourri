@@ -4,8 +4,8 @@
       v-if="chartData"
       :chart-data="chartData"
       :options="chartOptions"
-      :healthy-min="plant.measurands.humidity.healthyMin"
-      :healthy-max="plant.measurands.humidity.healthyMax"
+      :healthy-min="humidityHealthyMin"
+      :healthy-max="humidityHealthyMax"
     />
     <div
       v-else
@@ -60,7 +60,13 @@ export default {
   computed: {
     ...mapGetters('theme', [
       'iconMap'
-    ])
+    ]),
+    humidityHealthyMin () {
+      return this.$props.plant.measurands?.humidity?.healthyMin || 0
+    },
+    humidityHealthyMax () {
+      return this.$props.plant.measurands?.humidity?.healthyMax || 100
+    }
   },
   async mounted () {
     this.generateChartData()

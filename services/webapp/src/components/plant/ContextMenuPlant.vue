@@ -17,13 +17,13 @@
         v-if="$props.actionEdit"
         @click="onClickEdit"
       >
-        Edit Device
+        Edit Plant
       </v-list-item>
       <v-list-item
         v-if="$props.actionRemove"
         @click="onClickRemove"
       >
-        Remove Device
+        Remove Plant
       </v-list-item>
     </v-list>
   </v-menu>
@@ -31,7 +31,7 @@
 
 <script>
 export default {
-  name: 'ContextMenuDevice',
+  name: 'ContextMenuPlant',
   props: {
     actionEdit: {
       type: Function,

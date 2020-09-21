@@ -11,7 +11,7 @@
       />
     </AppBar>
     <v-container>
-      <div v-if="!fetchingPlant">
+      <div v-if="!fetchingData">
         <v-dialog
           v-model="removeDialogIsOpen"
           width="24rem"
@@ -73,12 +73,13 @@
               <v-tab>Now</v-tab>
               <v-tab>History</v-tab>
               <v-tab>Settings</v-tab>
-              <!-- <v-tab>Linked Devices</v-tab> -->
 
               <v-tab-item>
                 <v-row>
                   <v-col>
-                    <PlantCurrentHealth :device-code="plant.deviceCode" />
+                    <PlantCurrentHealth
+                      :device-code="plant.deviceCode"
+                    />
                   </v-col>
                 </v-row>
               </v-tab-item>
@@ -86,7 +87,9 @@
               <v-tab-item>
                 <v-row>
                   <v-col>
-                    <LoadingIndicator v-if="fetchingSensorData" />
+                    <LoadingIndicator
+                      v-if="fetchingData"
+                    />
                     <PlantHumidityHistory
                       v-else
                       :sensor-data="sensorData"
@@ -97,14 +100,18 @@
               </v-tab-item>
 
               <v-tab-item>
-                <PlantSettings :device-code="plant.deviceCode" />
+                <PlantSettings
+                  :plant="plant"
+                  :current-values="plantCurrentValues"
+                  :after-save-action="fetchData"
+                />
               </v-tab-item>
             </v-tabs>
           </v-col>
         </v-row>
       </div>
       <LoadingIndicator
-        v-if="fetchingPlant"
+        v-if="fetchingData"
         type="page"
       />
     </v-container>
@@ -116,7 +123,7 @@
 
 <script>
 import AppBar from '@/components/AppBar.vue'
-import ContextMenuPlant from '@/components/ContextMenuPlant.vue'
+import ContextMenuPlant from '@/components/plant/ContextMenuPlant.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import PlantCurrentHealth from '@/components/plant/PlantCurrentHealth.vue'
 import PlantHumidityHistory from '@/components/plant/PlantHumidityHistory.vue'
@@ -125,7 +132,8 @@ import ProfilePicture from '@/components/ProfilePicture.vue'
 
 import { mapGetters } from 'vuex'
 
-const InfluxConnector = require('../methods/influxConnector')
+import MetastoreConnector from '../methods/metastoreConnector'
+import InfluxConnector from '../methods/influxConnector'
 
 export default {
   name: 'Plant',
@@ -140,18 +148,15 @@ export default {
   },
   data () {
     return {
-      fetchingPlant: false,
+      fetchingData: false,
+      plant: {},
       plantPicture: '',
       removingPlant: false,
       removeDialogIsOpen: false,
-      fetchingSensorData: false,
       sensorData: []
     }
   },
   computed: {
-    ...mapGetters('featureToggles', [
-      'featureToggles'
-    ]),
     ...mapGetters('theme', [
       'iconMap'
     ]),
@@ -159,17 +164,44 @@ export default {
       'influxdbConnectionData',
       'metastoreServerAddress'
     ]),
-    plant () {
-      return this.$store.getters['metadata/plantById'](this.$route.params.id)
+    plantCurrentValues () {
+      return {
+        humidity: this.sensorData[0].value
+      }
     }
   },
-  async beforeMount () {
-    await this.fetchSensorData()
+  beforeMount () {
+    this.fetchData()
   },
   methods: {
     // reloadView () {
     //   this.$router.go()
     // },
+    async fetchData () {
+      this.fetchingData = true
+
+      // first: fetch meta data
+      await this.fetchMetaData()
+
+      // second: fetch sensor data
+      await this.fetchSensorData()
+
+      // This is the latest sensor value which could be passed
+      // to the PlantCurrentHealth component:
+      // console.log(this.sensorData[this.sensorData.length - 1].value)
+
+      this.fetchingData = false
+    },
+    async fetchMetaData () {
+      const metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
+
+      this.plant = await metastoreConnector.fetchPlant(this.$route.params.id)
+    },
+    async fetchSensorData () {
+      const influxConnector = new InfluxConnector(this.influxdbConnectionData)
+
+      this.sensorData = await influxConnector.fetchSensorHistoryPercent(this.plant.deviceCode, 'humidity', '24h')
+    },
     actionEditPlant () {
       this.$router.push('/plants/' + this.$route.params.id + '/edit')
     },
@@ -197,15 +229,6 @@ export default {
       }
 
       this.removingPlant = false
-    },
-    async fetchSensorData () {
-      this.fetchingSensorData = true
-
-      const influxConnector = new InfluxConnector(this.influxdbConnectionData)
-
-      this.sensorData = await influxConnector.fetchSensorHistoryPercent(this.plant.deviceCode, 'humidity', '24h')
-
-      this.fetchingSensorData = false
     }
   }
 }
