@@ -137,7 +137,8 @@ export default {
       },
       errorMessages: {
         name: []
-      }
+      },
+      metastoreConnector: undefined
     }
   },
   computed: {
@@ -151,16 +152,18 @@ export default {
       return inForm !== inStore
     }
   },
-  async beforeMount () {
+  beforeMount () {
+    this.metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
+
     this.fetchData()
   },
   methods: {
     async fetchData () {
       this.fetchingData = true
 
-      await this.fetchMetaData()
+      this.plant = await this.metastoreConnector.fetchPlant(this.$route.params.id)
 
-      await this.fetchProfilePicture()
+      this.plantPicture = await this.metastoreConnector.fetchPlantProfilePicture(this.$route.params.id)
 
       this.initializeForm()
 
@@ -168,16 +171,6 @@ export default {
     },
     initializeForm () {
       this.form = JSON.parse(JSON.stringify(this.plant)) // this is needed to copy the actual content, not just the pointer!
-    },
-    async fetchMetaData () {
-      const metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
-
-      this.plant = await metastoreConnector.fetchPlant(this.$route.params.id)
-    },
-    async fetchProfilePicture () {
-      const metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
-
-      this.plantPicture = await metastoreConnector.fetchPlantProfilePicture(this.$route.params.id)
     },
     previewPicture (data) {
       blueimpLoadImage(
@@ -194,12 +187,16 @@ export default {
     async onSubmit () {
       this.savingPlant = true
 
-      await this.updatePlant(this.plant)
+      await this.metastoreConnector.patchPlant(this.$route.params.id, {
+        name: this.form.name,
+        deviceCode: this.form.deviceCode
+      })
 
       // only update picture if this.form.picture is set,
-      // otherwise the profile picture will be deleted
+      // otherwise the existing profile picture would be
+      // deleted!
       if (this.form.picture) {
-        await this.updateProfilePicture(this.plant, this.form.picture)
+        await this.metastoreConnector.updateProfilePicture(this.$route.params.id, this.form.picture)
       }
 
       this.savingPlant = false
@@ -207,44 +204,6 @@ export default {
     },
     onCancel () {
       this.$router.replace('/plants/' + this.$route.params.id)
-    },
-    async updatePlant (plant) {
-      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
-
-      const options = {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: this.form.name,
-          deviceCode: this.form.deviceCode
-        })
-      }
-
-      try {
-        return fetch(url, options)
-      } catch (err) {
-        console.error(err)
-      }
-    },
-    async updateProfilePicture (plant, profilePictureRaw) {
-      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/profile-picture'
-
-      const formData = new FormData()
-
-      formData.append('profilePicture', new Blob([profilePictureRaw], { type: 'image/jpg' }), 'somefile.jpg')
-
-      const options = {
-        method: 'PUT',
-        body: formData
-      }
-
-      try {
-        return fetch(url, options)
-      } catch (err) {
-        console.error(err)
-      }
     }
   }
 }

@@ -145,7 +145,9 @@ export default {
       plantPicture: '',
       removingPlant: false,
       removeDialogIsOpen: false,
-      sensorData: []
+      sensorData: [],
+      metastoreConnector: undefined,
+      influxConnector: undefined
     }
   },
   computed: {
@@ -163,6 +165,9 @@ export default {
     }
   },
   beforeMount () {
+    this.metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
+    this.influxConnector = new InfluxConnector(this.influxdbConnectionData)
+
     this.fetchData()
   },
   methods: {
@@ -173,13 +178,13 @@ export default {
       this.fetchingData = true
 
       // first: fetch meta data
-      await this.fetchMetaData()
+      this.plant = await this.metastoreConnector.fetchPlant(this.$route.params.id)
 
       // second: fetch plant profile picture
-      await this.fetchProfilePicture()
+      this.plantPicture = await this.metastoreConnector.fetchPlantProfilePicture(this.$route.params.id)
 
       // third: fetch sensor data
-      await this.fetchSensorData()
+      this.sensorData = await this.influxConnector.fetchSensorHistoryPercent(this.plant.deviceCode, 'humidity', '24h')
 
       // IMPROVE: fetchSensorData needs data from fetchMetaData but fetchPlantProfile is independent from both. How can this be cascaded to be most efficient?
 
@@ -188,21 +193,6 @@ export default {
       // console.log(this.sensorData[this.sensorData.length - 1].value)
 
       this.fetchingData = false
-    },
-    async fetchMetaData () {
-      const metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
-
-      this.plant = await metastoreConnector.fetchPlant(this.$route.params.id)
-    },
-    async fetchProfilePicture () {
-      const metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
-
-      this.plantPicture = await metastoreConnector.fetchPlantProfilePicture(this.$route.params.id)
-    },
-    async fetchSensorData () {
-      const influxConnector = new InfluxConnector(this.influxdbConnectionData)
-
-      this.sensorData = await influxConnector.fetchSensorHistoryPercent(this.plant.deviceCode, 'humidity', '24h')
     },
     actionEditPlant () {
       this.$router.push('/plants/' + this.$route.params.id + '/edit')

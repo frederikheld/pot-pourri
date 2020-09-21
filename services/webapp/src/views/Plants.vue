@@ -70,7 +70,9 @@ export default {
   data () {
     return {
       plantsMeta: {},
-      fetchingData: false
+      fetchingData: false,
+      metastoreConnector: undefined,
+      influxConnector: undefined
     }
   },
   computed: {
@@ -86,6 +88,9 @@ export default {
     //       this.fetchingData will make sure that the loading
     //       indicator is displayed until the data is available.
 
+    this.metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
+    this.influxConnector = new InfluxConnector(this.influxdbConnectionData)
+
     this.fetchData()
   },
   methods: {
@@ -93,8 +98,7 @@ export default {
       this.fetchingData = true
 
       // first: fetch meta data for all plants
-      const metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
-      this.plantsMeta = await metastoreConnector.fetchPlants()
+      this.plantsMeta = await this.metastoreConnector.fetchPlants()
 
       // second: fetch happy state for all plants
       const promises = []
@@ -106,9 +110,7 @@ export default {
       this.fetchingData = false
     },
     async fetchPlantIsHappy (plant) {
-      const influxConnector = new InfluxConnector(this.influxdbConnectionData)
-
-      const currentHumidity = await influxConnector.fetchCurrentSensorValuePercent(plant.deviceCode, 'humidity')
+      const currentHumidity = await this.influxConnector.fetchCurrentSensorValuePercent(plant.deviceCode, 'humidity')
 
       const humidityHealthyMin = plant.measurands?.humidity?.healthyMin || 0
       const humidityHealthyMax = plant.measurands?.humidity?.healthyMax || 100

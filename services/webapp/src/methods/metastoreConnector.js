@@ -49,4 +49,33 @@ MetastoreConnector.prototype.fetchPlantProfilePicture = async function (plantId)
   return plantPictureObjectUrl
 }
 
+MetastoreConnector.prototype.patchPlant = async function (plantId, plantPatch) {
+  const url = this.metastoreServerAddress + '/api/plants/' + plantId
+
+  const options = {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(plantPatch)
+  }
+
+  return fetch(url, options)
+}
+
+MetastoreConnector.prototype.updateProfilePicture = async function (plantId, profilePicture) {
+  const url = this.metastoreServerAddress + '/api/plants/' + plantId + '/profile-picture'
+
+  const formData = new FormData()
+
+  formData.append('profilePicture', new Blob([profilePicture], { type: 'image/jpg' }), 'somefile.jpg')
+
+  const options = {
+    method: 'PUT',
+    body: formData
+  }
+
+  return fetch(url, options)
+}
+
 module.exports = MetastoreConnector
