@@ -32,4 +32,21 @@ MetastoreConnector.prototype.fetchPlant = async function (plantId) {
   return plant
 }
 
+MetastoreConnector.prototype.fetchPlantProfilePicture = async function (plantId) {
+  const url = this.metastoreServerAddress + '/api/plants/' + plantId + '/profile-picture'
+
+  const options = {
+    method: 'GET',
+    headers: {
+      Accept: 'image/png, image/jpg, image/jpeg'
+    }
+  }
+
+  const res = await fetch(url, options)
+  const plantPictureRaw = await res.blob()
+  const plantPictureObjectUrl = URL.createObjectURL(plantPictureRaw)
+
+  return plantPictureObjectUrl
+}
+
 module.exports = MetastoreConnector

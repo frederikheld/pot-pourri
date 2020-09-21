@@ -137,15 +137,7 @@ import InfluxConnector from '../methods/influxConnector'
 
 export default {
   name: 'Plant',
-  components: {
-    AppBar,
-    ContextMenuPlant,
-    LoadingIndicator,
-    PlantCurrentHealth,
-    PlantHumidityHistory,
-    PlantSettings,
-    ProfilePicture
-  },
+  components: { AppBar, ContextMenuPlant, LoadingIndicator, PlantCurrentHealth, PlantHumidityHistory, PlantSettings, ProfilePicture },
   data () {
     return {
       fetchingData: false,
@@ -183,8 +175,13 @@ export default {
       // first: fetch meta data
       await this.fetchMetaData()
 
-      // second: fetch sensor data
+      // second: fetch plant profile picture
+      await this.fetchProfilePicture()
+
+      // third: fetch sensor data
       await this.fetchSensorData()
+
+      // IMPROVE: fetchSensorData needs data from fetchMetaData but fetchPlantProfile is independent from both. How can this be cascaded to be most efficient?
 
       // This is the latest sensor value which could be passed
       // to the PlantCurrentHealth component:
@@ -196,6 +193,11 @@ export default {
       const metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
 
       this.plant = await metastoreConnector.fetchPlant(this.$route.params.id)
+    },
+    async fetchProfilePicture () {
+      const metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
+
+      this.plantPicture = await metastoreConnector.fetchPlantProfilePicture(this.$route.params.id)
     },
     async fetchSensorData () {
       const influxConnector = new InfluxConnector(this.influxdbConnectionData)
