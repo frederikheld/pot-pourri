@@ -6,7 +6,7 @@
     />
 
     <v-container>
-      <div v-if="!fetchingPlant">
+      <div v-if="!fetchingData">
         <v-form
           @submit.prevent
         >
@@ -73,7 +73,7 @@
         </v-form>
       </div>
       <LoadingIndicator
-        v-if="fetchingPlant"
+        v-if="fetchingData"
         type="page"
       />
     </v-container>
@@ -120,12 +120,14 @@ import * as blueimpLoadImage from 'blueimp-load-image'
 
 import { mapGetters } from 'vuex'
 
+import MetastoreConnector from '../methods/metastoreConnector'
+
 export default {
   name: 'EditPlant',
   components: { AppBar, LoadingIndicator, ProfilePicture },
   data () {
     return {
-      fetchingPlant: false,
+      fetchingData: false,
       savingPlant: false,
       plant: undefined,
       plantPicture: undefined,
@@ -150,52 +152,32 @@ export default {
     }
   },
   async beforeMount () {
-    await this.fetchPlantProfile()
-
-    this.initializeForm()
+    this.fetchData()
   },
   methods: {
-    initializeForm () {
-      this.form = JSON.parse(JSON.stringify(this.plant)) // this is needed to copy the content, not the pointer!
+    async fetchData () {
+      this.fetchingData = true
+
+      await this.fetchMetaData()
+
+      await this.fetchProfilePicture()
+
+      this.initializeForm()
+
+      this.fetchingData = false
     },
-    async fetchPlantProfile () {
-      this.fetchingPlant = true
+    initializeForm () {
+      this.form = JSON.parse(JSON.stringify(this.plant)) // this is needed to copy the actual content, not just the pointer!
+    },
+    async fetchMetaData () {
+      const metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
 
-      // fetch plant meta:
-      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
+      this.plant = await metastoreConnector.fetchPlant(this.$route.params.id)
+    },
+    async fetchProfilePicture () {
+      const metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
 
-      const options = {
-        method: 'GET',
-        accept: 'application/json'
-      }
-
-      try {
-        const res = await fetch(url, options)
-        const plant = await res.json()
-        this.plant = plant
-      } catch (err) {
-        console.error(err)
-      }
-
-      // fetch profile picture:
-      const url2 = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/profile-picture'
-
-      const options2 = {
-        method: 'GET',
-        headers: {
-          Accept: 'image/png, image/jpg, image/jpeg'
-        }
-      }
-
-      try {
-        const res2 = await fetch(url2, options2)
-        const plantPictureRaw = await res2.blob()
-        this.plantPicture = URL.createObjectURL(plantPictureRaw)
-      } catch (err) {
-        console.error(err)
-      }
-
-      this.fetchingPlant = false
+      this.plantPicture = await metastoreConnector.fetchPlantProfilePicture(this.$route.params.id)
     },
     previewPicture (data) {
       blueimpLoadImage(
