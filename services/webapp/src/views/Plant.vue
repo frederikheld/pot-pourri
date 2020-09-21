@@ -188,8 +188,7 @@ export default {
 
       // IMPROVE: fetchSensorData needs data from fetchMetaData but fetchPlantProfile is independent from both. How can this be cascaded to be most efficient?
 
-      // This is the latest sensor value which could be passed
-      // to the PlantCurrentHealth component:
+      // The following is the latest sensor value which could be passed to the PlantCurrentHealth component:
       // console.log(this.sensorData[this.sensorData.length - 1].value)
 
       this.fetchingData = false
@@ -203,24 +202,11 @@ export default {
     async removePlantConfirmed () {
       this.removingPlant = true
 
-      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
-
-      const options = {
-        method: 'DELETE',
-        accept: 'application/json'
-      }
-
-      try {
-        await fetch(url, options)
-
-        this.removeDialogIsOpen = false
-
-        this.$router.replace('/plants')
-      } catch (err) {
-        console.error(err)
-      }
+      await this.metastoreConnector.deletePlant(this.$route.params.id)
 
       this.removingPlant = false
+      this.removeDialogIsOpen = false
+      this.$router.replace('/plants')
     }
   }
 }

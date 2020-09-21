@@ -78,4 +78,15 @@ MetastoreConnector.prototype.updateProfilePicture = async function (plantId, pro
   return fetch(url, options)
 }
 
+MetastoreConnector.prototype.deletePlant = async function (plantId) {
+  const url = this.metastoreServerAddress + '/api/plants/' + plantId
+
+  const options = {
+    method: 'DELETE',
+    accept: 'application/json'
+  }
+
+  return fetch(url, options)
+}
+
 module.exports = MetastoreConnector
