@@ -64,9 +64,9 @@ const routes = [
     component: () => import('../views/FeatureToggles.vue')
   },
   {
-    path: '/settings',
-    name: 'Settings',
-    component: () => import('../views/Settings.vue')
+    path: '/app-settings',
+    name: 'AppSettings',
+    component: () => import('../views/AppSettings.vue')
   },
   {
     path: '/about',

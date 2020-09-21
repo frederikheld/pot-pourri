@@ -176,7 +176,7 @@ import AppBar from '@/components/AppBar.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'Settings',
+  name: 'AppSettings',
   components: { AppBar },
   data () {
     return {
