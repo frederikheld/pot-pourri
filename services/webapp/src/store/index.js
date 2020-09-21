@@ -5,8 +5,6 @@ import VuexPersistence from 'vuex-persist'
 import appSettings from './modules/app-settings'
 import featureToggles from './modules/feature-toggles'
 import lab from './modules/lab'
-import metadata from './modules/metadata'
-import sensordata from './modules/sensordata'
 import theme from './modules/theme'
 
 const vuexLocalPersistence = new VuexPersistence({
@@ -21,8 +19,6 @@ export default new Vuex.Store({
     appSettings,
     featureToggles,
     lab,
-    metadata: metadata,
-    sensordata,
     theme
   },
   plugins: [vuexLocalPersistence.plugin],
