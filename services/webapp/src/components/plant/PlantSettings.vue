@@ -48,7 +48,7 @@ import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
 import { mapGetters } from 'vuex'
 
-// import MetastoreConnector from '../../methods/metastoreConnector'
+import MetastoreConnector from '../../methods/metastoreConnector'
 
 export default {
   name: 'PlantSettings',
@@ -77,7 +77,8 @@ export default {
       },
       inForm: {
         healthyHumidity: [0, 100]
-      }
+      },
+      metastoreConnector: undefined
     }
   },
   computed: {
@@ -92,10 +93,12 @@ export default {
     }
   },
   mounted () {
-    this.fetchData()
+    this.metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
+
+    this.prepareForm()
   },
   methods: {
-    fetchData () {
+    prepareForm () {
       this.preparingForm = true
 
       this.initializeStore()
@@ -147,7 +150,14 @@ export default {
     async onSubmit () {
       this.savingPlantSettings = true
 
-      await this.savePlantSettings(this.inForm)
+      await this.metastoreConnector.patchPlant(this.$route.params.id, {
+        measurands: {
+          humidity: {
+            healthyMin: this.inForm.healthyHumidity[0],
+            healthyMax: this.inForm.healthyHumidity[1]
+          }
+        }
+      })
 
       // update buffered store:
       // a) more dependable, but slower option:
@@ -164,30 +174,6 @@ export default {
       }
 
       this.savingPlantSettings = false
-    },
-    async savePlantSettings (plantSettings) {
-      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
-
-      const options = {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          measurands: {
-            humidity: {
-              healthyMin: plantSettings.healthyHumidity[0],
-              healthyMax: plantSettings.healthyHumidity[1]
-            }
-          }
-        })
-      }
-
-      try {
-        return fetch(url, options)
-      } catch (err) {
-        console.error(err)
-      }
     }
   }
 }
