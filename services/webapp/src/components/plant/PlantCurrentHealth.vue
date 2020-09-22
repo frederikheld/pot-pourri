@@ -1,11 +1,11 @@
 <template>
   <div
-    v-if="fetchingCurrentSensorData || fetchingPlantSettings"
+    v-if="fetchingData"
     style="height: 4rem; width: 100%; position: absolute; "
   >
     <LoadingIndicator type="box" />
   </div>
-  <v-simple-table v-else-if="currentSensorData">
+  <v-simple-table v-else>
     <thead>
       <tr>
         <th>Parameter</th>
@@ -13,35 +13,31 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-if="currentSensorData.humidity">
+      <tr>
         <td>
           <v-icon>{{ iconMap.humidity }}</v-icon>
         </td>
         <td>
-          <v-icon v-if="currentSensorData.humidity > healthyHumidity[0] && currentSensorData.humidity < healthyHumidity[1]">
+          <v-icon v-if="humidityIsOkay === true">
             mdi-thumb-up
           </v-icon>
-          <v-icon v-else>
+          <v-icon v-else-if="humidityIsOkay === false">
             mdi-thumb-down
+          </v-icon>
+          <v-icon v-else>
+            mdi-help
           </v-icon>
         </td>
       </tr>
     </tbody>
   </v-simple-table>
-  <div
-    v-else
-    style="text-align: center; vertical-align: middle; height: 4rem;"
-  >
-    <span
-      style="display: inline-block; margin-top: 1.4rem;"
-    >No health data available</span>
-  </div>
 </template>
 
 <script>
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
 import { mapGetters } from 'vuex'
+import MetastoreConnector from '../../methods/metastoreConnector'
 
 const InfluxConnector = require('../../methods/influxConnector')
 
@@ -49,8 +45,8 @@ export default {
   name: 'PlantCurentHealth',
   components: { LoadingIndicator },
   props: {
-    deviceCode: {
-      type: String,
+    plant: {
+      type: Object,
       required: true
     }
   },
@@ -59,57 +55,52 @@ export default {
       currentSensorData: {
         humidity: undefined
       },
-      healthyHumidity: [undefined, undefined],
-      fetchingCurrentSensorData: false,
-      fetchingPlantSettings: false
+      fetchingData: false,
+      metastoreConnector: undefined,
+      influxConnector: undefined
     }
   },
   computed: {
-    ...mapGetters({
-      iconMap: 'theme/iconMap',
-      influxdbConnectionData: 'appSettings/influxdbConnectionData',
-      metastoreServerAddress: 'appSettings/metastoreServerAddress'
-    })
+    ...mapGetters('theme', [
+      'iconMap'
+    ]),
+    ...mapGetters('appSettings', [
+      'influxdbConnectionData',
+      'metastoreServerAddress'
+    ]),
+    humidityIsOkay () {
+      if (!this.currentSensorData.humidity) {
+        return undefined
+      } else {
+        const humidityHealthyMin = this.$props.plant?.measurands?.humidity?.healthyMin || 0
+        const humidityHealthyMax = this.$props.plant?.measurands?.humidity?.healthyMax || 100
+
+        if (
+          humidityHealthyMin < this.currentSensorData.humidity &&
+          humidityHealthyMax > this.currentSensorData.humidity
+        ) {
+          return true
+        } else {
+          return false
+        }
+      }
+    }
   },
-  async mounted () {
-    await Promise.all([
-      this.fetchCurrentSensorData(),
-      this.fetchPlantSettings()
-    ])
+  beforeMount () {
+    this.metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
+    this.influxConnector = new InfluxConnector(this.influxdbConnectionData)
+
+    this.fetchData()
   },
   methods: {
-    async fetchCurrentSensorData () {
-      this.fetchingCurrentSensorData = true
+    async fetchData () {
+      this.fetchingData = true
 
-      const influxConnector = new InfluxConnector(this.influxdbConnectionData)
+      this.currentSensorData.humidity = await this.influxConnector.fetchCurrentSensorValuePercent(this.$props.plant.deviceCode, 'humidity', '6h')
 
-      this.currentSensorData.humidity = await influxConnector.fetchCurrentSensorValuePercent(this.$props.deviceCode, 'humidity')
+      this.plantSettings = await this.metastoreConnector.fetchPlantSettings(this.$props.plant.id)
 
-      this.fetchingCurrentSensorData = false
-    },
-    async fetchPlantSettings () {
-      this.fetchingPlantSettings = true
-
-      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
-
-      const options = {
-        method: 'GET',
-        accept: 'application/json'
-      }
-
-      try {
-        const res = await fetch(url, options)
-        const plant = await res.json()
-
-        this.healthyHumidity = [
-          plant.measurands?.humidity?.healthyMin || 0,
-          plant.measurands?.humidity?.healthyMax || 100
-        ]
-      } catch (err) {
-        console.error(err)
-      }
-
-      this.fetchingPlantSettings = false
+      this.fetchingData = false
     }
   }
 }

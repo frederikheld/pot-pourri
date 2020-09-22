@@ -13,7 +13,7 @@
     >
       <span
         style="display: inline-block; margin-top: 1.4rem;"
-      >No historic data available</span>
+      >no data available for the last 24 hours</span>
     </div>
   </div>
 </template>
