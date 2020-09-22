@@ -19,12 +19,18 @@ const InfluxConnector = function (influxConnectionData) {
  * Returns the current value of the given sensor
  * on the given device.
  */
-InfluxConnector.prototype.fetchCurrentSensorValueRaw = async function (deviceCode, sensor) {
+InfluxConnector.prototype.fetchCurrentSensorValueRaw = async function (deviceCode, sensor, maxAge = undefined) {
   let currentSensorValue
 
   const influx = new Influx.InfluxDB(this.influxConnectionData)
 
-  const query = 'SELECT last("value") FROM "autogen"."mqtt_consumer" WHERE ("topic" = \'potpourri/devices/' + deviceCode + '/sensors/' + sensor + '\')'
+  let query = 'SELECT last("value") FROM "autogen"."mqtt_consumer" WHERE ("topic" = \'potpourri/devices/' + deviceCode + '/sensors/' + sensor + '\')'
+
+  if (maxAge) {
+    query += ' AND time >= now() - ' + maxAge
+  }
+
+  query += ' ORDER BY time DESC'
 
   const result = await influx.query(query)
 
@@ -40,12 +46,14 @@ InfluxConnector.prototype.fetchCurrentSensorValueRaw = async function (deviceCod
  * but converts the value into percent before
  * returning it.
  */
-InfluxConnector.prototype.fetchCurrentSensorValuePercent = async function (deviceCode, sensor) {
-  const currentSensorValueRaw = await this.fetchCurrentSensorValueRaw(deviceCode, sensor)
+InfluxConnector.prototype.fetchCurrentSensorValuePercent = async function (deviceCode, sensor, maxAge = undefined) {
+  const currentSensorValueRaw = await this.fetchCurrentSensorValueRaw(deviceCode, sensor, maxAge)
 
-  const currentSensorValue = ((1024 - currentSensorValueRaw) / 1024) * 100
+  if (!currentSensorValueRaw) {
+    return undefined
+  }
 
-  return currentSensorValue
+  return ((1024 - currentSensorValueRaw) / 1024) * 100
 }
 
 /**
@@ -55,12 +63,12 @@ InfluxConnector.prototype.fetchCurrentSensorValuePercent = async function (devic
  * `timeLimit` needs to be in InfluxQL format.
  * Default ist `24h`.
  */
-InfluxConnector.prototype.fetchSensorHistoryPercent = async function (deviceCode, sensor, timeLimit = '24h') {
+InfluxConnector.prototype.fetchSensorHistoryPercent = async function (deviceCode, sensor, maxAge = '24h') {
   let sensorHistory
 
   const influx = new Influx.InfluxDB(this.influxConnectionData)
 
-  const query = 'SELECT (1024 - "value") / 1024 * 100 FROM "autogen"."mqtt_consumer" WHERE ("topic" = \'potpourri/devices/' + deviceCode + '/sensors/' + sensor + '\') AND time > now() - ' + timeLimit + ' ORDER BY time DESC'
+  const query = 'SELECT (1024 - "value") / 1024 * 100 FROM "autogen"."mqtt_consumer" WHERE ("topic" = \'potpourri/devices/' + deviceCode + '/sensors/' + sensor + '\') AND time >= now() - ' + maxAge + ' ORDER BY time DESC'
 
   const result = await influx.query(query)
 
