@@ -2,19 +2,43 @@
 
 ## Design principles
 
-To always have an app that is maintainable with low effort, all design decisions shall be guided by the following rules.
+To always keep this app maintainable, all design decisions shall be guided by the following rules.
+
+The guideline will speak of _entities_, which means the representation of physical objects in the app and services that handle data. For better understanding we will use _plant_ and _plants_ as an example. Those can be replaced by any other entity when applying the pattern.
 
 ### Data handling
 
 Views that allow the manipulation of data in the database (via API):
 
 * the view itself should handle all data necessary to render it's components and sub-components
-* the view fetches the data directly from the respective API and stores it as local state
-* it uses the entity ID passed via the route do determine which dataset to request
-* the view provides the components with the respective data via their props. The components themselves do not request or write any data from or to any API
-* an exception from this rule is data that takes time for each item to fetch but isn't necessary for the user to interact with the view
-* global state (like app settings) are read from and written to the respective Vuex module
-* database entities have no representation in Vuex as the app is not meant to have offline editing capabilities but up-to-date and consistent data at all times
+* the reference for requesting data is the entity ID passed via the route (this.$route.params.id)
+* the view fetches the data directly from the respective API and stores it in local state (data())
+* while the necessary data is fetched, the view shows an loading indicator
+
+Components can have own data handling:
+
+* when to use
+    * if the data is not essential to use the view
+    * if fetching the data takes a lot of time and would block other features in the view that could be already used
+    * if placing the data handling in the component reduces duplication and complexity
+* interface
+    * the entity object is passed as a prop
+    * callbacks can be passed as props
+    * events should be avoided as they make the interface intransparent
+* the references for requesting data from an API is the entity ID passed with the entity object via props (this.$props.entity.id)
+
+Components without own data handling:
+
+* when to use
+    * for visualization (like diagrams, indicators, ...)
+    * if the same data is needed for other components in the view and thus putting the data handling into the component would lead to multiple requests for the same data
+* interface
+    * the necessary data is passed via props
+    
+Globale state (via Vuex):
+
+* Vuex should not be used to buffer data from an API. The app is not meant to have offline editing capabilities and in most cases we want to have up-to-date and consistent data from the server, so a detour via Vuex would only add unnecessary complexity without providing any value
+* global state (like app settings) are read from and written to the respective Vuex module. Each view and component accesses this data directly via getters
 
 ## Tools for local development
 
