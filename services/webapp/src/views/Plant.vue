@@ -92,7 +92,7 @@
                     />
                     <PlantHumidityHistory
                       v-else
-                      :sensor-data="sensorData"
+                      :sensor-data="sensorData.humidity"
                       :plant="plant"
                     />
                   </v-col>
@@ -145,7 +145,9 @@ export default {
       plantPicture: '',
       removingPlant: false,
       removeDialogIsOpen: false,
-      sensorData: [],
+      sensorData: {
+        humidity: []
+      },
       metastoreConnector: undefined,
       influxConnector: undefined
     }
@@ -159,9 +161,13 @@ export default {
       'metastoreServerAddress'
     ]),
     plantCurrentValues () {
-      return {
-        humidity: this.sensorData[0].value
+      const currentSensorValues = {}
+
+      if (this.sensorData.humidity[0]) {
+        currentSensorValues.humidity = this.sensorData.humidity[0].value
       }
+
+      return currentSensorValues
     }
   },
   beforeMount () {
@@ -184,12 +190,12 @@ export default {
       this.plantPicture = await this.metastoreConnector.fetchPlantProfilePicture(this.$route.params.id)
 
       // third: fetch sensor data
-      this.sensorData = await this.influxConnector.fetchSensorHistoryPercent(this.plant.deviceCode, 'humidity', '24h')
+      this.sensorData.humidity = await this.influxConnector.fetchSensorHistoryPercent(this.plant.deviceCode, 'humidity', '24h')
 
       // IMPROVE: fetchSensorData needs data from fetchMetaData but fetchPlantProfile is independent from both. How can this be cascaded to be most efficient?
 
       // The following is the latest sensor value which could be passed to the PlantCurrentHealth component:
-      // console.log(this.sensorData[this.sensorData.length - 1].value)
+      // console.log(this.sensorData.humidity[this.sensorData.humidity.length - 1].value)
 
       this.fetchingData = false
     },

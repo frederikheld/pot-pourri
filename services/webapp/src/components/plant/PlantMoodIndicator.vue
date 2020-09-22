@@ -67,18 +67,22 @@ export default {
     async fetchPlantIsHappy (plant) {
       this.fetchingPlantIsHappy = true
 
-      const currentHumidity = await this.influxConnector.fetchCurrentSensorValuePercent(plant.deviceCode, 'humidity')
+      const currentHumidity = await this.influxConnector.fetchCurrentSensorValuePercent(plant.deviceCode, 'humidity', '6h')
 
-      const humidityHealthyMin = plant.measurands?.humidity?.healthyMin || 0
-      const humidityHealthyMax = plant.measurands?.humidity?.healthyMax || 100
-
-      if (
-        humidityHealthyMin < currentHumidity &&
-        humidityHealthyMax > currentHumidity
-      ) {
-        this.plantIsHappy = true
+      if (!currentHumidity) {
+        this.plantIsHappy = undefined
       } else {
-        this.plantIsHappy = false
+        const humidityHealthyMin = plant.measurands?.humidity?.healthyMin || 0
+        const humidityHealthyMax = plant.measurands?.humidity?.healthyMax || 100
+
+        if (
+          humidityHealthyMin < currentHumidity &&
+          humidityHealthyMax > currentHumidity
+        ) {
+          this.plantIsHappy = true
+        } else {
+          this.plantIsHappy = false
+        }
       }
 
       this.fetchingPlantIsHappy = false
