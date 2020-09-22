@@ -40,20 +40,14 @@ export default {
       this.chart.update()
     },
     healthyMin: function (newHealthyMin, oldHealthyMin) {
-      console.log('healthyMin watcher called')
-
       if (this.chart) {
-        console.log('updating chart')
         this.chart.annotation.elements['healthy-min'].options.value = newHealthyMin
         this.chart.annotation.elements['healthy-min-fill'].options.yMax = newHealthyMin
         this.chart.update()
       }
     },
     healthyMax: function (newHealthyMax, oldHealthyMax) {
-      console.log('healthyMax watcher called')
-
       if (this.chart) {
-        console.log('updating chart')
         this.chart.annotation.elements['healthy-max'].options.value = newHealthyMax
         this.chart.annotation.elements['healthy-max-fill'].options.yMin = newHealthyMax
         this.chart.update()
