@@ -23,7 +23,7 @@
           <v-list-item-avatar>
             <PlantMoodIndicator
               ref="moodIndicator"
-              :plant-is-happy="plant.isHappy"
+              :plant="plant"
             />
           </v-list-item-avatar>
         </v-list-item>

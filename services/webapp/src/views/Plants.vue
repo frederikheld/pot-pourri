@@ -101,30 +101,13 @@ export default {
       this.plantsMeta = await this.metastoreConnector.fetchPlants()
 
       // second: fetch happy state for all plants
-      const promises = []
-      for (const plant of this.plantsMeta) {
-        promises.push(this.fetchPlantIsHappy(plant))
-      }
-      await Promise.all(promises)
+      // const promises = []
+      // for (const plant of this.plantsMeta) {
+      //   promises.push(this.fetchPlantIsHappy(plant))
+      // }
+      // await Promise.all(promises)
 
       this.fetchingData = false
-    },
-    async fetchPlantIsHappy (plant) {
-      const currentHumidity = await this.influxConnector.fetchCurrentSensorValuePercent(plant.deviceCode, 'humidity')
-
-      const humidityHealthyMin = plant.measurands?.humidity?.healthyMin || 0
-      const humidityHealthyMax = plant.measurands?.humidity?.healthyMax || 100
-
-      const plantReference = this.plantsMeta.find(x => x.id === plant.id)
-
-      if (
-        humidityHealthyMin < currentHumidity &&
-        humidityHealthyMax > currentHumidity
-      ) {
-        plantReference.isHappy = true
-      } else {
-        plantReference.isHappy = false
-      }
     }
   }
 }
