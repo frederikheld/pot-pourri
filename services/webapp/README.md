@@ -6,9 +6,15 @@ To always have an app that is maintainable with low effort, all design decisions
 
 ### Data handling
 
-* data that should be available consistently all over the app shall be kept in the Vuex store. Synchronization of such data with the providing service shall be done throguh Vuex actions.
-* all view specific data should be handled by the respective view which synchronizes the data with the store (via getters and mutations) and passes it to the components (via props).
-* components are dumb. They don't fetch or update data, they just get it passed through props. If updating of data is necessary, the respective function of the view is passed as a prop and called within the component.
+Views that allow the manipulation of data in the database (via API):
+
+* the view itself should handle all data necessary to render it's components and sub-components
+* the view fetches the data directly from the respective API and stores it as local state
+* it uses the entity ID passed via the route do determine which dataset to request
+* the view provides the components with the respective data via their props. The components themselves do not request or write any data from or to any API
+* an exception from this rule is data that takes time for each item to fetch but isn't necessary for the user to interact with the view
+* global state (like app settings) are read from and written to the respective Vuex module
+* database entities have no representation in Vuex as the app is not meant to have offline editing capabilities but up-to-date and consistent data at all times
 
 ## Tools for local development
 
