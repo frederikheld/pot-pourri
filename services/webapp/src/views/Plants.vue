@@ -4,12 +4,14 @@
       title="Plants"
     >
       <LoadingIndicator
-        v-if="fetchingPlants"
+        v-if="fetchingData"
+        type="inline"
+        style="padding-right: 0.8rem"
       />
       <v-btn
         v-else
         icon
-        @click="fetchPlants()"
+        @click="fetchData()"
       >
         <v-icon>mdi-reload</v-icon>
       </v-btn>
@@ -27,13 +29,13 @@
       class="pa-0"
     >
       <PlantsList
-        v-if="!fetchingPlants"
+        v-if="!fetchingData"
         ref="plantsList"
-        :plants="plants"
+        :plants="plantsMeta"
       />
 
       <LoadingIndicator
-        v-if="fetchingPlants"
+        v-if="fetchingData"
         type="page"
       />
     </v-container>
@@ -56,63 +58,56 @@
 import AppBar from '@/components/AppBar.vue'
 import PlantsList from '@/components/PlantsList.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
-// import PlantCard from '@/components/PlantCard.vue'
-// import PlantStatusCompact from '@/components/PlantStatusCompact.vue'
 
 import { mapGetters } from 'vuex'
 
+import MetastoreConnector from '../methods/metastoreConnector'
+import InfluxConnector from '../methods/influxConnector'
+
 export default {
   name: 'Plants',
-  // components: { AppBar, PlantCard, PlantStatusCompact },
   components: { AppBar, PlantsList, LoadingIndicator },
   data () {
     return {
-      plants: [],
-      fetchingPlants: false
+      plantsMeta: {},
+      fetchingData: false,
+      metastoreConnector: undefined,
+      influxConnector: undefined
     }
   },
   computed: {
-    ...mapGetters([
-      'metastoreServerAddress'
+    ...mapGetters('appSettings', [
+      'metastoreServerAddress',
+      'influxdbConnectionData'
     ])
   },
-  async beforeMount () {
-    this.fetchingPlants = true
-    await this.fetchPlants()
-    this.fetchingPlants = false
+  beforeMount () {
+    // NOTE: beforeMount() cannot actually be async. So Vue won't
+    //       wait for this function to finish before it proceeds
+    //       to render the page. But this doesn't matter as
+    //       this.fetchingData will make sure that the loading
+    //       indicator is displayed until the data is available.
+
+    this.metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
+    this.influxConnector = new InfluxConnector(this.influxdbConnectionData)
+
+    this.fetchData()
   },
   methods: {
-    async fetchPlants  () {
-      const url = this.metastoreServerAddress + '/api/plants'
+    async fetchData () {
+      this.fetchingData = true
 
-      const options = {
-        method: 'GET',
-        accept: 'application/json'
-      }
+      // first: fetch meta data for all plants
+      this.plantsMeta = await this.metastoreConnector.fetchPlants()
 
-      try {
-        const res = await fetch(url, options)
-        const plants = await res.json()
+      // second: fetch happy state for all plants
+      // const promises = []
+      // for (const plant of this.plantsMeta) {
+      //   promises.push(this.fetchPlantIsHappy(plant))
+      // }
+      // await Promise.all(promises)
 
-        // // debug:
-        // for (let i = 0; i < Math.random() * (5 - 1) + 1; i++) {
-        //   plants.push({
-        //     deviceCode: '1',
-        //     id: 'test-' + i,
-        //     name: 'test'
-        //   })
-        // }
-
-        this.plants = plants
-        this.fetchingPlants = false
-        this.$nextTick(function () {
-          this.$refs.plantsList.updateMoods()
-        })
-        return true
-      } catch (err) {
-        console.error(err)
-        return false
-      }
+      this.fetchingData = false
     }
   }
 }

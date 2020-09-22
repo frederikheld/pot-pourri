@@ -18,15 +18,12 @@
           <v-list-item-content>
             <v-list-item-title>{{ plant.name }}</v-list-item-title>
             <v-list-item-subtitle>{{ plant.id }}</v-list-item-subtitle>
-            <!-- <div>
-              {{ plant }}
-            </div> -->
           </v-list-item-content>
 
           <v-list-item-avatar>
             <PlantMoodIndicator
               ref="moodIndicator"
-              :device-code="plant.deviceCode"
+              :plant="plant"
             />
           </v-list-item-avatar>
         </v-list-item>
@@ -60,7 +57,7 @@
 import PlantMoodIndicator from '@/components/plant/PlantMoodIndicator.vue'
 
 export default {
-  name: 'DevicesList',
+  name: 'PlantsList',
   components: { PlantMoodIndicator },
   props: {
     plants: {
@@ -69,12 +66,6 @@ export default {
       default: () => { return [] }
     }
   },
-  methods: {
-    async updateMoods () {
-      for (const moodIndicator of this.$refs.moodIndicator) {
-        await moodIndicator.fetchCurrentSensorData()
-      }
-    }
-  }
+  methods: { }
 }
 </script>

@@ -44,21 +44,6 @@ const routes = [
     component: () => import('../views/Lab.vue')
   },
   {
-    path: '/devices',
-    name: 'Devices',
-    component: () => import('../views/Devices.vue')
-  },
-  {
-    path: '/devices/add',
-    name: 'AddDevice',
-    component: () => import('../views/AddDevice.vue')
-  },
-  {
-    path: '/devices/:id',
-    name: 'Device',
-    component: () => import('../views/Device.vue')
-  },
-  {
     path: '/system',
     name: 'System',
     component: () => import('../views/System.vue')
@@ -69,14 +54,19 @@ const routes = [
     component: () => import('../views/lab/LabSettings.vue')
   },
   {
+    path: '/lab/lab-store-rest-backend',
+    name: 'Store REST Backend Lab',
+    component: () => import('../views/lab/LabStoreRestBackend.vue')
+  },
+  {
     path: '/feature-toggles',
     name: 'FeatureToggles',
     component: () => import('../views/FeatureToggles.vue')
   },
   {
-    path: '/settings',
-    name: 'Settings',
-    component: () => import('../views/Settings.vue')
+    path: '/app-settings',
+    name: 'AppSettings',
+    component: () => import('../views/AppSettings.vue')
   },
   {
     path: '/about',

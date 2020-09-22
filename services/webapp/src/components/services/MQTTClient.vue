@@ -46,6 +46,8 @@ export default {
     onMessageArrived (message) {
     //   console.log('message as received:', message)
       this.$store.state.mqtt.lastMessage = message
+      // NOTE: you removed this from the store. If you re-implement it,
+      // do it with getters and mutations!
     }
   }
 }

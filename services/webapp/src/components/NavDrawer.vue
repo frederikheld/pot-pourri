@@ -44,13 +44,13 @@
 
         <v-list-item
           link
-          to="/settings"
+          to="/app-settings"
         >
           <v-list-item-action>
             <v-icon>mdi-tune</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Settings</v-list-item-title>
+            <v-list-item-title>App Settings</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 

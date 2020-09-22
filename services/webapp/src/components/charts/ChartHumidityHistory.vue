@@ -9,29 +9,27 @@ import Chart from 'chart.js'
 import 'chartjs-adapter-moment'
 import * as chartjsPluginAnnotation from 'chartjs-plugin-annotation'
 
-import { mapGetters } from 'vuex'
-
 export default {
   name: 'ChartHumidityHistory',
   props: {
     chartData: {
       type: Array,
       default: () => { return [] }
+    },
+    healthyMin: {
+      type: Number,
+      default: 0
+    },
+    healthyMax: {
+      type: Number,
+      default: 100
     }
   },
   data () {
     return {
       chart: {},
-      formattedData: [],
-      healthyHumidity: [0, 100],
-      fetchingPlantSettings: false
+      formattedData: []
     }
-  },
-  computed: {
-    ...mapGetters([
-      'influxdbConnectionData',
-      'metastoreServerAddress'
-    ])
   },
   watch: {
     chartData: function (newChartData, oldChartData) {
@@ -40,10 +38,29 @@ export default {
 
       // re-render chart:
       this.chart.update()
+    },
+    healthyMin: function (newHealthyMin, oldHealthyMin) {
+      console.log('healthyMin watcher called')
+
+      if (this.chart) {
+        console.log('updating chart')
+        this.chart.annotation.elements['healthy-min'].options.value = newHealthyMin
+        this.chart.annotation.elements['healthy-min-fill'].options.yMax = newHealthyMin
+        this.chart.update()
+      }
+    },
+    healthyMax: function (newHealthyMax, oldHealthyMax) {
+      console.log('healthyMax watcher called')
+
+      if (this.chart) {
+        console.log('updating chart')
+        this.chart.annotation.elements['healthy-max'].options.value = newHealthyMax
+        this.chart.annotation.elements['healthy-max-fill'].options.yMin = newHealthyMax
+        this.chart.update()
+      }
     }
   },
   async mounted () {
-    await this.fetchPlantSettings()
     this.formattedData = this.formatChartData(this.$props.chartData)
     this.createChart(this.$refs.chart)
   },
@@ -142,7 +159,7 @@ export default {
                 type: 'box',
                 xScaleID: 'x-axis-percent',
                 yScaleID: 'y-axis-percent',
-                yMin: this.healthyHumidity[1],
+                yMin: this.healthyMax,
                 borderWidth: 0,
                 backgroundColor: 'rgba(255,150,0,0.2)'
               },
@@ -151,7 +168,7 @@ export default {
                 type: 'line',
                 mode: 'horizontal',
                 scaleID: 'y-axis-percent',
-                value: this.healthyHumidity[1],
+                value: this.healthyMax,
                 borderWidth: 1,
                 borderColor: 'rgba(255,150,0,0.6)'
               },
@@ -160,7 +177,7 @@ export default {
                 type: 'box',
                 xScaleID: 'x-axis-percent',
                 yScaleID: 'y-axis-percent',
-                yMax: this.healthyHumidity[0],
+                yMax: this.healthyMin,
                 borderWidth: 0,
                 backgroundColor: 'rgba(255,0,0,0.2)'
               },
@@ -169,7 +186,7 @@ export default {
                 type: 'line',
                 mode: 'horizontal',
                 scaleID: 'y-axis-percent',
-                value: this.healthyHumidity[0],
+                value: this.healthyMin,
                 borderWidth: 1,
                 borderColor: 'rgba(255,0,0,0.6)'
               }
@@ -202,30 +219,6 @@ export default {
       })
 
       return formattedData
-    },
-    async fetchPlantSettings () {
-      this.fetchingPlantSettings = true
-
-      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
-
-      const options = {
-        method: 'GET',
-        accept: 'application/json'
-      }
-
-      try {
-        const res = await fetch(url, options)
-        const plant = await res.json()
-
-        this.healthyHumidity = [
-          plant.measurands?.humidity?.healthyMin || 0,
-          plant.measurands?.humidity?.healthyMax || 100
-        ]
-      } catch (err) {
-        console.error(err)
-      }
-
-      this.fetchingPlantSettings = false
     }
   }
 }

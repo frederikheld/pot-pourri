@@ -1,5 +1,21 @@
 # webapp
 
+## Design principles
+
+To always have an app that is maintainable with low effort, all design decisions shall be guided by the following rules.
+
+### Data handling
+
+Views that allow the manipulation of data in the database (via API):
+
+* the view itself should handle all data necessary to render it's components and sub-components
+* the view fetches the data directly from the respective API and stores it as local state
+* it uses the entity ID passed via the route do determine which dataset to request
+* the view provides the components with the respective data via their props. The components themselves do not request or write any data from or to any API
+* an exception from this rule is data that takes time for each item to fetch but isn't necessary for the user to interact with the view
+* global state (like app settings) are read from and written to the respective Vuex module
+* database entities have no representation in Vuex as the app is not meant to have offline editing capabilities but up-to-date and consistent data at all times
+
 ## Tools for local development
 
 ### VSCode configuration

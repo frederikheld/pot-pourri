@@ -2,7 +2,12 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 
-const vuexLocal = new VuexPersistence({
+import appSettings from './modules/app-settings'
+import featureToggles from './modules/feature-toggles'
+import lab from './modules/lab'
+import theme from './modules/theme'
+
+const vuexLocalPersistence = new VuexPersistence({
   key: 'pot-pourri',
   storage: window.localStorage
 })
@@ -10,113 +15,12 @@ const vuexLocal = new VuexPersistence({
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  plugins: [vuexLocal.plugin],
-  state: {
-    appSettings: {
-      network: {
-        mqtt: {
-          protocol: 'https',
-          address: 'localhost',
-          port: 1883
-        },
-        metastore: {
-          protocol: 'https',
-          address: 'localhost',
-          port: 3003
-        },
-        influxdb: {
-          protocol: 'https',
-          address: 'localhost',
-          port: 8086,
-          username: undefined,
-          password: undefined,
-          database: 'telegraf'
-        }
-      }
-    },
-    appFeatureToggles: {
-      activityFeed: {
-        enabled: false,
-        addFakeMessages: false
-      }
-    },
-    maps: {
-      icons: {
-        default: 'mdi-gauge',
-        humidity: 'mdi-water',
-        light: 'mdi-weather-sunny',
-        rain: 'mdi-weather-pouring',
-        'ph-value': 'mdi-image-filter-hdr',
-        temperature: 'mdi-thermometer'
-      }
-    },
-    mqtt: {
-      client: undefined,
-      lastMessage: undefined
-    },
-    lab: {
-      count: 0,
-      countDirect: 0
-    },
-    labSettings: {
-      foo: {
-        bar: { }
-      }
-    }
-  },
-  getters: {
-    appSettings (state) {
-      return state.appSettings
-    },
-    appFeatureToggles (state) {
-      return state.appFeatureToggles
-    },
-    iconMap: function (state) {
-      return state.maps.icons
-    },
-    mqttServerAddress: function (state) {
-      return state.appSettings.network.mqtt.protocol + '://' + state.appSettings.network.mqtt.address + ':' + state.appSettings.network.mqtt.port
-    },
-    metastoreServerAddress: function (state) {
-      return state.appSettings.network.metastore.protocol + '://' + state.appSettings.network.metastore.address + ':' + state.appSettings.network.metastore.port
-    },
-    influxdbConnectionData: function (state) {
-      const influxConnectionData = {
-        host: state.appSettings.network.influxdb.address,
-        port: state.appSettings.network.influxdb.port,
-        username: state.appSettings.network.influxdb.username,
-        password: state.appSettings.network.influxdb.password,
-        database: state.appSettings.network.influxdb.database
-      }
-
-      return influxConnectionData
-    },
-    count (state) {
-      return state.lab.count
-    },
-    labSettings (state) {
-      return state.labSettings
-    }
-  },
-  mutations: {
-    SAVE_APP_SETTINGS (state, newAppSettingsObject) {
-      state.appSettings = newAppSettingsObject
-    },
-    SAVE_APP_FEATURETOGGLES (state, newAppFeatureTogglesObject) {
-      state.appFeatureToggles = newAppFeatureTogglesObject
-    },
-    INCREMENT_COUNTER (state) {
-      state.lab.count++
-    },
-    DECREMENT_COUNTER (state) {
-      state.lab.count--
-    },
-    SAVE_LAB_SETTINGS (state, newLabSettingsObject) {
-      state.labSettings = newLabSettingsObject
-    }
-  },
-  actions: {
-  },
   modules: {
-  }
+    appSettings,
+    featureToggles,
+    lab,
+    theme
+  },
+  plugins: [vuexLocalPersistence.plugin],
+  strict: process.env.NODE_ENV !== 'production'
 })

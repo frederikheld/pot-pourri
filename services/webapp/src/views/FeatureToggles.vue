@@ -15,7 +15,7 @@
                   Activity Feed
                 </span>
                 <v-switch
-                  v-model="appFeatureToggles.activityFeed.enabled"
+                  v-model="featureToggles.activityFeed.enabled"
                   @change="saveFeatureToggles"
                 >
                   <template v-slot:label>
@@ -30,7 +30,7 @@
                   </template>
                 </v-switch>
                 <v-switch
-                  v-model="appFeatureToggles.activityFeed.addFakeMessages"
+                  v-model="featureToggles.activityFeed.addFakeMessages"
                   @change="saveFeatureToggles"
                 >
                   <template v-slot:label>
@@ -56,20 +56,30 @@
 <script>
 import AppBar from '@/components/AppBar.vue'
 
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Settings',
   components: { AppBar },
   data () {
-    return { }
+    return {
+      inForm: undefined
+    }
   },
   computed: {
-    appFeatureToggles () {
-      return this.$store.state.appFeatureToggles
+    ...mapGetters('featureToggles', {
+      featureTogglesInStore: 'featureToggles'
+    }),
+    featureToggles () {
+      return JSON.parse(JSON.stringify(this.featureTogglesInStore))
     }
+  },
+  created () {
+    this.inForm = JSON.parse(JSON.stringify(this.featureToggles))
   },
   methods: {
     saveFeatureToggles () {
-      this.$store.commit('SAVE_APP_FEATURETOGGLES', this.$store.state.appFeatureToggles)
+      this.$store.commit('featureToggles/SAVE_FEATURETOGGLES', this.featureToggles, { root: true })
     }
   }
 }

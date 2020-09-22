@@ -6,7 +6,7 @@
     />
 
     <v-container>
-      <div v-if="!fetchingPlant">
+      <div v-if="!fetchingData">
         <v-form
           @submit.prevent
         >
@@ -73,7 +73,7 @@
         </v-form>
       </div>
       <LoadingIndicator
-        v-if="fetchingPlant"
+        v-if="fetchingData"
         type="page"
       />
     </v-container>
@@ -120,12 +120,14 @@ import * as blueimpLoadImage from 'blueimp-load-image'
 
 import { mapGetters } from 'vuex'
 
+import MetastoreConnector from '../methods/metastoreConnector'
+
 export default {
   name: 'EditPlant',
   components: { AppBar, LoadingIndicator, ProfilePicture },
   data () {
     return {
-      fetchingPlant: false,
+      fetchingData: false,
       savingPlant: false,
       plant: undefined,
       plantPicture: undefined,
@@ -135,11 +137,12 @@ export default {
       },
       errorMessages: {
         name: []
-      }
+      },
+      metastoreConnector: undefined
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapGetters('appSettings', [
       'metastoreServerAddress'
     ]),
     hasPendingEdits () {
@@ -149,53 +152,25 @@ export default {
       return inForm !== inStore
     }
   },
-  async beforeMount () {
-    await this.fetchPlantProfile()
+  beforeMount () {
+    this.metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
 
-    this.initializeForm()
+    this.fetchData()
   },
   methods: {
-    initializeForm () {
-      this.form = JSON.parse(JSON.stringify(this.plant)) // this is needed to copy the content, not the pointer!
+    async fetchData () {
+      this.fetchingData = true
+
+      this.plant = await this.metastoreConnector.fetchPlant(this.$route.params.id)
+
+      this.plantPicture = await this.metastoreConnector.fetchPlantProfilePicture(this.$route.params.id)
+
+      this.initializeForm()
+
+      this.fetchingData = false
     },
-    async fetchPlantProfile () {
-      this.fetchingPlant = true
-
-      // fetch plant meta:
-      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
-
-      const options = {
-        method: 'GET',
-        accept: 'application/json'
-      }
-
-      try {
-        const res = await fetch(url, options)
-        const plant = await res.json()
-        this.plant = plant
-      } catch (err) {
-        console.error(err)
-      }
-
-      // fetch profile picture:
-      const url2 = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/profile-picture'
-
-      const options2 = {
-        method: 'GET',
-        headers: {
-          Accept: 'image/png, image/jpg, image/jpeg'
-        }
-      }
-
-      try {
-        const res2 = await fetch(url2, options2)
-        const plantPictureRaw = await res2.blob()
-        this.plantPicture = URL.createObjectURL(plantPictureRaw)
-      } catch (err) {
-        console.error(err)
-      }
-
-      this.fetchingPlant = false
+    initializeForm () {
+      this.form = JSON.parse(JSON.stringify(this.plant)) // this is needed to copy the actual content, not just the pointer!
     },
     previewPicture (data) {
       blueimpLoadImage(
@@ -212,12 +187,16 @@ export default {
     async onSubmit () {
       this.savingPlant = true
 
-      await this.updatePlant(this.plant)
+      await this.metastoreConnector.patchPlant(this.$route.params.id, {
+        name: this.form.name,
+        deviceCode: this.form.deviceCode
+      })
 
       // only update picture if this.form.picture is set,
-      // otherwise the profile picture will be deleted
+      // otherwise the existing profile picture would be
+      // deleted!
       if (this.form.picture) {
-        await this.updateProfilePicture(this.plant, this.form.picture)
+        await this.metastoreConnector.updateProfilePicture(this.$route.params.id, this.form.picture)
       }
 
       this.savingPlant = false
@@ -225,44 +204,6 @@ export default {
     },
     onCancel () {
       this.$router.replace('/plants/' + this.$route.params.id)
-    },
-    async updatePlant (plant) {
-      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
-
-      const options = {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: this.form.name,
-          deviceCode: this.form.deviceCode
-        })
-      }
-
-      try {
-        return fetch(url, options)
-      } catch (err) {
-        console.error(err)
-      }
-    },
-    async updateProfilePicture (plant, profilePictureRaw) {
-      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/profile-picture'
-
-      const formData = new FormData()
-
-      formData.append('profilePicture', new Blob([profilePictureRaw], { type: 'image/jpg' }), 'somefile.jpg')
-
-      const options = {
-        method: 'PUT',
-        body: formData
-      }
-
-      try {
-        return fetch(url, options)
-      } catch (err) {
-        console.error(err)
-      }
     }
   }
 }

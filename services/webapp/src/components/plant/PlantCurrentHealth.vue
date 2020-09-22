@@ -65,11 +65,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'iconMap',
-      'influxdbConnectionData',
-      'metastoreServerAddress'
-    ])
+    ...mapGetters({
+      iconMap: 'theme/iconMap',
+      influxdbConnectionData: 'appSettings/influxdbConnectionData',
+      metastoreServerAddress: 'appSettings/metastoreServerAddress'
+    })
   },
   async mounted () {
     await Promise.all([

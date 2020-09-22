@@ -5,9 +5,15 @@
     />
 
     <v-container>
-      <v-btn to="lab/lab-settings">
-        Settings Lab
-      </v-btn>
+      <v-container>
+        <v-btn to="lab/lab-settings">
+          Settings Lab
+        </v-btn>
+        <v-btn to="lab/lab-store-rest-backend">
+          Store REST Backend Lab
+        </v-btn>
+      </v-container>
+      <v-divider />
       <h1>Chart Test</h1>
       <ChartTest
         id="chart"
@@ -16,10 +22,9 @@
 
       <h1>Vuex Test</h1>
       <Counter class="my-4" />
-      <CounterDirect class="my-4" />
 
-      <h1>MQTT Tests</h1>
-      <LastMQTTMessage />
+      <!-- <h1>MQTT Tests</h1> -->
+      <!-- <LastMQTTMessage /> -->
 
       <h1>Loading Indicators</h1>
 
@@ -172,12 +177,11 @@ import AppBar from '@/components/AppBar.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import ChartTest from '@/components/lab/ChartTest.vue'
 import Counter from '@/components/lab/Counter.vue'
-import CounterDirect from '@/components/lab/CounterDirect.vue'
-import LastMQTTMessage from '@/components/lab/LastMQTTMessage.vue'
+// import LastMQTTMessage from '@/components/lab/LastMQTTMessage.vue'
 
 export default {
   name: 'Lab',
-  components: { AppBar, ChartTest, Counter, CounterDirect, LastMQTTMessage, LoadingIndicator },
+  components: { AppBar, ChartTest, Counter, LoadingIndicator },
 
   data () {
     return {

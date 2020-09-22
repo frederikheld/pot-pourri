@@ -20,15 +20,15 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 export default {
   name: 'Counter',
   computed: {
-    ...mapGetters([
+    ...mapGetters('lab', [
       'count'
     ]),
-    ...mapState([
+    ...mapState('lab', [
       'lab'
     ])
   },
   methods: {
-    ...mapMutations([
+    ...mapMutations('lab', [
       'INCREMENT_COUNTER',
       'DECREMENT_COUNTER'
     ])

@@ -1,7 +1,6 @@
 <template>
   <div
-    v-if="fetchingCurrentSensorData"
-    style=""
+    v-if="fetchingPlantIsHappy"
   >
     <LoadingIndicator type="inline" />
   </div>
@@ -9,16 +8,21 @@
     v-else
   >
     <v-icon
-      v-if="currentSensorData.humidity > 30 && currentSensorData.humidity < 70"
+      v-if="plantIsHappy === true"
       color="primary"
     >
       mdi-emoticon-excited-outline
     </v-icon>
     <v-icon
-      v-else
+      v-else-if="plantIsHappy === false"
       color="error"
     >
       mdi-emoticon-sad-outline
+    </v-icon>
+    <v-icon
+      v-else
+    >
+      mdi-help-circle-outline
     </v-icon>
   </div>
 </template>
@@ -28,57 +32,56 @@ import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
 import { mapGetters } from 'vuex'
 
-const Influx = require('influx')
+import InfluxConnector from '../../methods/influxConnector'
 
 export default {
   name: 'PlantMoodIndicator',
   components: { LoadingIndicator },
   props: {
-    deviceCode: {
-      type: String,
+    plant: {
+      type: Object,
       required: true
     }
   },
   data () {
     return {
-      currentSensorData: {
-        humidity: undefined
-      },
-      fetchingCurrentSensorData: false
+      fetchingPlantIsHappy: false,
+      plantIsHappy: undefined,
+      influxConnector: undefined
     }
   },
   computed: {
-    ...mapGetters([
-      'iconMap',
-      'appSettings'
+    ...mapGetters('theme', [
+      'iconMap'
+    ]),
+    ...mapGetters('appSettings', [
+      'influxdbConnectionData'
     ])
   },
-  async mounted () {
-    await this.fetchCurrentSensorData()
+  beforeMount () {
+    this.influxConnector = new InfluxConnector(this.influxdbConnectionData)
+
+    this.fetchPlantIsHappy(this.$props.plant)
   },
   methods: {
-    async fetchCurrentSensorData () {
-      this.fetchingCurrentSensorData = true
+    async fetchPlantIsHappy (plant) {
+      this.fetchingPlantIsHappy = true
 
-      const influx = new Influx.InfluxDB({
-        host: this.appSettings.network.influxdb.address,
-        port: this.appSettings.network.influxdb.port,
-        username: this.appSettings.network.influxdb.username,
-        password: this.appSettings.network.influxdb.password,
-        database: this.appSettings.network.influxdb.database
-      })
+      const currentHumidity = await this.influxConnector.fetchCurrentSensorValuePercent(plant.deviceCode, 'humidity')
 
-      const query = 'SELECT ((1024 - last("value")) / 1024) * 100 FROM "autogen"."mqtt_consumer" WHERE ("topic" = \'potpourri/devices/' + this.$props.deviceCode + '/sensors/humidity\')'
+      const humidityHealthyMin = plant.measurands?.humidity?.healthyMin || 0
+      const humidityHealthyMax = plant.measurands?.humidity?.healthyMax || 100
 
-      const result = await influx.query(query)
-
-      if (result && result[0]) {
-        this.currentSensorData.humidity = result[0].last
+      if (
+        humidityHealthyMin < currentHumidity &&
+        humidityHealthyMax > currentHumidity
+      ) {
+        this.plantIsHappy = true
       } else {
-        this.currentSensorData = undefined
+        this.plantIsHappy = false
       }
 
-      this.fetchingCurrentSensorData = false
+      this.fetchingPlantIsHappy = false
     }
   }
 }

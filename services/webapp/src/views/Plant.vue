@@ -11,7 +11,7 @@
       />
     </AppBar>
     <v-container>
-      <div v-if="!fetchingPlant">
+      <div v-if="!fetchingData">
         <v-dialog
           v-model="removeDialogIsOpen"
           width="24rem"
@@ -73,49 +73,45 @@
               <v-tab>Now</v-tab>
               <v-tab>History</v-tab>
               <v-tab>Settings</v-tab>
-              <!-- <v-tab>Linked Devices</v-tab> -->
 
               <v-tab-item>
                 <v-row>
                   <v-col>
-                    <PlantCurrentHealth :device-code="plant.deviceCode" />
-                  </v-col>
-                </v-row>
-              </v-tab-item>
-
-              <v-tab-item>
-                <v-row>
-                  <v-col>
-                    <PlantHumidityHistory :device-code="plant.deviceCode" />
-                  </v-col>
-                </v-row>
-              </v-tab-item>
-
-              <v-tab-item>
-                <PlantSettings :device-code="plant.deviceCode" />
-              </v-tab-item>
-              <!-- <v-tab-item>
-                <v-row>
-                  <v-col>
-                    <DevicesList
-                      :devices="devices"
-                      :action-unlink-device="actionUnlinkDevice"
-                      :no-devices-info="'You haven\'t linked any devices to this plant yet.'"
-                    />
-                    <LinkDeviceDialog
-                      class="mx-auto"
-                      :plant-id="plant.id"
-                      @saveLinkedDevicesDone="reloadView()"
+                    <PlantCurrentHealth
+                      :device-code="plant.deviceCode"
                     />
                   </v-col>
                 </v-row>
-              </v-tab-item> -->
+              </v-tab-item>
+
+              <v-tab-item>
+                <v-row>
+                  <v-col>
+                    <LoadingIndicator
+                      v-if="fetchingData"
+                    />
+                    <PlantHumidityHistory
+                      v-else
+                      :sensor-data="sensorData"
+                      :plant="plant"
+                    />
+                  </v-col>
+                </v-row>
+              </v-tab-item>
+
+              <v-tab-item>
+                <PlantSettings
+                  :plant="plant"
+                  :current-values="plantCurrentValues"
+                  :after-save-action="fetchData"
+                />
+              </v-tab-item>
             </v-tabs>
           </v-col>
         </v-row>
       </div>
       <LoadingIndicator
-        v-if="fetchingPlant"
+        v-if="fetchingData"
         type="page"
       />
     </v-container>
@@ -127,9 +123,7 @@
 
 <script>
 import AppBar from '@/components/AppBar.vue'
-import ContextMenuPlant from '@/components/ContextMenuPlant.vue'
-// import DevicesList from '@/components/DevicesList.vue'
-// import LinkDeviceDialog from '@/components/LinkDeviceDialog.vue'
+import ContextMenuPlant from '@/components/plant/ContextMenuPlant.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import PlantCurrentHealth from '@/components/plant/PlantCurrentHealth.vue'
 import PlantHumidityHistory from '@/components/plant/PlantHumidityHistory.vue'
@@ -138,58 +132,67 @@ import ProfilePicture from '@/components/ProfilePicture.vue'
 
 import { mapGetters } from 'vuex'
 
-// const querystring = require('querystring')
+import MetastoreConnector from '../methods/metastoreConnector'
+import InfluxConnector from '../methods/influxConnector'
 
 export default {
   name: 'Plant',
   components: { AppBar, ContextMenuPlant, LoadingIndicator, PlantCurrentHealth, PlantHumidityHistory, PlantSettings, ProfilePicture },
   data () {
     return {
-      fetchingPlant: false,
-      removeDialogIsOpen: false,
+      fetchingData: false,
+      plant: {},
+      plantPicture: '',
       removingPlant: false,
-      plant: { },
-      plantPicture: ''
+      removeDialogIsOpen: false,
+      sensorData: [],
+      metastoreConnector: undefined,
+      influxConnector: undefined
     }
   },
   computed: {
-    ...mapGetters([
-      'iconMap',
+    ...mapGetters('theme', [
+      'iconMap'
+    ]),
+    ...mapGetters('appSettings', [
+      'influxdbConnectionData',
       'metastoreServerAddress'
-    ])
+    ]),
+    plantCurrentValues () {
+      return {
+        humidity: this.sensorData[0].value
+      }
+    }
   },
-  async beforeMount () {
-    await this.fetchPlantProfile()
+  beforeMount () {
+    this.metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
+    this.influxConnector = new InfluxConnector(this.influxdbConnectionData)
+
+    this.fetchData()
   },
   methods: {
-    reloadView () {
-      this.$router.go()
-    },
-    // async actionUnlinkDevice (deviceId) {
-    //   this.fetchingPlant = true
-
-    //   const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/linked-devices'
-
-    //   const options = {
-    //     method: 'DELETE',
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify([deviceId])
-    //   }
-
-    //   try {
-    //     await fetch(url, options)
-
-    //     this.$router.replace('/plants/' + this.$route.params.id)
-    //   } catch (err) {
-    //     console.error(err)
-    //   }
-
-    //   this.reloadView()
-
-    //   this.fetchingPlant = false
+    // reloadView () {
+    //   this.$router.go()
     // },
+    async fetchData () {
+      this.fetchingData = true
+
+      // first: fetch meta data
+      this.plant = await this.metastoreConnector.fetchPlant(this.$route.params.id)
+
+      // second: fetch plant profile picture
+      this.plantPicture = await this.metastoreConnector.fetchPlantProfilePicture(this.$route.params.id)
+
+      // third: fetch sensor data
+      this.sensorData = await this.influxConnector.fetchSensorHistoryPercent(this.plant.deviceCode, 'humidity', '24h')
+
+      // IMPROVE: fetchSensorData needs data from fetchMetaData but fetchPlantProfile is independent from both. How can this be cascaded to be most efficient?
+
+      // The following is the latest sensor value which could be passed to the PlantCurrentHealth component:
+      // console.log(this.sensorData[this.sensorData.length - 1].value)
+
+      this.fetchingData = false
+    },
     actionEditPlant () {
       this.$router.push('/plants/' + this.$route.params.id + '/edit')
     },
@@ -199,96 +202,11 @@ export default {
     async removePlantConfirmed () {
       this.removingPlant = true
 
-      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
-
-      const options = {
-        method: 'DELETE',
-        accept: 'application/json'
-      }
-
-      try {
-        await fetch(url, options)
-
-        this.removeDialogIsOpen = false
-
-        this.$router.replace('/plants')
-      } catch (err) {
-        console.error(err)
-      }
+      await this.metastoreConnector.deletePlant(this.$route.params.id)
 
       this.removingPlant = false
-    },
-    async fetchPlantProfile () {
-      this.fetchingPlant = true
-
-      // fetch plant meta:
-      const url = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id
-
-      const options = {
-        method: 'GET',
-        accept: 'application/json'
-      }
-
-      try {
-        const res = await fetch(url, options)
-        const plant = await res.json()
-        this.plant = plant
-      } catch (err) {
-        console.error(err)
-      }
-
-      // fetch profile picture:
-      const url2 = this.metastoreServerAddress + '/api/plants/' + this.$route.params.id + '/profile-picture'
-
-      const options2 = {
-        method: 'GET',
-        headers: {
-          Accept: 'image/png, image/jpg, image/jpeg'
-        }
-      }
-
-      try {
-        const res2 = await fetch(url2, options2)
-        const plantPictureRaw = await res2.blob()
-        this.plantPictureRaw = plantPictureRaw
-        this.plantPicture = URL.createObjectURL(plantPictureRaw)
-      } catch (err) {
-        console.error(err)
-      }
-
-      // fetch linked devices:
-      if (this.plant.linkedDevices) {
-        this.devices = await this.fetchLinkedDevices(this.plant.linkedDevices)
-      } else {
-        this.devices = []
-      }
-
-      this.fetchingPlant = false
-    },
-    async fetchLinkedDevices (list) {
-      // this.fetchingDevices = true
-
-      const baseUrl = this.metastoreServerAddress + '/api/devices/'
-
-      const options = {
-        method: 'GET',
-        accept: 'application/json'
-      }
-
-      const devices = []
-
-      for (let i = 0; i < list.length; i++) {
-        try {
-          const res = await fetch(baseUrl + list[i], options)
-          devices.push(await res.json())
-        } catch (err) {
-          console.error(err)
-        }
-      }
-
-      // this.fetchingDevices = false
-
-      return devices
+      this.removeDialogIsOpen = false
+      this.$router.replace('/plants')
     }
   }
 }

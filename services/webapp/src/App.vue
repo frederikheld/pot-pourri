@@ -13,7 +13,7 @@
       background-color="primary"
     >
       <v-btn
-        v-if="appFeatureToggles.activityFeed.enabled"
+        v-if="featureToggles.activityFeed.enabled"
         to="/activities"
       >
         <span>Activities</span>
@@ -63,8 +63,8 @@ export default {
   components: { NavDrawer },
   data: () => ({ }),
   computed: {
-    ...mapGetters([
-      'appFeatureToggles'
+    ...mapGetters('featureToggles', [
+      'featureToggles'
     ])
   }
 }
