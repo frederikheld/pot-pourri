@@ -85,30 +85,30 @@
                         </p>
                         <v-range-slider
                           ref="healthyHumidity"
-                          v-model="inForm.sensors.humidity.healthyRange"
+                          v-model="inForm.sensors[sensor.id].healthyRange"
                           min="0"
                           max="100"
                         >
                           <template v-slot:prepend>
                             <v-text-field
-                              :value="inForm.sensors.humidity.healthyRange[0]"
+                              :value="inForm.sensors[sensor.id].healthyRange[0]"
                               class="mt-0 pt-0 form-input-right-aligned"
                               hide-details
                               single-line
                               type="number"
                               style="width: 3rem;"
-                              @change="$set(inForm.sensors.humidity.healthyRange, 0, $event)"
+                              @change="$set(inForm.sensors[sensor.id].healthyRange, 0, $event)"
                             />
                           </template>
                           <template v-slot:append>
                             <v-text-field
-                              :value="inForm.sensors.humidity.healthyRange[1]"
+                              :value="inForm.sensors[sensor.id].healthyRange[1]"
                               class="mt-0 pt-0 form-input-right-aligned"
                               hide-details
                               single-line
                               type="number"
                               style="width: 3rem"
-                              @change="$set(inForm.sensors.humidity.healthyRange, 1, $event)"
+                              @change="$set(inForm.sensors[sensor.id].healthyRange, 1, $event)"
                             />
                           </template>
                         </v-range-slider>
@@ -125,7 +125,7 @@
             <p>inForm.activeSensors:</p>
             <p>{{ inForm.activeSensors }}</p>
             <p>inForm:</p>
-            <p>{{ inForm }}</p>
+            <pre>{{ inForm }}</pre>
           </v-col>
         </v-row>
         <v-row>
@@ -184,6 +184,7 @@ export default {
       fetchingData: false,
       savingSensorSettings: false,
       availableSensors: [],
+      plant: {},
       inForm: {
         activeSensors: {},
         sensors: {
@@ -192,14 +193,14 @@ export default {
           }
         }
       },
-      inStore: {
-        activeSensors: {},
-        sensors: {
-          humidity: {
-            healthyRange: [0, 100]
-          }
-        }
-      },
+      // inStore: {
+      //   activeSensors: {},
+      //   sensors: {
+      //     humidity: {
+      //       healthyRange: [0, 100]
+      //     }
+      //   }
+      // },
       errorMessages: {
         name: []
       },
@@ -241,28 +242,52 @@ export default {
       }
     ]
 
-    // this.fetchData()
-  },
-  mounted () {
     this.prepareForm()
   },
   methods: {
-    prepareForm () {
-      this.initializeStore()
+    async prepareForm () {
+      await this.fetchData()
+
+      // this.initializeStore()
 
       this.initializeForm()
     },
-    initializeStore () {
-      this.inStore.sensors.humidity.healthyRange = [0, 100]
-    },
+    // initializeStore () {
+    //   for (const sensor of this.availableSensors) {
+    //     this.inStore.sensors[sensor.id] = {
+    //       healthyRange: [0, 100]
+    //     }
+    //   }
+    // },
     initializeForm () {
-      this.inForm = JSON.parse(JSON.stringify(this.inStore)) // this is needed to copy the actual content, not just the pointer!
+      /**
+       * Adaptor between data structure in metastore and data structure in form.
+       * Used to initialize the form after fetching the data from the metastore.
+       */
+
+      // init default values:
+      for (const measurand of this.availableSensors) {
+        this.inForm.sensors[measurand.id] = {}
+        this.inForm.sensors[measurand.id].healthyRange = [0, 100]
+      }
+
+      // init with real data from metastore:
+      if (this.plant.measurands) {
+        for (const measurandId in this.plant.measurands) {
+          this.inForm.activeSensors[measurandId] = true
+
+          this.inForm.sensors[measurandId].healthyRange = [
+            this.plant.measurands[measurandId].healthyMin,
+            this.plant.measurands[measurandId].healthyMax
+          ]
+        }
+      }
     },
     sensorIsActive (sensorId) {
-      // DEBUG:
-      if (sensorId === 'humidity') {
-        return true
-      }
+      // // DEBUG:
+      // if (sensorId === 'humidity') {
+      //   return true
+      // }
 
       if (
         this.inForm.activeSensors[sensorId] &&
@@ -285,10 +310,10 @@ export default {
     async onSubmit () {
       this.savingPlant = true
 
-      await this.metastoreConnector.patchPlant(this.$route.params.id, {
-        // name: this.form.name,
-        // deviceCode: this.form.deviceCode
-      })
+      // await this.metastoreConnector.patchPlant(this.$route.params.id, {
+      //   name: this.form.name,
+      //   deviceCode: this.form.deviceCode
+      // })
 
       this.savingPlant = false
       this.$router.replace('/plants/' + this.$route.params.id)
