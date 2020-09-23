@@ -25,6 +25,26 @@ const plantSchema = new mongoose.Schema({
         type: Number,
         required: false
       }
+    },
+    temperature: {
+      healthyMax: {
+        type: Number,
+        required: false
+      },
+      healthyMin: {
+        type: Number,
+        required: false
+      }
+    },
+    light: {
+      healthyMax: {
+        type: Number,
+        required: false
+      },
+      healthyMin: {
+        type: Number,
+        required: false
+      }
     }
   }
 })
