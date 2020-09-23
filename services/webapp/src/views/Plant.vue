@@ -5,8 +5,9 @@
       back="/plants"
     >
       <ContextMenuPlant
+        :action-edit-profile="actionEditPlantProfile"
+        :action-edit-sensor-settings="actionEditSensorSettings"
         :action-remove="actionRemovePlant"
-        :action-edit="actionEditPlant"
         justify="right"
       />
     </AppBar>
@@ -153,9 +154,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('theme', [
-      'iconMap'
-    ]),
     ...mapGetters('appSettings', [
       'influxdbConnectionData',
       'metastoreServerAddress'
@@ -199,8 +197,11 @@ export default {
 
       this.fetchingData = false
     },
-    actionEditPlant () {
-      this.$router.push('/plants/' + this.$route.params.id + '/edit')
+    actionEditPlantProfile () {
+      this.$router.push('/plants/' + this.$route.params.id + '/edit-profile')
+    },
+    actionEditSensorSettings () {
+      this.$router.push('/plants/' + this.$route.params.id + '/sensor-settings')
     },
     actionRemovePlant () {
       this.removeDialogIsOpen = true

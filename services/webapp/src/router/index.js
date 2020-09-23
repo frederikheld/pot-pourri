@@ -29,9 +29,14 @@ const routes = [
     component: () => import('../views/Plant.vue')
   },
   {
-    path: '/plants/:id/edit',
-    name: 'EditPlant',
-    component: () => import('../views/EditPlant.vue')
+    path: '/plants/:id/edit-profile',
+    name: 'EditPlantProfile',
+    component: () => import('../views/EditPlantProfile.vue')
+  },
+  {
+    path: '/plants/:id/sensor-settings',
+    name: 'EditPlantSensorSettings',
+    component: () => import('../views/EditPlantSensorSettings.vue')
   },
   {
     path: '/house',
