@@ -33,10 +33,10 @@
               :key="sensor.id"
               class="card-container"
             >
-              <div class="switch-on-card">
+              <div class="switch-on-top-of-card">
                 <v-col cols="2">
                   <v-switch
-                    v-model="activeSensorsFormToggles[sensor.id]"
+                    v-model="inForm.activeSensors[sensor.id]"
                     class="float-right my-0"
                     dense
                     active
@@ -85,30 +85,30 @@
                         </p>
                         <v-range-slider
                           ref="healthyHumidity"
-                          v-model="inForm.healthyHumidity"
+                          v-model="inForm.sensors.humidity.healthyRange"
                           min="0"
                           max="100"
                         >
                           <template v-slot:prepend>
                             <v-text-field
-                              :value="inForm.healthyHumidity[0]"
+                              :value="inForm.sensors.humidity.healthyRange[0]"
                               class="mt-0 pt-0 form-input-right-aligned"
                               hide-details
                               single-line
                               type="number"
                               style="width: 3rem;"
-                              @change="$set(inForm.healthyHumidity, 0, $event)"
+                              @change="$set(inForm.sensors.humidity.healthyRange, 0, $event)"
                             />
                           </template>
                           <template v-slot:append>
                             <v-text-field
-                              :value="inForm.healthyHumidity[1]"
+                              :value="inForm.sensors.humidity.healthyRange[1]"
                               class="mt-0 pt-0 form-input-right-aligned"
                               hide-details
                               single-line
                               type="number"
                               style="width: 3rem"
-                              @change="$set(inForm.healthyHumidity, 1, $event)"
+                              @change="$set(inForm.sensors.humidity.healthyRange, 1, $event)"
                             />
                           </template>
                         </v-range-slider>
@@ -120,16 +120,14 @@
             </div>
           </v-col>
         </v-row>
-        <!-- <v-row>
+        <v-row>
           <v-col>
-            <p>activeSensorsFormToggles:</p>
-            <p>{{ activeSensorsFormToggles }}</p>
-            <p>activeSensors:</p>
-            <p>{{ activeSensors }}</p>
-            <p>sensorIsActive('light'):</p>
-            <p>{{ sensorIsActive('light') }}</p>
+            <p>inForm.activeSensors:</p>
+            <p>{{ inForm.activeSensors }}</p>
+            <p>inForm:</p>
+            <p>{{ inForm }}</p>
           </v-col>
-        </v-row> -->
+        </v-row>
         <v-row>
           <v-col align="right">
             <v-btn
@@ -161,7 +159,7 @@
 
 // }
 
-.switch-on-card {
+.switch-on-top-of-card {
   position: relative;
   top: 0;
   width: 4rem;
@@ -186,12 +184,21 @@ export default {
       fetchingData: false,
       savingSensorSettings: false,
       availableSensors: [],
-      activeSensorsFormToggles: {},
       inForm: {
-        healthyHumidity: [0, 100]
+        activeSensors: {},
+        sensors: {
+          humidity: {
+            healthyRange: [0, 100]
+          }
+        }
       },
       inStore: {
-        healthyHumidity: [undefined, undefined]
+        activeSensors: {},
+        sensors: {
+          humidity: {
+            healthyRange: [0, 100]
+          }
+        }
       },
       errorMessages: {
         name: []
@@ -206,17 +213,6 @@ export default {
     ...mapGetters('theme', [
       'iconMap'
     ]),
-    activeSensors () {
-      const activeSensors = []
-
-      for (const [id, active] of Object.entries(this.activeSensorsFormToggles)) {
-        if (active) {
-          activeSensors.push(this.availableSensors.filter(x => x.id === id)[0])
-        }
-      }
-
-      return activeSensors
-    },
     hasPendingEdits () {
       const inForm = JSON.stringify(this.form)
       const inStore = JSON.stringify(this.plant)
@@ -257,7 +253,7 @@ export default {
       this.initializeForm()
     },
     initializeStore () {
-      this.inStore.healthyHumidity = [0, 100]
+      this.inStore.sensors.humidity.healthyRange = [0, 100]
     },
     initializeForm () {
       this.inForm = JSON.parse(JSON.stringify(this.inStore)) // this is needed to copy the actual content, not just the pointer!
@@ -268,7 +264,10 @@ export default {
         return true
       }
 
-      if (this.activeSensors.find(x => x.id === sensorId)) {
+      if (
+        this.inForm.activeSensors[sensorId] &&
+        this.inForm.activeSensors[sensorId] === true
+      ) {
         return true
       }
 
