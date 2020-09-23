@@ -5,89 +5,133 @@
       :back="'/plants/' + $route.params.id"
     />
 
-    <v-container>
-      <v-container v-if="!fetchingData">
-        <v-form
-          @submit.prevent
-        >
-          <v-row>
-            Plant name and picture here to remind the user which plant they're setting up.
-          </v-row>
-          <v-row>
-            <v-tabs>
-              <v-tab>General</v-tab>
-              <v-tab
-                v-for="sensor in activeSensors"
-                :key="sensor.id"
-              >
-                <v-icon>{{ iconMap[sensor.id] }}</v-icon>
-              </v-tab>
+    <LoadingIndicator
+      v-if="fetchingData"
+      type="page"
+    />
 
-              <v-tab-item>
-                <v-row>
-                  <v-col>
-                    <span class="text-h6">Measuring Interval</span>
-                    <v-row>
-                      <v-col>// tbd: input here</v-col>
-                    </v-row>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col>
-                    <span class="text-h6">
-                      Active Sensors
-                    </span>
-                    <v-row
-                      v-for="sensor in availableSensors"
-                      :key="sensor.id"
-                      align="center"
-                      dense
-                    >
-                      <v-col cols="1">
-                        <v-icon>{{ iconMap[sensor.id] }}</v-icon>
+    <v-container v-if="!fetchingData">
+      <v-form
+        @submit.prevent
+      >
+        <v-row>
+          <v-col>
+            Plant name and picture here to remind the user which plant they're setting up.
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <span class="text-h6">Device</span>
+            <p>// tbd: measuring interval settings here</p>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <span class="text-h6">Sensors</span>
+            <div
+              v-for="sensor in availableSensors"
+              :key="sensor.id"
+              class="card-container"
+            >
+              <div class="switch-on-card">
+                <v-col cols="2">
+                  <v-switch
+                    v-model="activeSensorsFormToggles[sensor.id]"
+                    class="float-right my-0"
+                    dense
+                    active
+                  />
+                </v-col>
+              </div>
+
+              <v-card
+                class="card my-4"
+                :disabled="!sensorIsActive(sensor.id)"
+              >
+                <v-list-item-content
+                  class="py-0"
+                >
+                  <v-container>
+                    <v-row dense>
+                      <v-col cols="auto">
+                        <v-icon>
+                          {{ iconMap[sensor.id] }}
+                        </v-icon>
                       </v-col>
                       <v-col>
-                        <p class="text--primary my-0">
+                        <p class="text--primary my-0 mb-1">
                           {{ sensor.name }}
                         </p>
                         <p class="text--secondary my-0">
                           {{ sensor.description }}
                         </p>
                       </v-col>
-                      <v-col cols="2">
-                        <v-switch
-                          v-model="activeSensorsFormToggles[sensor.id]"
-                          class="float-right"
-                        />
+                    </v-row>
+                  </v-container>
+                </v-list-item-content>
+
+                <v-list-item-content
+                  v-if="sensorIsActive(sensor.id)"
+                  class="py-0"
+                >
+                  <v-container
+                    class="py-0"
+                  >
+                    <v-divider />
+                    <v-row>
+                      <v-col>
+                        <p class="mt-4">
+                          Healthy Range:
+                        </p>
+                        <v-range-slider
+                          ref="healthyHumidity"
+                          v-model="inForm.healthyHumidity"
+                          min="0"
+                          max="100"
+                        >
+                          <template v-slot:prepend>
+                            <v-text-field
+                              :value="inForm.healthyHumidity[0]"
+                              class="mt-0 pt-0 form-input-right-aligned"
+                              hide-details
+                              single-line
+                              type="number"
+                              style="width: 3rem;"
+                              @change="$set(inForm.healthyHumidity, 0, $event)"
+                            />
+                          </template>
+                          <template v-slot:append>
+                            <v-text-field
+                              :value="inForm.healthyHumidity[1]"
+                              class="mt-0 pt-0 form-input-right-aligned"
+                              hide-details
+                              single-line
+                              type="number"
+                              style="width: 3rem"
+                              @change="$set(inForm.healthyHumidity, 1, $event)"
+                            />
+                          </template>
+                        </v-range-slider>
                       </v-col>
                     </v-row>
-                  </v-col>
-                </v-row>
-              </v-tab-item>
-
-              <v-tab-item
-                v-for="sensor in activeSensors"
-                :key="sensor.id"
-              >
-                <v-row>
-                  <v-col>
-                    {{ sensor }}
-                  </v-col>
-                </v-row>
-              </v-tab-item>
-            </v-tabs>
-          </v-row>
-          <!-- <v-row>
-            <v-col>
-              <p>DEBUG:</p>
-              <p>activeSensorsFormToggles:</p>
-              <p>{{ activeSensorsFormToggles }}</p>
-              <p>activeSensors:</p>
-              <p>{{ activeSensors }}</p>
-            </v-col>
-          </v-row> -->
-          <v-row>
-            <v-spacer />
+                  </v-container>
+                </v-list-item-content>
+              </v-card>
+            </div>
+          </v-col>
+        </v-row>
+        <!-- <v-row>
+          <v-col>
+            <p>activeSensorsFormToggles:</p>
+            <p>{{ activeSensorsFormToggles }}</p>
+            <p>activeSensors:</p>
+            <p>{{ activeSensors }}</p>
+            <p>sensorIsActive('light'):</p>
+            <p>{{ sensorIsActive('light') }}</p>
+          </v-col>
+        </v-row> -->
+        <v-row>
+          <v-col align="right">
             <v-btn
               color="primary"
               type="submit"
@@ -97,18 +141,33 @@
             >
               Save
             </v-btn>
-          </v-row>
-        </v-form>
-      </v-container>
-      <LoadingIndicator
-        v-if="fetchingData"
-        type="page"
-      />
+          </v-col>
+        </v-row>
+      </v-form>
     </v-container>
   </div>
 </template>
 
 <style lang="scss" scoped>
+.form-input-right-aligned::v-deep input {
+  text-align: right;
+}
+
+// .card-container {
+
+// }
+
+// .card {
+
+// }
+
+.switch-on-card {
+  position: relative;
+  top: 0;
+  width: 4rem;
+  float: right;
+  z-index: 1;
+}
 </style>
 
 <script>
@@ -128,7 +187,11 @@ export default {
       savingSensorSettings: false,
       availableSensors: [],
       activeSensorsFormToggles: {},
-      form: {
+      inForm: {
+        healthyHumidity: [0, 100]
+      },
+      inStore: {
+        healthyHumidity: [undefined, undefined]
       },
       errorMessages: {
         name: []
@@ -185,35 +248,32 @@ export default {
     // this.fetchData()
   },
   mounted () {
-    // this.activeSensors.push(
-    //   {
-    //     id: 'humidity',
-    //     name: 'Humidity',
-    //     icon: 'humidity'
-    //   },
-    //   {
-    //     id: 'temperature',
-    //     name: 'Temperature',
-    //     icon: 'temperature'
-    //   },
-    //   {
-    //     id: 'temperature2',
-    //     name: 'Temperature',
-    //     icon: 'temperature'
-    //   },
-    //   {
-    //     id: 'temperature3',
-    //     name: 'Temperature',
-    //     icon: 'temperature'
-    //   },
-    //   {
-    //     id: 'temperature4',
-    //     name: 'Temperature',
-    //     icon: 'temperature'
-    //   }
-    // )
+    this.prepareForm()
   },
   methods: {
+    prepareForm () {
+      this.initializeStore()
+
+      this.initializeForm()
+    },
+    initializeStore () {
+      this.inStore.healthyHumidity = [0, 100]
+    },
+    initializeForm () {
+      this.inForm = JSON.parse(JSON.stringify(this.inStore)) // this is needed to copy the actual content, not just the pointer!
+    },
+    sensorIsActive (sensorId) {
+      // DEBUG:
+      if (sensorId === 'humidity') {
+        return true
+      }
+
+      if (this.activeSensors.find(x => x.id === sensorId)) {
+        return true
+      }
+
+      return false
+    },
     async fetchData () {
       this.fetchingData = true
 
@@ -222,9 +282,6 @@ export default {
       this.initializeForm()
 
       this.fetchingData = false
-    },
-    initializeForm () {
-      this.form = JSON.parse(JSON.stringify(this.plant)) // this is needed to copy the actual content, not just the pointer!
     },
     async onSubmit () {
       this.savingPlant = true
