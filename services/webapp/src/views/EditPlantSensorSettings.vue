@@ -6,11 +6,11 @@
     />
 
     <LoadingIndicator
-      v-if="fetchingData"
+      v-if="preparingForm"
       type="page"
     />
 
-    <v-container v-if="!fetchingData">
+    <v-container v-if="!preparingForm">
       <v-form
         @submit.prevent
       >
@@ -181,26 +181,18 @@ export default {
   components: { AppBar, LoadingIndicator },
   data () {
     return {
-      fetchingData: false,
+      preparingForm: false,
       savingSensorSettings: false,
       availableSensors: [],
       plant: {},
       inForm: {
         activeSensors: {},
-        sensors: {
-          humidity: {
-            healthyRange: [0, 100]
-          }
-        }
+        sensors: {}
       },
-      // inStore: {
-      //   activeSensors: {},
-      //   sensors: {
-      //     humidity: {
-      //       healthyRange: [0, 100]
-      //     }
-      //   }
-      // },
+      inStore: {
+        activeSensors: {},
+        sensors: {}
+      },
       errorMessages: {
         name: []
       },
@@ -224,6 +216,7 @@ export default {
   beforeMount () {
     this.metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
 
+    // IMPROVE: this should come from an device config template
     this.availableSensors = [
       {
         id: 'humidity',
@@ -246,19 +239,14 @@ export default {
   },
   methods: {
     async prepareForm () {
+      this.preparingForm = true
+
       await this.fetchData()
 
-      // this.initializeStore()
-
       this.initializeForm()
+
+      this.preparingForm = false
     },
-    // initializeStore () {
-    //   for (const sensor of this.availableSensors) {
-    //     this.inStore.sensors[sensor.id] = {
-    //       healthyRange: [0, 100]
-    //     }
-    //   }
-    // },
     initializeForm () {
       /**
        * Adaptor between data structure in metastore and data structure in form.
@@ -299,13 +287,7 @@ export default {
       return false
     },
     async fetchData () {
-      this.fetchingData = true
-
       this.plant = await this.metastoreConnector.fetchPlant(this.$route.params.id)
-
-      this.initializeForm()
-
-      this.fetchingData = false
     },
     async onSubmit () {
       this.savingPlant = true
