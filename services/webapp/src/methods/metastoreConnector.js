@@ -43,10 +43,17 @@ MetastoreConnector.prototype.fetchPlantProfilePicture = async function (plantId)
   }
 
   const res = await fetch(url, options)
-  const plantPictureRaw = await res.blob()
-  const plantPictureObjectUrl = URL.createObjectURL(plantPictureRaw)
+  // NOTE: this will log an error in the Chrome dev console if the response is 404 and there's nothing you can do to suppress it!
+  //    Source: https://stackoverflow.com/questions/4500741/suppress-chrome-failed-to-load-resource-messages-in-console
 
-  return plantPictureObjectUrl
+  if (res.ok) {
+    const plantPictureRaw = await res.blob()
+    const plantPictureObjectUrl = URL.createObjectURL(plantPictureRaw)
+
+    return plantPictureObjectUrl
+  }
+
+  return undefined
 }
 
 MetastoreConnector.prototype.patchPlant = async function (plantId, plantPatch) {
@@ -61,6 +68,27 @@ MetastoreConnector.prototype.patchPlant = async function (plantId, plantPatch) {
   }
 
   return fetch(url, options)
+}
+
+MetastoreConnector.prototype.fetchPlantSettings = async function (plantId) {
+  const url = this.metastoreServerAddress + '/api/plants/' + plantId
+
+  const options = {
+    method: 'GET',
+    accept: 'application/json'
+  }
+
+  const res = await fetch(url, options)
+  const plant = await res.json()
+
+  const plantSettings = {}
+
+  plantSettings.healthyHumidity = [
+    plant.measurands?.humidity?.healthyMin || 0,
+    plant.measurands?.humidity?.healthyMax || 100
+  ]
+
+  return plantSettings
 }
 
 MetastoreConnector.prototype.updateProfilePicture = async function (plantId, profilePicture) {

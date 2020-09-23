@@ -78,7 +78,7 @@
                 <v-row>
                   <v-col>
                     <PlantCurrentHealth
-                      :device-code="plant.deviceCode"
+                      :plant="plant"
                     />
                   </v-col>
                 </v-row>
