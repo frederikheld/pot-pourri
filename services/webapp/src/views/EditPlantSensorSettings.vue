@@ -31,7 +31,6 @@
             <div
               v-for="sensor in availableSensors"
               :key="sensor.id"
-              class="card-container"
             >
               <div class="switch-on-top-of-card">
                 <v-col cols="2">
@@ -45,7 +44,7 @@
               </div>
 
               <v-card
-                class="card my-4"
+                class="my-4"
                 :disabled="!sensorIsActive(sensor.id)"
               >
                 <v-list-item-content
@@ -81,7 +80,7 @@
                     <v-row>
                       <v-col>
                         <p class="mt-4">
-                          Healthy Range:
+                          Healthy limits:
                         </p>
                         <v-range-slider
                           ref="healthyHumidity"
@@ -121,14 +120,6 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col>
-            <p>inForm.activeSensors:</p>
-            <p>{{ inForm.activeSensors }}</p>
-            <p>inForm:</p>
-            <pre>{{ inForm }}</pre>
-          </v-col>
-        </v-row>
-        <v-row>
           <v-col align="right">
             <v-btn
               color="primary"
@@ -141,6 +132,34 @@
             </v-btn>
           </v-col>
         </v-row>
+        <!-- <v-row>
+          <v-col>
+            <p>inForm.activeSensors:</p>
+            <p>{{ inForm.activeSensors }}</p>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="6">
+            <p>inLocalState:</p>
+            <pre>{{ inLocalState }}</pre>
+          </v-col>
+          <v-col cols="6">
+            <p>inForm:</p>
+            <pre>{{ inForm }}</pre>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <p>inLocalState stringified</p>
+            <pre>{{ JSON.stringify(inLocalState) }}</pre>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <p>inForm stringified</p>
+            <pre>{{ JSON.stringify(inForm) }}</pre>
+          </v-col>
+        </v-row> -->
       </v-form>
     </v-container>
   </div>
@@ -150,14 +169,6 @@
 .form-input-right-aligned::v-deep input {
   text-align: right;
 }
-
-// .card-container {
-
-// }
-
-// .card {
-
-// }
 
 .switch-on-top-of-card {
   position: relative;
@@ -189,7 +200,7 @@ export default {
         activeSensors: {},
         sensors: {}
       },
-      inStore: {
+      inLocalState: {
         activeSensors: {},
         sensors: {}
       },
@@ -207,10 +218,10 @@ export default {
       'iconMap'
     ]),
     hasPendingEdits () {
-      const inForm = JSON.stringify(this.form)
-      const inStore = JSON.stringify(this.plant)
+      const inForm = JSON.stringify(this.inForm)
+      const inLocalState = JSON.stringify(this.inLocalState)
 
-      return inForm !== inStore
+      return inForm !== inLocalState
     }
   },
   beforeMount () {
@@ -243,33 +254,77 @@ export default {
 
       await this.fetchData()
 
+      this.initializeLocalState()
+      console.log('freshly initialized local state', this.inLocalState)
+
       this.initializeForm()
 
       this.preparingForm = false
     },
+    initializeLocalState () {
+      this.inLocalState = this.convertFromMetastore(this.plant)
+    },
     initializeForm () {
+      this.inForm = JSON.parse(JSON.stringify(this.inLocalState))
+    },
+    convertToMetastore (formObject) {
+      /**
+       * Adaptor between data structure in form and data structure in metastore.
+       * Used to initialize the form after fetching the data from the metastore.
+       */
+
+      // init object:
+      const plantObject = {
+        measurands: {}
+      }
+
+      // populate with real data from form:
+      for (const sensor of this.availableSensors) {
+        plantObject.measurands[sensor.id] = {
+          healthyMin: formObject.sensors[sensor.id].healthyRange[0],
+          healthyMax: formObject.sensors[sensor.id].healthyRange[1]
+        }
+
+        if (formObject.activeSensors[sensor.id] === true) {
+          plantObject.measurands[sensor.id].active = true
+        } else {
+          plantObject.measurands[sensor.id].active = false
+        }
+      }
+
+      return plantObject
+    },
+    convertFromMetastore (plantObject) {
       /**
        * Adaptor between data structure in metastore and data structure in form.
        * Used to initialize the form after fetching the data from the metastore.
        */
 
-      // init default values:
-      for (const measurand of this.availableSensors) {
-        this.inForm.sensors[measurand.id] = {}
-        this.inForm.sensors[measurand.id].healthyRange = [0, 100]
+      // init object:
+      const formObject = {
+        activeSensors: {},
+        sensors: {}
       }
 
-      // init with real data from metastore:
-      if (this.plant.measurands) {
-        for (const measurandId in this.plant.measurands) {
-          this.inForm.activeSensors[measurandId] = true
+      // init default values:
+      for (const measurand of this.availableSensors) {
+        formObject.sensors[measurand.id] = {}
+        formObject.sensors[measurand.id].healthyRange = [0, 100]
+      }
 
-          this.inForm.sensors[measurandId].healthyRange = [
-            this.plant.measurands[measurandId].healthyMin,
-            this.plant.measurands[measurandId].healthyMax
+      // populate with real data from metastore:
+      if (plantObject.measurands) {
+        for (const measurandId in plantObject.measurands) {
+          formObject.activeSensors[measurandId] = plantObject.measurands[measurandId].active
+
+          formObject.sensors[measurandId].healthyRange = [
+            plantObject.measurands[measurandId].healthyMin,
+            plantObject.measurands[measurandId].healthyMax
           ]
         }
       }
+
+      return formObject
     },
     sensorIsActive (sensorId) {
       // // DEBUG:
@@ -292,13 +347,16 @@ export default {
     async onSubmit () {
       this.savingPlant = true
 
-      // await this.metastoreConnector.patchPlant(this.$route.params.id, {
-      //   name: this.form.name,
-      //   deviceCode: this.form.deviceCode
-      // })
+      const plantSettingsObject = this.convertToMetastore(this.inForm)
+
+      console.log('saving:', plantSettingsObject)
+
+      await this.metastoreConnector.patchPlant(this.$route.params.id, plantSettingsObject)
+
+      this.inLocalState = JSON.parse(JSON.stringify(this.inForm))
 
       this.savingPlant = false
-      this.$router.replace('/plants/' + this.$route.params.id)
+      // this.$router.replace('/plants/' + this.$route.params.id)
     },
     onCancel () {
       this.$router.replace('/plants/' + this.$route.params.id)
