@@ -67,24 +67,55 @@ export default {
     async fetchPlantIsHappy (plant) {
       this.fetchingPlantIsHappy = true
 
-      const currentHumidity = await this.influxConnector.fetchCurrentSensorValuePercent(plant.deviceCode, 'humidity', '6h')
-
-      if (!currentHumidity) {
+      // check if any sensor is configured:
+      if (!plant.measurands || plant.measurands.length === 0) {
         this.plantIsHappy = undefined
-      } else {
-        const humidityHealthyMin = plant.measurands?.humidity?.healthyMin || 0
-        const humidityHealthyMax = plant.measurands?.humidity?.healthyMax || 100
+        this.fetchingPlantIsHappy = false
+        return
+      }
 
-        if (
-          humidityHealthyMin < currentHumidity &&
-          humidityHealthyMax > currentHumidity
-        ) {
-          this.plantIsHappy = true
-        } else {
-          this.plantIsHappy = false
+      // check if at least one sensor is active:
+      let noActiveSensors = true
+
+      for (const sensorId in plant.measurands) {
+        if (plant.measurands[sensorId].active) {
+          noActiveSensors = false
+          // IMPROVE: I could save away active sensors here so I don't need to iterate the full array again in the next loop.
+          // As the number of sensors will be rather low, is okay like this for now.
         }
       }
 
+      if (noActiveSensors) {
+        this.plantIsHappy = undefined
+        this.fetchingPlantIsHappy = false
+        return
+      }
+
+      for (const sensorId in plant.measurands) {
+        if (plant.measurands[sensorId].active) {
+          const currentValue = await this.influxConnector.fetchCurrentSensorValuePercent(plant.deviceCode, sensorId, '6h')
+
+          if (currentValue === undefined) {
+            this.plantIsHappy = undefined
+            this.fetchingPlantIsHappy = false
+            return
+          }
+
+          const healthyMin = plant.measurands[sensorId].healthyMin || 0
+          const healthyMax = plant.measurands[sensorId].healthyMax || 100
+
+          if (
+            currentValue < healthyMin ||
+            currentValue > healthyMax
+          ) {
+            this.plantIsHappy = false
+            this.fetchingPlantIsHappy = false
+            return
+          }
+        }
+      }
+
+      this.plantIsHappy = true
       this.fetchingPlantIsHappy = false
     }
   }

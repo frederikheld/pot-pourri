@@ -123,7 +123,7 @@ import { mapGetters } from 'vuex'
 import MetastoreConnector from '../methods/metastoreConnector'
 
 export default {
-  name: 'EditPlant',
+  name: 'EditPlantProfile',
   components: { AppBar, LoadingIndicator, ProfilePicture },
   data () {
     return {

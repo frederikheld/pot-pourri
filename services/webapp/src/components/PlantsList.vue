@@ -31,18 +31,17 @@
     </v-list-item-group>
 
     <v-row
-      v-if="plants.length <= 0"
-      justify="center"
-      class="mt-4"
+      v-else
     >
       <v-col
-        class="text-center"
+        class="my-8"
+        align="center"
       >
         <p class="body-1">
           You don't have any plants added yet.
         </p>
         <p class="body-2">
-          Tap the + button to create one!
+          Tap the <span style="white-space: nowrap;"><v-icon>mdi-plus</v-icon> button</span> to create one!
         </p>
       </v-col>
     </v-row>

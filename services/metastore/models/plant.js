@@ -17,13 +17,54 @@ const plantSchema = new mongoose.Schema({
   },
   measurands: {
     humidity: {
+      active: {
+        type: Boolean,
+        required: false,
+        default: false
+      },
       healthyMax: {
         type: Number,
-        required: false
+        required: false,
+        default: 100
       },
       healthyMin: {
         type: Number,
-        required: false
+        required: false,
+        default: 0
+      }
+    },
+    temperature: {
+      active: {
+        type: Boolean,
+        required: false,
+        default: false
+      },
+      healthyMax: {
+        type: Number,
+        required: false,
+        default: 100
+      },
+      healthyMin: {
+        type: Number,
+        required: false,
+        default: 0
+      }
+    },
+    light: {
+      active: {
+        type: Boolean,
+        required: false,
+        default: false
+      },
+      healthyMax: {
+        type: Number,
+        required: false,
+        default: 100
+      },
+      healthyMin: {
+        type: Number,
+        required: false,
+        default: 0
       }
     }
   }

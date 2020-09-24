@@ -14,11 +14,18 @@
     </template>
     <v-list>
       <v-list-item
-        v-if="$props.actionEdit"
-        @click="onClickEdit"
+        v-if="$props.actionEditProfile"
+        @click="onClickEditProfile"
       >
-        Edit Plant
+        Edit Profile
       </v-list-item>
+      <v-list-item
+        v-if="$props.actionEditSensorSettings"
+        @click="onClickEditSensorSettings"
+      >
+        Sensor Settings
+      </v-list-item>
+      <v-divider />
       <v-list-item
         v-if="$props.actionRemove"
         @click="onClickRemove"
@@ -33,7 +40,12 @@
 export default {
   name: 'ContextMenuPlant',
   props: {
-    actionEdit: {
+    actionEditProfile: {
+      type: Function,
+      required: false,
+      default: null
+    },
+    actionEditSensorSettings: {
       type: Function,
       required: false,
       default: null
@@ -55,8 +67,11 @@ export default {
     }
   },
   methods: {
-    onClickEdit () {
-      this.$props.actionEdit()
+    onClickEditProfile () {
+      this.$props.actionEditProfile()
+    },
+    onClickEditSensorSettings () {
+      this.$props.actionEditSensorSettings()
     },
     onClickRemove () {
       this.$props.actionRemove()
