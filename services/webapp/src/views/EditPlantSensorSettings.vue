@@ -83,7 +83,7 @@
                           Healthy limits:
                         </p>
                         <v-range-slider
-                          ref="healthyHumidity"
+                          :ref="getRefName(sensor.id)"
                           v-model="inForm.sensors[sensor.id].healthyRange"
                           min="0"
                           max="100"
@@ -160,6 +160,12 @@
             <pre>{{ JSON.stringify(inForm) }}</pre>
           </v-col>
         </v-row> -->
+        <!-- <v-row>
+          <v-col>
+            <p>currentSensorValues:</p>
+            <p>{{ currentSensorValues }}</p>
+          </v-col>
+        </v-row> -->
       </v-form>
     </v-container>
   </div>
@@ -186,13 +192,14 @@ import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import { mapGetters } from 'vuex'
 
 import MetastoreConnector from '../methods/metastoreConnector'
+import InfluxConnector from '../methods/influxConnector'
 
 export default {
   name: 'EditPlantProfile',
   components: { AppBar, LoadingIndicator },
   data () {
     return {
-      preparingForm: false,
+      preparingForm: true,
       savingSensorSettings: false,
       availableSensors: [],
       plant: {},
@@ -204,15 +211,18 @@ export default {
         activeSensors: {},
         sensors: {}
       },
-      errorMessages: {
-        name: []
-      },
-      metastoreConnector: undefined
+      currentSensorValues: {},
+      // errorMessages: {
+      //   name: []
+      // },
+      metastoreConnector: undefined,
+      influxConnector: undefined
     }
   },
   computed: {
     ...mapGetters('appSettings', [
-      'metastoreServerAddress'
+      'metastoreServerAddress',
+      'influxdbConnectionData'
     ]),
     ...mapGetters('theme', [
       'iconMap'
@@ -224,8 +234,18 @@ export default {
       return inForm !== inLocalState
     }
   },
+  watch: {
+    preparingForm: function (value) {
+      if (!value) {
+        this.$nextTick(function () {
+          this.placeCurrentValueIndicators()
+        })
+      }
+    }
+  },
   beforeMount () {
     this.metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
+    this.influxConnector = new InfluxConnector(this.influxdbConnectionData)
 
     // IMPROVE: this should come from an device config template
     this.availableSensors = [
@@ -248,15 +268,18 @@ export default {
 
     this.prepareForm()
   },
+  updated () {
+  },
   methods: {
     async prepareForm () {
       this.preparingForm = true
 
-      await this.fetchData()
+      // fetch data:
+      await this.fetchMetadata()
+      await this.fetchCurrentSensorValues() // needs deviceId from meta data!
 
+      // initialize form:
       this.initializeLocalState()
-      console.log('freshly initialized local state', this.inLocalState)
-
       this.initializeForm()
 
       this.preparingForm = false
@@ -341,15 +364,78 @@ export default {
 
       return false
     },
-    async fetchData () {
+    async fetchMetadata () {
       this.plant = await this.metastoreConnector.fetchPlant(this.$route.params.id)
+    },
+    async fetchCurrentSensorValues () {
+      const promises = []
+      const order = []
+
+      for (const sensor of this.availableSensors) {
+        const response = this.influxConnector.fetchCurrentSensorValuePercent(this.plant.deviceCode, sensor.id, '6h')
+
+        promises.push(response)
+        order.push(sensor.id)
+      }
+
+      const results = await Promise.all(promises)
+
+      for (let i = 0; i < promises.length; i++) {
+        this.currentSensorValues[order[i]] = results[i]
+      }
+    },
+    placeCurrentValueIndicators () {
+      // console.log('placeCurrentValueIndicators this.currentSensorValues', this.currentSensorValues)
+      // console.log('placeCurrentValueIndicators $refs', this.$refs)
+
+      for (const sensorId in this.currentSensorValues) {
+        if (this.currentSensorValues[sensorId]) {
+          // console.log('running loop with sensorId', sensorId)
+          const currentValue = this.currentSensorValues[sensorId]
+
+          // console.log('currentValue', currentValue)
+
+          const currentValueIndicator = document.createElement('div')
+
+          // debug:
+          // currentValueIndicator.style.width = '8px'
+          // currentValueIndicator.style.height = '8px'
+          // currentValueIndicator.style.backgroundColor = '#66f'
+
+          const point = document.createElement('div')
+          point.style.width = '12px'
+          point.style.height = '12px'
+          point.style.top = '50%'
+          point.style.marginLeft = '-6px'
+          point.style.borderRadius = '50%'
+          point.style.backgroundColor = '#66f'
+
+          currentValueIndicator.append(point)
+
+          currentValueIndicator.style.marginLeft = Math.round(currentValue) + '%'
+
+          // console.log('$refs', this.$refs)
+          // console.log('looking for $ref with name', this.getRefName(sensorId))
+          // console.log('$refs[refName]', this.$refs[this.getRefName(sensorId)])
+          // console.log('$refs[refName].$el', this.$refs[this.getRefName(sensorId)].$el)
+
+          // console.log(this.$refs[this.getRefName(sensorId)][0].$el.children[1].children[0].children[0])
+
+          this.$refs[this.getRefName(sensorId)][0].$el.children[1].children[0].children[0].appendChild(currentValueIndicator)
+        }
+      }
+    },
+    getRefName (sensorId) {
+      const refName = 'healthy' + sensorId.charAt(0).toUpperCase() + sensorId.slice(1)
+
+      // console.log('created ref with name', refName)
+
+      return refName
     },
     async onSubmit () {
       this.savingPlant = true
 
       const plantSettingsObject = this.convertToMetastore(this.inForm)
-
-      console.log('saving:', plantSettingsObject)
 
       await this.metastoreConnector.patchPlant(this.$route.params.id, plantSettingsObject)
 
