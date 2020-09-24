@@ -168,7 +168,7 @@ export default {
       preparingForm: true,
       savingSensorSettings: false,
       availableSensors: [],
-      plant: {},
+      plantMeta: {},
       inForm: {
         activeSensors: {},
         sensors: {}
@@ -244,7 +244,7 @@ export default {
       this.preparingForm = false
     },
     initializeLocalState () {
-      this.inLocalState = this.convertFromMetastore(this.plant)
+      this.inLocalState = this.convertFromMetastore(this.plantMeta)
     },
     initializeForm () {
       this.inForm = JSON.parse(JSON.stringify(this.inLocalState))
@@ -319,14 +319,14 @@ export default {
       return false
     },
     async fetchMetadata () {
-      this.plant = await this.metastoreConnector.fetchPlant(this.$route.params.id)
+      this.plantMeta = await this.metastoreConnector.fetchPlant(this.$route.params.id)
     },
     async fetchCurrentSensorValues () {
       const promises = []
       const order = []
 
       for (const sensor of this.availableSensors) {
-        const response = this.influxConnector.fetchCurrentSensorValuePercent(this.plant.deviceCode, sensor.id, '6h')
+        const response = this.influxConnector.fetchCurrentSensorValuePercent(this.plantMeta.deviceCode, sensor.id, '6h')
 
         promises.push(response)
         order.push(sensor.id)

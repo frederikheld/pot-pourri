@@ -7,14 +7,21 @@
       :healthy-min="humidityHealthyMin"
       :healthy-max="humidityHealthyMax"
     />
-    <div
+    <v-row
       v-else
-      style="text-align: center; vertical-align: middle; height: 4rem;"
     >
-      <span
-        style="display: inline-block; margin-top: 1.4rem;"
-      >no data available for the last 24 hours</span>
-    </div>
+      <v-col
+        class="my-3"
+        align="center"
+      >
+        <p class="body-1">
+          No data available for the last 24 hours.
+        </p>
+        <!-- <p class="body-2">
+          // something the user can do about that
+        </p> -->
+      </v-col>
+    </v-row>
   </div>
 </template>
 
