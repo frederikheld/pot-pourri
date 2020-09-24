@@ -234,16 +234,7 @@ export default {
       return inForm !== inLocalState
     }
   },
-  watch: {
-    preparingForm: function (value) {
-      if (!value) {
-        this.$nextTick(function () {
-          this.placeCurrentValueIndicators()
-        })
-      }
-    }
-  },
-  beforeMount () {
+  async beforeMount () {
     this.metastoreConnector = new MetastoreConnector(this.metastoreServerAddress)
     this.influxConnector = new InfluxConnector(this.influxdbConnectionData)
 
@@ -266,9 +257,11 @@ export default {
       }
     ]
 
-    this.prepareForm()
-  },
-  updated () {
+    await this.prepareForm()
+
+    this.$nextTick(function () {
+      this.placeCurrentValueIndicators()
+    })
   },
   methods: {
     async prepareForm () {
@@ -350,11 +343,6 @@ export default {
       return formObject
     },
     sensorIsActive (sensorId) {
-      // // DEBUG:
-      // if (sensorId === 'humidity') {
-      //   return true
-      // }
-
       if (
         this.inForm.activeSensors[sensorId] &&
         this.inForm.activeSensors[sensorId] === true
@@ -385,22 +373,11 @@ export default {
       }
     },
     placeCurrentValueIndicators () {
-      // console.log('placeCurrentValueIndicators this.currentSensorValues', this.currentSensorValues)
-      // console.log('placeCurrentValueIndicators $refs', this.$refs)
-
       for (const sensorId in this.currentSensorValues) {
         if (this.currentSensorValues[sensorId]) {
-          // console.log('running loop with sensorId', sensorId)
           const currentValue = this.currentSensorValues[sensorId]
 
-          // console.log('currentValue', currentValue)
-
           const currentValueIndicator = document.createElement('div')
-
-          // debug:
-          // currentValueIndicator.style.width = '8px'
-          // currentValueIndicator.style.height = '8px'
-          // currentValueIndicator.style.backgroundColor = '#66f'
 
           const point = document.createElement('div')
           point.style.width = '12px'
@@ -414,13 +391,6 @@ export default {
 
           currentValueIndicator.style.marginLeft = Math.round(currentValue) + '%'
 
-          // console.log('$refs', this.$refs)
-          // console.log('looking for $ref with name', this.getRefName(sensorId))
-          // console.log('$refs[refName]', this.$refs[this.getRefName(sensorId)])
-          // console.log('$refs[refName].$el', this.$refs[this.getRefName(sensorId)].$el)
-
-          // console.log(this.$refs[this.getRefName(sensorId)][0].$el.children[1].children[0].children[0])
-
           this.$refs[this.getRefName(sensorId)][0].$el.children[1].children[0].children[0].appendChild(currentValueIndicator)
         }
       }
@@ -433,7 +403,7 @@ export default {
       return refName
     },
     async onSubmit () {
-      this.savingPlant = true
+      this.savingSensorSettings = true
 
       const plantSettingsObject = this.convertToMetastore(this.inForm)
 
@@ -441,7 +411,7 @@ export default {
 
       this.inLocalState = JSON.parse(JSON.stringify(this.inForm))
 
-      this.savingPlant = false
+      this.savingSensorSettings = false
       // this.$router.replace('/plants/' + this.$route.params.id)
     },
     onCancel () {
