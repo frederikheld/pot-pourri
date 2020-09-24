@@ -73,7 +73,6 @@
             <v-tabs>
               <v-tab>Now</v-tab>
               <v-tab>History</v-tab>
-              <v-tab>Settings</v-tab>
 
               <v-tab-item>
                 <v-row>
@@ -99,14 +98,6 @@
                   </v-col>
                 </v-row>
               </v-tab-item>
-
-              <v-tab-item>
-                <PlantSettings
-                  :plant="plant"
-                  :current-values="plantCurrentValues"
-                  :after-save-action="fetchData"
-                />
-              </v-tab-item>
             </v-tabs>
           </v-col>
         </v-row>
@@ -128,7 +119,6 @@ import ContextMenuPlant from '@/components/plant/ContextMenuPlant.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import PlantCurrentHealth from '@/components/plant/PlantCurrentHealth.vue'
 import PlantHumidityHistory from '@/components/plant/PlantHumidityHistory.vue'
-import PlantSettings from '@/components/plant/PlantSettings.vue'
 import ProfilePicture from '@/components/ProfilePicture.vue'
 
 import { mapGetters } from 'vuex'
@@ -138,7 +128,7 @@ import InfluxConnector from '../methods/influxConnector'
 
 export default {
   name: 'Plant',
-  components: { AppBar, ContextMenuPlant, LoadingIndicator, PlantCurrentHealth, PlantHumidityHistory, PlantSettings, ProfilePicture },
+  components: { AppBar, ContextMenuPlant, LoadingIndicator, PlantCurrentHealth, PlantHumidityHistory, ProfilePicture },
   data () {
     return {
       fetchingData: false,

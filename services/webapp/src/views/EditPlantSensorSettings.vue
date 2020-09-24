@@ -132,40 +132,6 @@
             </v-btn>
           </v-col>
         </v-row>
-        <!-- <v-row>
-          <v-col>
-            <p>inForm.activeSensors:</p>
-            <p>{{ inForm.activeSensors }}</p>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="6">
-            <p>inLocalState:</p>
-            <pre>{{ inLocalState }}</pre>
-          </v-col>
-          <v-col cols="6">
-            <p>inForm:</p>
-            <pre>{{ inForm }}</pre>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <p>inLocalState stringified</p>
-            <pre>{{ JSON.stringify(inLocalState) }}</pre>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <p>inForm stringified</p>
-            <pre>{{ JSON.stringify(inForm) }}</pre>
-          </v-col>
-        </v-row> -->
-        <!-- <v-row>
-          <v-col>
-            <p>currentSensorValues:</p>
-            <p>{{ currentSensorValues }}</p>
-          </v-col>
-        </v-row> -->
       </v-form>
     </v-container>
   </div>
@@ -398,8 +364,6 @@ export default {
     getRefName (sensorId) {
       const refName = 'healthy' + sensorId.charAt(0).toUpperCase() + sensorId.slice(1)
 
-      // console.log('created ref with name', refName)
-
       return refName
     },
     async onSubmit () {
@@ -409,6 +373,13 @@ export default {
 
       await this.metastoreConnector.patchPlant(this.$route.params.id, plantSettingsObject)
 
+      // update buffered store:
+      // a) more dependable, but slower option:
+      // fetch settings from store to check
+      // if they were saved correctly:
+      // await this.fetchMetaData()
+
+      // b) less dependable, but faster option:
       this.inLocalState = JSON.parse(JSON.stringify(this.inForm))
 
       this.savingSensorSettings = false
