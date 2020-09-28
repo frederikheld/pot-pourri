@@ -6,19 +6,19 @@ It uses [_InfluxDB_](https://www.influxdata.com/products/influxdb-overview/) for
 
 _InfluxDB_ is sided by [_Telegraf_](https://www.influxdata.com/time-series-platform/telegraf/), which works as an adapter that receives _MQTT_ messages, converts them into the _InfluxDB_ data format, and stores them in the database.
 
-## Run
+## Deployment
 
 This service runs out of the box. If you need to configure your deployment different from the default values, have a look at section _Advanced configuration_ below!
 
-You can start this service via `docker-compose`:
+To deploy the app manually, conduct the following steps:
 
-```sh
-$ docker-compose up
-```
+1. Pull the latest changes with `$ git checkout master && git pull`
+1. Build the app with `$ docker-compose build`
+1. Start the updated containers with `$ docker-compose up -d`
 
-Add the `-d` flag to keep containers running in background (detached mode). This allows you to close the terminal after _Grafana_ was started.
+If you want to update the still running app, you can conduct the same steps without the need to stop the container first.
 
-Add `--force-recreate` if you want to make sure that Docker builds your containers anew. This is useful if you have started them before but have changed the configuration or provisioning files.
+If you have just changed the _Telegraf_ configuration [./telegraf/telegraf.conf](./telegraf/telegraf.conf) (see more about the configuration below), both commands won't work as neither the image nor the container have changed. In this case you can restart the containers with `$ docker-compose restart`.
 
 ## Data persistence
 
