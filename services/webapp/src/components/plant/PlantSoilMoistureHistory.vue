@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ChartHumidityHistory
+    <ChartSoilMoistureHistory
       v-if="chartData"
       :chart-data="chartData"
       :options="chartOptions"
@@ -26,13 +26,13 @@
 </template>
 
 <script>
-import ChartHumidityHistory from '@/components/charts/ChartHumidityHistory.vue'
+import ChartSoilMoistureHistory from '@/components/charts/ChartSoilMoistureHistory.vue'
 
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'PlantHumidityHistory',
-  components: { ChartHumidityHistory },
+  name: 'PlantSoilMoistureHistory',
+  components: { ChartSoilMoistureHistory },
   props: {
     plant: {
       type: Object,

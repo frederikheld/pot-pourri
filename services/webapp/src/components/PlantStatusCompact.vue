@@ -1,5 +1,5 @@
 <template>
-  <HumidityIndicatorCompact
+  <SoilMoistureIndicatorCompact
     id="humidity_indicator"
     :humidity="plant.humidity"
   />
@@ -15,10 +15,10 @@
 </style>
 
 <script>
-import HumidityIndicatorCompact from '@/components/HumidityIndicatorCompact.vue'
+import SoilMoistureIndicatorCompact from '@/components/SoilMoistureIndicatorCompact.vue'
 export default {
   name: 'PlantStatusCompact',
-  components: { HumidityIndicatorCompact },
+  components: { SoilMoistureIndicatorCompact },
   props: {
     plant: {
       type: Object,

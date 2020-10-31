@@ -10,7 +10,7 @@ import 'chartjs-adapter-moment'
 import * as chartjsPluginAnnotation from 'chartjs-plugin-annotation'
 
 export default {
-  name: 'ChartHumidityHistory',
+  name: 'ChartSoilMoistureHistory',
   props: {
     chartData: {
       type: Array,
