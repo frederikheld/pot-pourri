@@ -90,7 +90,7 @@
                     <LoadingIndicator
                       v-if="fetchingData"
                     />
-                    <PlantHumidityHistory
+                    <PlantSoilMoistureHistory
                       v-else
                       :sensor-data="sensorData.humidity"
                       :plant="plant"
@@ -118,7 +118,7 @@ import AppBar from '@/components/AppBar.vue'
 import ContextMenuPlant from '@/components/plant/ContextMenuPlant.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import PlantCurrentHealth from '@/components/plant/PlantCurrentHealth.vue'
-import PlantHumidityHistory from '@/components/plant/PlantHumidityHistory.vue'
+import PlantSoilMoistureHistory from '@/components/plant/PlantSoilMoistureHistory.vue'
 import ProfilePicture from '@/components/ProfilePicture.vue'
 
 import { mapGetters } from 'vuex'
@@ -128,7 +128,7 @@ import InfluxConnector from '../methods/influxConnector'
 
 export default {
   name: 'Plant',
-  components: { AppBar, ContextMenuPlant, LoadingIndicator, PlantCurrentHealth, PlantHumidityHistory, ProfilePicture },
+  components: { AppBar, ContextMenuPlant, LoadingIndicator, PlantCurrentHealth, PlantSoilMoistureHistory, ProfilePicture },
   data () {
     return {
       fetchingData: false,

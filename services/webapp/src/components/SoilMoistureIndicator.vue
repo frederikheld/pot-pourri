@@ -1,5 +1,5 @@
 <template>
-  <canvas ref="humidity_indicator" />
+  <canvas ref="soil_moisture_indicator" />
 </template>
 
 <script>
@@ -7,7 +7,7 @@ import Chart from 'chart.js'
 import * as chartjsPluginAnnotation from 'chartjs-plugin-annotation'
 
 export default {
-  name: 'HumidityIndicator',
+  name: 'SoilMoistureIndicator',
   props: {
     humidity: {
       type: Object,
@@ -38,7 +38,7 @@ export default {
   },
   mounted () {
     this.$nextTick(function () {
-      this.createChart(this.$refs.humidity_indicator, this.humidity)
+      this.createChart(this.$refs.soil_moisture_indicator, this.humidity)
     })
   },
   methods: {
