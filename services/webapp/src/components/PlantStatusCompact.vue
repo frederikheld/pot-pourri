@@ -1,12 +1,12 @@
 <template>
   <SoilMoistureIndicatorCompact
-    id="humidity_indicator"
+    id="soil_moisture_indicator"
     :humidity="plant.humidity"
   />
 </template>
 
 <style lang="scss" scoped>
-#humidity_indicator {
+#soil_moisture_indicator {
   margin-right: 1rem;
   float: right;
   height: 30px !important;
