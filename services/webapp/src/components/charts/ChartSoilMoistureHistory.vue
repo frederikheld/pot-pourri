@@ -65,7 +65,7 @@ export default {
         plugins: [chartjsPluginAnnotation],
         data: {
           datasets: [{
-            label: 'Humidity',
+            label: 'Soil Moisture',
             data: this.formattedData,
             xAxisID: 'x-axis-time',
             borderColor: 'rgba(100, 100, 255, 1.0)',
