@@ -208,8 +208,8 @@ export default {
     this.availableSensors = [
       {
         id: 'humidity',
-        name: 'Humidity',
-        description: 'Humidity of the plant\'s soil'
+        name: 'Soil Moisture',
+        description: 'Moisture of the plant\'s soil'
       },
       {
         id: 'temperature',
