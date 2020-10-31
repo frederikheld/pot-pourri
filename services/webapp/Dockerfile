@@ -4,7 +4,7 @@
 # app with nginx.
 
 # build stage
-FROM node:lts-alpine as build-stage
+FROM node:14-alpine3.12 as build-stage
 
 WORKDIR /app
 
