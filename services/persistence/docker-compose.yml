@@ -19,9 +19,15 @@ services:
         container_name: potpourri-persistence-telegraf
         volumes:
             - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+        networks:
+            - potpourri-mqtt-broker_default
         depends_on:
             - influxdb
         restart: always
 
 volumes:
     influxdb:
+
+networks:
+    potpourri-mqtt-broker_default:
+        external: true
