@@ -5,13 +5,8 @@ cd webapp
 docker-compose down
 cd ..
 
-# stop ui
-cd ui
-docker-compose down
-cd ..
-
-# stop datastore
-cd datastore
+# stop metastore
+cd metastore
 docker-compose down
 cd ..
 

@@ -34,7 +34,7 @@ package "pot-pourri" {
     ' }
 
     package "webapp" {
-        [Web App] #LightGrey
+        [Web App]
     }
 }
 
