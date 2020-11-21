@@ -14,8 +14,6 @@ services:
             - potpourri
         ports:
             - ${grafana_port}:3000
-        networks:
-            - potpourri-persistence_default
         restart: always
 
 volumes:
