@@ -9,7 +9,7 @@ services:
         volumes:
             - influxdb:/var/lib/influxdb
         networks:
-            - potpourri-mqtt-broker_default
+            - potpourri
         ports:
             - ${influxdb_port}:8086
         restart: always
@@ -22,7 +22,7 @@ services:
         volumes:
             - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
         networks:
-            - potpourri-mqtt-broker_default
+            - potpourri
         depends_on:
             - influxdb
         restart: always
@@ -31,5 +31,5 @@ volumes:
     influxdb:
 
 networks:
-    potpourri-mqtt-broker_default:
-        external: true
+    potpourri:
+        driver: bridge

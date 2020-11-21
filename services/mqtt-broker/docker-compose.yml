@@ -8,6 +8,12 @@ services:
             context: .
             dockerfile: Dockerfile
         container_name: potpourri-mqtt-broker
+        networks:
+            - potpourri
         ports:
             - ${mqtt_broker_port}:1883
         restart: always
+
+networks:
+    potpourri:
+        driver: bridge
