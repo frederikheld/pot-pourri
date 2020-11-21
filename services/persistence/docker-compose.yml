@@ -32,5 +32,7 @@ volumes:
     influxdb:
 
 networks:
+    potpourri-persistence_default:
+        driver: bridge
     potpourri-mqtt-broker_default:
         external: true
