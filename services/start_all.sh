@@ -15,13 +15,8 @@ cd visualization
 docker-compose up -d --force-recreate
 cd ..
 
-# start datastore
-cd datastore
-docker-compose up -d --force-recreate
-cd ..
-
-# start ui
-cd ui
+# start metastore
+cd metastore
 docker-compose up -d --force-recreate
 cd ..
 
