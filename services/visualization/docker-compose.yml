@@ -11,7 +11,7 @@ services:
             - ./grafana/grafana.ini:/etc/grafana/grafana.ini:ro
             - ./grafana/provisioning:/etc/grafana/provisioning:ro
         networks:
-            - potpourri
+            - potpourri-persistence_default
         ports:
             - ${grafana_port}:3000
         restart: always
@@ -20,5 +20,5 @@ volumes:
     grafana:
 
 networks:
-    potpourri:
-        driver: bridge
+    potpourri-persistence_default:
+        external: true

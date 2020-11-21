@@ -8,8 +8,6 @@ services:
         container_name: potpourri-persistence-influxdb
         volumes:
             - influxdb:/var/lib/influxdb
-        networks:
-            - potpourri
         ports:
             - ${influxdb_port}:8086
         restart: always
@@ -21,15 +19,9 @@ services:
         container_name: potpourri-persistence-telegraf
         volumes:
             - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
-        networks:
-            - potpourri
         depends_on:
             - influxdb
         restart: always
 
 volumes:
     influxdb:
-
-networks:
-    potpourri:
-        driver: bridge
