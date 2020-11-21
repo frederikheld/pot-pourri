@@ -10,10 +10,10 @@ services:
             - grafana:/var/lib/grafana
             - ./grafana/grafana.ini:/etc/grafana/grafana.ini:ro
             - ./grafana/provisioning:/etc/grafana/provisioning:ro
-        ports:
-            - ${grafana_port}:3000
         networks:
             - potpourri-persistence_default
+        ports:
+            - ${grafana_port}:3000
         restart: always
 
 volumes:
