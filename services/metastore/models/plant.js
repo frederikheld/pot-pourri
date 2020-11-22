@@ -16,7 +16,7 @@ const plantSchema = new mongoose.Schema({
     required: false
   },
   measurands: {
-    humidity: {
+    moisture: {
       active: {
         type: Boolean,
         required: false,
