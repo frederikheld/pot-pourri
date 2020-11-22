@@ -33,7 +33,7 @@ const plantSchema = new mongoose.Schema({
         default: 0
       }
     },
-    temperature: {
+    air_temperature: {
       active: {
         type: Boolean,
         required: false,
