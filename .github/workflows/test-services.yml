@@ -1,4 +1,4 @@
-name: Test Services
+name: Test all Services
 
 on:
   push:
