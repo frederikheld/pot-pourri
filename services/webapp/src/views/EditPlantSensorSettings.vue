@@ -207,12 +207,12 @@ export default {
     // IMPROVE: this should come from an device config template
     this.availableSensors = [
       {
-        id: 'humidity',
+        id: 'moisture',
         name: 'Soil Moisture',
         description: 'Moisture of the plant\'s soil'
       },
       {
-        id: 'temperature',
+        id: 'air_temperature',
         name: 'Temperature',
         description: 'Air temperature around the plant'
       },
@@ -357,7 +357,9 @@ export default {
 
           currentValueIndicator.style.marginLeft = Math.round(currentValue) + '%'
 
-          this.$refs[this.getRefName(sensorId)][0].$el.children[1].children[0].children[0].appendChild(currentValueIndicator)
+          if (this.$refs[this.getRefName(sensorId)]) {
+            this.$refs[this.getRefName(sensorId)][0].$el.children[1].children[0].children[0].appendChild(currentValueIndicator)
+          }
         }
       }
     },

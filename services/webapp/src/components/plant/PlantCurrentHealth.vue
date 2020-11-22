@@ -124,7 +124,7 @@ export default {
       this.plantSettings = await this.metastoreConnector.fetchPlantSettings(this.$props.plant.id)
     },
     async fetchCurrentSensorValues () {
-      this.currentSensorData.humidity = await this.influxConnector.fetchCurrentSensorValuePercent(this.$props.plant.deviceCode, 'humidity', '6h')
+      this.currentSensorData.moisture = await this.influxConnector.fetchCurrentSensorValuePercent(this.$props.plant.deviceCode, 'moisture', '6h')
     },
     valueIsOkay (sensorId) {
       if (!this.currentSensorData[sensorId]) {
