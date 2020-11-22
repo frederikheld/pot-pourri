@@ -1,0 +1,18 @@
+version: 2
+updates:
+
+  # Ignore experiments:
+  - package-ecosystem: "npm"
+    directory: "/experiments"
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: "*"
+
+  # Ignore legacy services:
+  - package-ecosystem: "npm"
+    directory: "/services/LEGACY"
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: "*"
