@@ -40,7 +40,8 @@ describe('/plants/:id', () => {
         {
           name: 'multi levels deep',
           measurands: {
-            humidity: {
+            moisture: {
+              active: true,
               healthyMax: 82,
               healthyMin: 30
             }
@@ -125,14 +126,18 @@ describe('/plants/:id', () => {
 
       res.should.have.status(200)
 
-      // if I just want to check if the single entry was updated
+      // if you just want to check if the single entry was updated
       // const updatedPlant = await mongoDbInstance.collection('plants').findOne({ _id: new ObjectID(mockObjects.plants[2]._id) })
       // updatedPlant.name.should.equal('Foo')
 
       const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
-      mockObjects.plants[2].name = 'Foo'
-      delete mockObjects.plants[2].deviceCode
+      mockObjects.plants[2] = {
+        _id: allPlants[2]._id,
+        __v: allPlants[2].__v,
+        name: 'Foo'
+      }
 
+      // assert.deepStrictEqual(allPlants, mockObjects.plants)
       allPlants.should.deep.equal(mockObjects.plants)
     })
 
@@ -230,7 +235,8 @@ describe('/plants/:id', () => {
       const expectedObjectBefore = {
         name: 'multi levels deep',
         measurands: {
-          humidity: {
+          moisture: {
+            active: true,
             healthyMax: 82,
             healthyMin: 30
           }
@@ -250,7 +256,7 @@ describe('/plants/:id', () => {
         .send({
           name: 'multi levels modified', // changed
           measurands: {
-            humidity: {
+            moisture: {
               healthyMin: 42 // one of the object keys changed
             }
           },
@@ -268,7 +274,8 @@ describe('/plants/:id', () => {
       const expectedObjectAfter = {
         name: 'multi levels modified',
         measurands: {
-          humidity: {
+          moisture: {
+            active: true,
             healthyMax: 82,
             healthyMin: 42
           }

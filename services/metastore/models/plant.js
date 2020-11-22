@@ -32,41 +32,41 @@ const plantSchema = new mongoose.Schema({
         required: false,
         default: 0
       }
-    },
-    air_temperature: {
-      active: {
-        type: Boolean,
-        required: false,
-        default: false
-      },
-      healthyMax: {
-        type: Number,
-        required: false,
-        default: 100
-      },
-      healthyMin: {
-        type: Number,
-        required: false,
-        default: 0
-      }
-    },
-    light: {
-      active: {
-        type: Boolean,
-        required: false,
-        default: false
-      },
-      healthyMax: {
-        type: Number,
-        required: false,
-        default: 100
-      },
-      healthyMin: {
-        type: Number,
-        required: false,
-        default: 0
-      }
     }
+    // air_temperature: {
+    //   active: {
+    //     type: Boolean,
+    //     required: false,
+    //     default: false
+    //   },
+    //   healthyMax: {
+    //     type: Number,
+    //     required: false,
+    //     default: 100
+    //   },
+    //   healthyMin: {
+    //     type: Number,
+    //     required: false,
+    //     default: 0
+    //   }
+    // },
+    // light: {
+    //   active: {
+    //     type: Boolean,
+    //     required: false,
+    //     default: false
+    //   },
+    //   healthyMax: {
+    //     type: Number,
+    //     required: false,
+    //     default: 100
+    //   },
+    //   healthyMin: {
+    //     type: Number,
+    //     required: false,
+    //     default: 0
+    //   }
+    // }
   }
 })
 
