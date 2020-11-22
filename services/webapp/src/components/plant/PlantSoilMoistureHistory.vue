@@ -1,16 +1,30 @@
 <template>
   <div>
     <ChartSoilMoistureHistory
-      v-if="chartData"
+      v-if="sensorMoistureActive && chartData"
       :chart-data="chartData"
       :options="chartOptions"
-      :healthy-min="humidityHealthyMin"
-      :healthy-max="humidityHealthyMax"
+      :healthy-min="moistureHealthyMin"
+      :healthy-max="moistureHealthyMax"
     />
     <v-row
       v-else
     >
       <v-col
+        v-if="!sensorMoistureActive"
+        class="my-3"
+        align="center"
+      >
+        <p class="body-1">
+          No sensors active.
+        </p>
+        <p class="body-2">
+          You can change that via the sensor settings in the <span style="white-space: nowrap;"><v-icon>mdi-dots-vertical</v-icon> menu!</span>
+        </p>
+      </v-col>
+
+      <v-col
+        v-else-if="!chartData"
         class="my-3"
         align="center"
       >
@@ -68,11 +82,14 @@ export default {
     ...mapGetters('theme', [
       'iconMap'
     ]),
-    humidityHealthyMin () {
-      return this.$props.plant.measurands?.humidity?.healthyMin || 0
+    moistureHealthyMin () {
+      return this.$props.plant.measurands?.moisture?.healthyMin || 0
     },
-    humidityHealthyMax () {
-      return this.$props.plant.measurands?.humidity?.healthyMax || 100
+    moistureHealthyMax () {
+      return this.$props.plant.measurands?.moisture?.healthyMax || 100
+    },
+    sensorMoistureActive () {
+      return this.$props.plant.measurands?.moisture?.active || false
     }
   },
   async mounted () {

@@ -83,9 +83,9 @@ MetastoreConnector.prototype.fetchPlantSettings = async function (plantId) {
 
   const plantSettings = {}
 
-  plantSettings.healthyHumidity = [
-    plant.measurands?.humidity?.healthyMin || 0,
-    plant.measurands?.humidity?.healthyMax || 100
+  plantSettings.healthyMoisture = [
+    plant.measurands?.moisture?.healthyMin || 0,
+    plant.measurands?.moisture?.healthyMax || 100
   ]
 
   return plantSettings

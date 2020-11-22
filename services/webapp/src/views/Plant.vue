@@ -178,7 +178,7 @@ export default {
       this.plantPicture = await this.metastoreConnector.fetchPlantProfilePicture(this.$route.params.id)
 
       // third: fetch sensor data
-      this.sensorData.soilMoisture = await this.influxConnector.fetchSensorHistoryPercent(this.plant.deviceCode, 'humidity', '24h')
+      this.sensorData.soilMoisture = await this.influxConnector.fetchSensorHistoryPercent(this.plant.deviceCode, 'moisture', '24h')
 
       // IMPROVE: fetchSensorData needs data from fetchMetaData but fetchPlantProfile is independent from both. How can this be cascaded to be most efficient?
 

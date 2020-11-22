@@ -87,6 +87,7 @@ export default {
       this.$router.replace('/plants')
     },
     async addPlant (plant) {
+      // REFACTOR: this function should be moved to metastorConnector
       const url = this.metastoreServerAddress + '/api/plants'
 
       const options = {

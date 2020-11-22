@@ -144,7 +144,7 @@ describe('/plants/:id/profile-picture', () => {
       const filename = 'plants-' + mockObjects.plants[1]._id + '-profilePicture.png'
       expect('store/blob/' + filename).to.be.a.file()
 
-      // check if the contents matcH:
+      // check if the contents match:
       const fileContents = fs.readFileSync('store/blob/' + filename)
       Buffer.compare(fileContents, (Buffer.from([255, 0, 255]))).should.equal(0)
       // note: this is done with fs and Buffer.compare, as chai-fs
@@ -155,7 +155,7 @@ describe('/plants/:id/profile-picture', () => {
 
       mockObjects.plants[1].profilePicture = filename
 
-      JSON.stringify(allPlants).should.equal(JSON.stringify(mockObjects.plants))
+      allPlants.should.deep.equal(mockObjects.plants)
     })
     it('should store the attached profile picture in the blob storage, link the filename as "profilePicture" in the plant profile and return 200, if the plant already has a profile picture', async () => {
       const res = await chai.request(server)
@@ -181,7 +181,7 @@ describe('/plants/:id/profile-picture', () => {
 
       mockObjects.plants[0].profilePicture = filename
 
-      JSON.stringify(allPlants).should.equal(JSON.stringify(mockObjects.plants))
+      allPlants.should.deep.equal(mockObjects.plants)
     })
 
     it('should not link the filename as "profilePicture" in the plant object and return status 500 with an error message, if storing the profile picture failed', async () => {
@@ -203,7 +203,7 @@ describe('/plants/:id/profile-picture', () => {
       // check if filename was NOT linked in plant object:
       const allPlants = await mongoDbInstance.collection('plants').find({}).toArray()
 
-      JSON.stringify(allPlants).should.equal(JSON.stringify(mockObjects.plants))
+      allPlants.should.deep.equal(mockObjects.plants)
     })
   })
 })

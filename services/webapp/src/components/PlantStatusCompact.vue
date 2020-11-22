@@ -1,7 +1,7 @@
 <template>
   <SoilMoistureIndicatorCompact
     id="soil_moisture_indicator"
-    :humidity="plant.humidity"
+    :moisture="plant.moisture"
   />
 </template>
 

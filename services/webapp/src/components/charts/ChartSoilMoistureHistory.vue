@@ -98,20 +98,22 @@ export default {
                       return value
                     }
                   },
-                  autoSkip: false,
-                  source: 'date'
+                  max: Date.now(),
+                  min: Date.now() - 1000 * 60 * 60 * 24,
+                  autoSkip: false
+                  // source: 'date'
                 },
                 scaleLabel: {
                   labelString: 'time of day',
                   display: false
                 }
-              },
-              {
-                id: 'x-axis-percent',
-                type: 'linear',
-                min: 0,
-                max: 100,
-                display: false
+              // },
+              // {
+              //   id: 'x-axis-percent',
+              //   type: 'linear',
+              //   min: 0,
+              //   max: 100,
+              //   display: false
               }
             ],
             yAxes: [

@@ -6,7 +6,7 @@ _Pot Pourri_ helps you to keep your potted plants alive :-)
 
 The system collects data from connected sensor devices ([see the devices repository](https://github.com/frederikheld/pot-pourri-devices)) an displays it on a web interface. This helps you to track the health of your plants and don't miss the right time when they need water.
 
-It is also planned to add an event engine that triggers actors attached the connected devices on pre-defined events (like "humidity below x %"). This will allow for automatically watering the plants, regulating sun and ventilation, etc.
+It is also planned to add an event engine that triggers actors attached the connected devices on pre-defined events (like "moisture below x %"). This will allow for automatically watering the plants, regulating sun and ventilation, etc.
 
 ## Architecture
 
@@ -59,10 +59,10 @@ The _webapp_ will be a convenient user interace for mobile devices to interact w
 It will:
 
 * display the current health of your plants to tell you where you have to act at a glance
-* allow you to create and maintain plant profiles with information like max and min healty humidity for each plant individually
+* allow you to create and maintain plant profiles with information like max and min healty moisture for each plant individually
 * make it easy to integrate new devices into the _Pot Pourri_ system
 
-Right now it is capable of displaying the current humidity for each plant. All other features are not done yet and partly depend on planned features of _datastore_.
+Right now it is capable of displaying the current moisture for each plant. All other features are not done yet and partly depend on planned features of _metastore_ and _persistence_.
 
 ### metastore
 
