@@ -12,7 +12,7 @@ const theme = {
       maps: {
         icons: {
           default: 'mdi-gauge',
-          humidity: 'mdi-water',
+          moisture: 'mdi-water',
           light: 'mdi-weather-sunny',
           rain: 'mdi-weather-pouring',
           'ph-value': 'mdi-image-filter-hdr',

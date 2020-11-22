@@ -14,7 +14,7 @@ import * as chartjsPluginAnnotation from 'chartjs-plugin-annotation'
 export default {
   name: 'SoilMoistureIndicatorCompact',
   props: {
-    humidity: {
+    moisture: {
       type: Object,
       default: function () {
         return {}
@@ -23,22 +23,22 @@ export default {
   },
   data () {
     return {
-      chartHumidity: {}
+      chartMoisture: {}
     }
   },
   watch: {
-    humidity: function (newData, oldData) {
-      this.chartHumidity.annotation.elements['current-value'].options.value =
+    moisture: function (newData, oldData) {
+      this.chartMoisture.annotation.elements['current-value'].options.value =
         newData.value
-      this.chartHumidity.update()
+      this.chartMoisture.update()
     }
   },
   mounted () {
-    this.createChart(this.$refs.soil_moisture_indicator, this.humidity)
+    this.createChart(this.$refs.soil_moisture_indicator, this.moisture)
   },
   methods: {
     createChart (ctx, data) {
-      this.chartHumidity = new Chart(ctx, {
+      this.chartMoisture = new Chart(ctx, {
         type: 'horizontalBar',
         plugins: [chartjsPluginAnnotation],
         data: {
