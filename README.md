@@ -112,19 +112,17 @@ $ sh services/stop_all.sh
 
 ### Update the services
 
-All containers persist the relevant data in Docker volumes. Therefore you can easily shut them down and start them again. This can happen individually or all at once as shown above.
-
 To update the services, pull the latest version of this repository on the master branch and re-build the images.
 
-`docker-compose` offers
+All containers persist the relevant data in Docker volumes. Therefore you can easily shut them down and start them again. You can re-build all at once as shown above or each one individually.
 
-If you do it individually, you can the `--force-recreate` flag of `docker-compose` to re-build the image:
+If you do it individually, you can use the following `docker-compose` command to make sure that the images are being re-built and the containers are being properly re-started:
 
 ```sh
-$ docker-compose up -d --force-recreate
+$ docker-compose up -d --build --force-recreate
 ```
 
-If you re-start them all at once, you don't need to take care of it. `start_all.sh` always uses the `--force-recreate` flag.
+`start_all.sh` will do exactly the same thing for each container in the right order.
 
 Hint: you don't need to stop containers before you re-build them with `docker-compose` or `start_all.sh`! This will be done automatically.
 
