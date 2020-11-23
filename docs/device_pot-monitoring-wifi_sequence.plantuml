@@ -1,5 +1,9 @@
-@startuml Wifi Device Flowchart
+@startuml
 skinparam componentStyle uml2
+
+title Wifi Device Flowchart
+
+'This should go to the pot-pourri-devices repo
 
 participant "MQTT Broker"
 participant "Device"

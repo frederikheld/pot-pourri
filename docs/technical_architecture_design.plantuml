@@ -25,12 +25,12 @@ package "pot-pourri" {
         [Metastore]
     }
 
-    package "event-engine" #LightGrey {
-        [Event Engine] #LightGrey
-    }
-
     package "webapp" {
         [Web App]
+    }
+
+    package "event-engine" #LightGrey {
+        [Event Engine] #LightGrey
     }
 }
 
