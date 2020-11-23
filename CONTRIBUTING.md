@@ -8,9 +8,9 @@ You can also submit pull requests for fixes and features that are not listed in 
 
 ## Contributors License Agreement
 
-With submitting a Pull Request, you guarantee that you own the intellectual property to the changes you have submitted and have the right to license your contribution.
+With submitting a Pull Request, you confirm that you own the intellectual property to the changes you have submitted and have the right to license your contribution.
 
-You also agree to assign the copyright to said changes to the owner of this repostitory.
+You also agree to transfer the copyright to said changes to the owner of this repository.
 
 In exchange, you are free to use the code in this repository under the terms of the license stated in [LICENSE.md](LICENSE.md).
 
@@ -18,7 +18,7 @@ In exchange, you are free to use the code in this repository under the terms of 
 
 Before you open a pull request, make sure that your branch is up to date with _master_.
 
-Also make sure that all tests run trough. You run all tests with
+Also make sure that all tests run through. You can run all tests with
 
 ```sh
 $ cd services
