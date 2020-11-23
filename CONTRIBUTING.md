@@ -27,4 +27,4 @@ $ sh run_all_tests.sh
 
 ## Help Wanted
 
-[Webapp](./service/webapp) lacks e2e tests because I don't know enough about Cypress yet. I would appreciate your help with testing it! Most useful would be checks that all views render without throwing errors on the console.
+_service/webapp_ lacks e2e tests because I don't know enough about Cypress yet. I would appreciate your help with testing it! Most useful would be checks if all views render without throwing errors on the console.
