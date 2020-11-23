@@ -1,7 +1,1 @@
-
 node_modules/
-
-services/datastore/\.nyc_output/
-services/datastore/test/temp/
-
-dist/
