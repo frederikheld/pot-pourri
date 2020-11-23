@@ -1,8 +1,11 @@
 @startuml
 skinparam componentStyle uml2
 
-participant "Eventstore"
-participant "Datastore"
+title Wifi Device Flowchart
+
+'This should go to the pot-pourri-devices repo
+
+participant "MQTT Broker"
 participant "Device"
 participant "Sensors"
 participant "Actuators"
@@ -21,21 +24,20 @@ Deactivate Sensors
 
 Device -> Device: prepare data
 
-== Send Data to Datastore ==
+== Send Data to MQTT Broker ==
 
-Device -> Datastore: send data
+Device -> "MQTT Broker": send data
 
-Activate Datastore
-Datastore -> Datastore: process and\nsave data
-Datastore -> Device: send\nacknowledge-\nment
-Deactivate Datastore
+Activate "MQTT Broker"
+"MQTT Broker" -> Device: send\nacknowledge-\nment
+Deactivate "MQTT Broker"
 
 == Fetch accumulated events ==
 
-Device -> Eventstore: check for events
-Activate Eventstore
-Eventstore -> Device: send events
-Deactivate Eventstore
+Device -> "MQTT Broker": check for events
+Activate "MQTT Broker"
+"MQTT Broker" -> Device: send events
+Deactivate "MQTT Broker"
 
 == Control Actuators ==
 

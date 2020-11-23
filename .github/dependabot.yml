@@ -8,11 +8,3 @@ updates:
       interval: "daily"
     ignore:
       - dependency-name: "*"
-
-  # Ignore legacy services:
-  - package-ecosystem: "npm"
-    directory: "/services/LEGACY"
-    schedule:
-      interval: "daily"
-    ignore:
-      - dependency-name: "*"

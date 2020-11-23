@@ -25,16 +25,12 @@ package "pot-pourri" {
         [Metastore]
     }
 
-    package "event-engine" #LightGrey {
-        [Event Engine] #LightGrey
-    }
-
-    ' package "datastore" {
-    '     [Datastore] #LightGrey
-    ' }
-
     package "webapp" {
         [Web App]
+    }
+
+    package "event-engine" #LightGrey {
+        [Event Engine] #LightGrey
     }
 }
 
@@ -49,7 +45,6 @@ package "pot-pourri-devices" {
 [Grafana] -[norank]-> [InfluxDB] : get data
 
 [Sensor] --> [Telegraf] #CornflowerBlue : send value
-' [Sensor] --> [Datastore] #CornflowerBlue : send value
 [Telegraf] --> [InfluxDB] : set data
 
 Gardener --> [Web App]

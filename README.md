@@ -70,26 +70,6 @@ Stores meta information like plant profiles, device settings and links between s
 
 It is accessible by other services via a REST API.
 
-### datastore
-
-> Note: This service is work in progress!
-
-The original purpose of _datastore_ was to persist data from the connected devices, which is now done by the _persistence_ service.
-
-What _persistence_ can't do is store meta data like plant profiles. This is what _datastore_ will do as soon as it is implemented.
-
-### ui
-
-> Note: This service is deprecated!
-
-The purpose of _ui_ was to visualize data like humidity on an web interface.
-
-The system dashboard with all data is now provided by the _visualization_ service.
-
-A user-friendly way to interact with your plants will be provided by _webapp_.
-
-Therefore _ui_ will be removed in the near future!
-
 ## Devices
 
 You will find the devices that can monitor your plants in the [separate repository](https://github.com/frederikheld/pot-pourri-devices.git).
