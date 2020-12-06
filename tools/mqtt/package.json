@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Collection of tools that help debug mqtt communication.",
   "scripts": {
-    "send": "node send_message.js",
+    "send-rand": "node send_random_message.js",
     "log": "node log_messages.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
