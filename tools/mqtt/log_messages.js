@@ -21,14 +21,14 @@ Arguments:
 
     topic_pattern The topic that will be listened to. This can be specified
                   using topic wildcards. Optional, defaults to
-                  "potpourri/devices+/sensors/+".
+                  "potpourri/devices/+/sensors/+". To log all topics, pass "#".
 
   `)
   return
 }
 const mqtt_host = cmd_args[0]
 const mqtt_port = cmd_args[1] || 1883
-const topic_pattern = cmd_args[3] || "potpourri/devices/+/sensors/+"
+const topic_pattern = cmd_args[2] || "potpourri/devices/+/sensors/+"
 
 const connection_string = "mqtt://" + mqtt_host + ":" + mqtt_port + "/"
 
