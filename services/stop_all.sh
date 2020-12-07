@@ -22,5 +22,9 @@ cd ..
 
 # stop mqtt-broker
 cd mqtt-broker
-docker-compose down
+if [ "$(uname -m)" = "aarch64" ]; then
+    docker-compose -f docker-compose.aarch64.yml down
+else
+    docker-compose down
+fi
 cd ..

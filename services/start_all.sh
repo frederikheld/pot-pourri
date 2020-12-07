@@ -2,7 +2,11 @@
 
 # start mqtt-broker
 cd mqtt-broker
-docker-compose up -d --build --force-recreate
+if [ "$(uname -m)" = "aarch64" ]; then
+    docker-compose -f docker-compose.aarch64.yml up -d --build --force-recreate
+else
+    docker-compose up -d --build --force-recreate
+fi
 cd ..
 
 # start persistence
