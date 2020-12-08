@@ -4,7 +4,7 @@ services:
     influxdb:
         env_file:
             - .env
-        image: influxdb
+        image: influxdb:1.8
         container_name: potpourri-persistence-influxdb
         volumes:
             - influxdb:/var/lib/influxdb
@@ -17,7 +17,7 @@ services:
     telegraf:
         env_file:
             - .env
-        image: telegraf
+        image: telegraf:1.16
         container_name: potpourri-persistence-telegraf
         volumes:
             - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro

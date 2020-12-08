@@ -1,1 +1,4 @@
-FROM frederikheld/hivemq-ce
+FROM frederikheld/hivemq-ce:latest
+# In this case `lastest` works as we have to create new versions manually
+# so it can't happen that a new version unexpectedly jumps out of the box
+# and breaks our system.
