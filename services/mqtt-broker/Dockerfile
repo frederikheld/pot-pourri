@@ -1,1 +1,1 @@
-FROM hivemq/hivemq-ce
+FROM hivemq/hivemq-ce:2020.6
