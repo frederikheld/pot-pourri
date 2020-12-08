@@ -4,7 +4,7 @@ services:
     grafana:
         env_file:
             - .env
-        image: grafana/grafana
+        image: grafana/grafana:7.3.4
         container_name: potpourri-visualization-grafana
         volumes:
             - grafana:/var/lib/grafana
