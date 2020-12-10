@@ -6,6 +6,8 @@
 #   * start services that require different base images on different
 #     architectures without manual configuration
 
+set -eu
+
 # helper functions
 print_help_text() {
     echo "This script will"
@@ -24,33 +26,50 @@ print_help_text() {
     echo ""
     echo "Usage:"
     echo ""
-    echo "  $ sudo sh start_all.sh [-c|--core-only]"
+    echo "  $ sh start_all.sh [-c|--core-only] [-h|--help]"
     echo ""
     echo "Options:"
     echo ""
-    echo "  -c | --core-only:  Will only start the core services, which are"
-    echo "                       * mqtt-broker"
-    echo "                       * persistence"
-    echo "                       * metastore"
+    echo "  -c, --core-only  Start only the core services, which are"
+    echo "                     * mqtt-broker"
+    echo "                     * persistence"
+    echo "                     * metastore"
     echo ""
-    echo "  -h | --help:       Print this help text"
+    echo "  -h, --help       Print this help text"
+}
+
+report_illegal_opt() {
+    echo "$*" >&2
+    exit 2
 }
 
 # parse args
 CORE_ONLY=false
-while getopts c-: OPT; do
+LONGOPT=false
+while getopts ch-: OPT; do
+
+    # Parse long options (double-dash)
     if [ "$OPT" = "-" ]; then
+        LONGOPT=true
         OPT="${OPTARG%%=*}"     # extract long option name
         OPTARG="${OPTARG#$OPT}" # extract long option argument (may be empty)
         OPTARG="${OPTARG#=}"    # if long option argument, remove assigning `=`
     fi
+
+    # Throw error for longopts with only one char length (edge case)
+    if [ "${LONGOPT}" = true ] && [ ${#OPT} -eq 1 ]; then
+        report_illegal_opt "Illegal option --${OPT}"
+    fi
+
     case "$OPT" in
-        c | core-only ) CORE_ONLY=true ;;
         h | help ) print_help_text; exit 0 ;;
+        c | core-only ) CORE_ONLY=true ;;
+        ??* ) report_illegal_opt "Illegal option --${OPT}" ;; # bad long option
+        ? ) exit 2 ;; # bad short option (error was already reported via getopts)
     esac
 done
+# This is a workaround to use POSIX compatible `getopts`, which allows only short options, to parse long options as well.
 # Source: https://stackoverflow.com/questions/402377/using-getopts-to-process-long-and-short-command-line-options (CC BY-SA 4.0)
-
 
 # start mqtt-broker
 cd mqtt-broker
