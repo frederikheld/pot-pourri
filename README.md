@@ -16,7 +16,7 @@ _Pot Pourri_ consists of several services that communicate via REST api interfac
 
 > Note: According to the nature of the MQTT protocol, all MQTT communication is conducted via the broker. In order to keep the diagram clean, I visualized the communication between clients via an direct arrow between those clients.
 
-The following sections give a brief abstract of the purpose of those services. Please see the readme of each service for more details!
+The following sections give a brief abstract of the purpose of those services. Please see the readme of each service as well as the [general readme for the services](./services/README.md) for more details!
 
 ### mqtt-broker
 
