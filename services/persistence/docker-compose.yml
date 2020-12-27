@@ -17,10 +17,10 @@ services:
     telegraf:
         env_file:
             - .env
-        image: telegraf:1.16
+        build:
+            context: .
+            dockerfile: Dockerfile.telegraf
         container_name: potpourri-persistence-telegraf
-        volumes:
-            - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
         networks:
             - default
             - potpourri-mqtt-broker_default

@@ -23,7 +23,10 @@ Arguments:
     device_id     The device id that will be used to send fake data. Optional,
                   defaults to a random between 0 and 255.
 
-    interval      The interval in milliseconds betwee two messages. Optional,
+    sensor_id     The sensor id that will be used to send fake data. Optional,
+                  defaults to a random between 0 and 255.
+
+    interval      The interval in milliseconds between two messages. Optional,
                   defaults to 1000.
 
   `)
@@ -32,13 +35,15 @@ Arguments:
 const mqtt_host = cmd_args[0];
 const mqtt_port = cmd_args[1] || 1883;
 const device_id = cmd_args[2] || getRandomInt(0, 256);
-const interval = cmd_args[3] || 1000;
+const sensor_id = cmd_args[3] || getRandomInt(0, 256);
+const interval = cmd_args[4] || 1000;
 
 const connection_string = "mqtt://" + mqtt_host + ":" + mqtt_port + "/"
 
 console.log("MQTT host: " + mqtt_host);
 console.log("MQTT port: " + mqtt_port);
 console.log("Device ID: " + device_id);
+console.log("Sensor ID: " + sensor_id);
 console.log("Interval : " + interval);
 
 const mqtt = require("mqtt");
@@ -48,7 +53,7 @@ mqttClient.on("connect", async () => {
   console.log("connected to " + connection_string)
 
   setInterval(() => {
-    const topic = "potpourri/devices/" + device_id + "/sensors/1"
+    const topic = "potpourri/devices/" + device_id + "/sensors/" + sensor_id
     const fake_data = getRandomInt(0, 1025)
 
     mqttClient.publish(
