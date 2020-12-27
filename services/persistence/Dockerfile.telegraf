@@ -1,0 +1,3 @@
+FROM telegraf:1.16
+
+COPY ./telegraf/telegraf.conf /etc/telegraf/telegraf.conf
