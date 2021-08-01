@@ -71,8 +71,6 @@ done
 # This is a workaround to use POSIX compatible `getopts`, which allows only short options, to parse long options as well.
 # Source: https://stackoverflow.com/questions/402377/using-getopts-to-process-long-and-short-command-line-options (CC BY-SA 4.0)
 
-echo "CORE_ONLY=$CORE_ONLY"
-
 # start mqtt-broker
 cd mqtt-broker
 if [ "$(uname -m)" = "aarch64" ]; then
