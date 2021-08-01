@@ -71,6 +71,8 @@ done
 # This is a workaround to use POSIX compatible `getopts`, which allows only short options, to parse long options as well.
 # Source: https://stackoverflow.com/questions/402377/using-getopts-to-process-long-and-short-command-line-options (CC BY-SA 4.0)
 
+echo "CORE_ONLY=$CORE_ONLY"
+
 # start mqtt-broker
 cd mqtt-broker
 if [ "$(uname -m)" = "aarch64" ]; then
@@ -86,7 +88,7 @@ docker-compose up -d --build --force-recreate
 cd ..
 
 # start visualization
-if [ ! CORE_ONLY ]; then
+if ! $CORE_ONLY; then
     cd visualization
     docker-compose up -d --build --force-recreate
     cd ..
@@ -100,7 +102,7 @@ docker-compose up -d --build --force-recreate
 cd ..
 
 # start webapp
-if [ ! CORE_ONLY ]; then
+if ! $CORE_ONLY; then
     cd webapp
     docker-compose up -d --build --force-recreate
     cd ..
