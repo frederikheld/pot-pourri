@@ -86,7 +86,7 @@ docker-compose up -d --build --force-recreate
 cd ..
 
 # start visualization
-if [ ! CORE_ONLY ]; then
+if ! $CORE_ONLY; then
     cd visualization
     docker-compose up -d --build --force-recreate
     cd ..
@@ -100,7 +100,7 @@ docker-compose up -d --build --force-recreate
 cd ..
 
 # start webapp
-if [ ! CORE_ONLY ]; then
+if ! $CORE_ONLY; then
     cd webapp
     docker-compose up -d --build --force-recreate
     cd ..

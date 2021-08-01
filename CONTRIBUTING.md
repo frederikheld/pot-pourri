@@ -28,3 +28,7 @@ $ sh run_all_tests.sh
 ## Help Wanted
 
 _service/webapp_ lacks e2e tests because I don't know enough about Cypress yet. I would appreciate your help with testing it! Most useful would be checks if all views render without throwing errors on the console.
+
+## Recommended Reads
+
+* [Best practices for writing Dockerfiles](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/)
