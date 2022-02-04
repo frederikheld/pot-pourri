@@ -8,6 +8,8 @@ The system collects data from connected sensor devices ([see the devices reposit
 
 It is also planned to add an event engine that triggers actors attached the connected devices on pre-defined events (like "moisture below x %"). This will allow for automatically watering the plants, regulating sun and ventilation, etc.
 
+> __Note: parts of this project (mainly the mobile app) are being continued as closed source. If you want to know more about this project, have a look at [gardeneers.social](https://gardeneers.social).__
+
 ## Architecture
 
 _Pot Pourri_ consists of several services that communicate via REST api interfaces or via their specific interfaces. Communication with the connected devices is conducted via the [MQTT protocol](https://en.wikipedia.org/wiki/MQTT).
